@@ -1,0 +1,34 @@
+{
+    "css.validate": true,
+    "editor.formatOnSave": false,
+    "eslint.autoFixOnSave": true,
+    "eslint.enable": true,
+    "eslint.validate": [
+      {
+        "language": "javascript",
+        "autoFix": true
+      },
+      {
+        "language": "javascriptreact",
+        "autoFix": true
+      },
+      {
+        "language": "typescript",
+        "autoFix": true
+      },
+      {
+        "language": "typescriptreact",
+        "autoFix": true
+      }
+    ],
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "stylelint.enable": false,
+    "typescript.tsserver.trace": "verbose",
+    "[markdown]": {
+      "files.trimTrailingWhitespace": false
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+  }
