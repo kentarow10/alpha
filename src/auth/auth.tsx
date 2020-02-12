@@ -16,8 +16,6 @@ const styles = StyleSheet.create({});
 const initialData = {
   isLoading: true,
   isAuthed: false,
-  email: 'test@test.com',
-  password: 'password',
 };
 
 const useAuth = (initialState = initialData) => {
@@ -37,10 +35,19 @@ const useAuth = (initialState = initialData) => {
       .auth()
       .signInWithEmailAndPassword(email, pass)
       .then(response => {
+        async () => {
+          try {
+            await AsyncStorage.setItem('isLogin', 'true');
+          } catch (e) {
+            console.log(e);
+          }
+        };
         const user = firebase.auth().currentUser;
         let uid: string;
         if (user != null) {
           uid = user.uid;
+          // TODO
+          // ローカルなSQLiteにユーザー情報を保存する
         }
         setAuthed('true');
       })
@@ -54,8 +61,12 @@ const useAuth = (initialState = initialData) => {
 
 export const AuthC = createContainer(useAuth);
 
-const SplashScreen = () => <View style={{ backgroundColor: 'red' }}></View>;
-const HomeScreen = () => <View style={{ backgroundColor: 'blue' }}></View>;
+const SplashScreen = () => (
+  <View style={{ backgroundColor: 'red', height: HEIGHT }}></View>
+);
+const HomeScreen = () => (
+  <View style={{ backgroundColor: 'blue', height: HEIGHT }}></View>
+);
 
 const AuthDisplay = () => {
   const auth = AuthC.useContainer();
