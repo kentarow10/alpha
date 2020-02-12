@@ -1,14 +1,15 @@
 import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
-import Auth from './src/auth/auth';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppearanceProvider } from 'react-native-appearance';
+
+import { Main } from './src/main';
 
 export default function App() {
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <Auth />
-      </NavigationContainer>
-    </PaperProvider>
+    <SafeAreaProvider>
+      <AppearanceProvider>
+        <Main />
+      </AppearanceProvider>
+    </SafeAreaProvider>
   );
 }
