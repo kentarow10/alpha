@@ -8,6 +8,7 @@ import firebase from '../../firebase/firebase';
 import SignInScreen from './signin';
 import SignUpScreen from './signup';
 import ResetPassword from './resetpass';
+import { RootNavigator } from '../home/home';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -64,9 +65,6 @@ export const AuthC = createContainer(useAuth);
 const SplashScreen = () => (
   <View style={{ backgroundColor: 'red', height: HEIGHT }}></View>
 );
-const HomeScreen = () => (
-  <View style={{ backgroundColor: 'blue', height: HEIGHT }}></View>
-);
 
 const AuthDisplay = () => {
   const auth = AuthC.useContainer();
@@ -103,7 +101,7 @@ const AuthDisplay = () => {
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
         </>
       ) : (
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Home" component={RootNavigator} />
       )}
     </Stack.Navigator>
   );
