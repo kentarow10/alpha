@@ -85,7 +85,7 @@ const AuthDisplay = () => {
   }, []);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator headerMode="none">
       {auth.auth.isLoading ? (
         <Stack.Screen name="Splash" component={SplashScreen} />
       ) : auth.auth.isAuthed === false ? (
@@ -93,9 +93,11 @@ const AuthDisplay = () => {
           <Stack.Screen
             name="SignIn"
             component={SignInScreen}
-            options={{
-              title: 'Sign in',
-            }}
+            options={
+              {
+                // title: 'Sign in',
+              }
+            }
           />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />

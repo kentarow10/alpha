@@ -5,17 +5,11 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Appbar, Avatar, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// import { BottomTabs } from './bottomTabs';
-// import { Details } from './details';
+import { BottomTabs } from './bottomTabs';
+import { Details } from './details';
 import { StackNavigatorParamlist } from './types';
 
 const Stack = createStackNavigator<StackNavigatorParamlist>();
-const BottomTabs = () => (
-  <View style={{ height: 200, backgroudcolor: 'red' }}></View>
-);
-const Details = () => (
-  <View style={{ height: 200, backgroudcolor: 'blue' }}></View>
-);
 
 export const StackNavigator = () => {
   const theme = useTheme();
