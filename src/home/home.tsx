@@ -10,9 +10,6 @@ import { DrawerContent } from './drawerContent';
 const Drawer = createDrawerNavigator();
 
 export const RootNavigator = () => {
-  const theme = useTheme();
-  const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
-
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={StackNavigator} />

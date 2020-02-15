@@ -127,7 +127,9 @@ export function DrawerContent(props: Props) {
               />
             )}
             label="Profile"
-            onPress={() => {}}
+            onPress={() => {
+              props.navigation.jumpTo('Home');
+            }}
           />
           <DrawerItem
             icon={({ color, size }) => (
