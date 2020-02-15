@@ -3,8 +3,10 @@ import { StyleSheet, View, Dimensions, AsyncStorage } from 'react-native';
 import { createContainer } from 'unstated-next';
 import { NavigationContext } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import firebase from '../../firebase/firebase';
+import * as SQLite from 'expo-sqlite';
+import * as FileSystem from 'expo-file-system';
 // import components
+import firebase from '../../firebase/firebase';
 import SignInScreen from './signin';
 import SignUpScreen from './signup';
 import ResetPassword from './resetpass';
@@ -22,6 +24,60 @@ const initialData = {
 const useAuth = (initialState = initialData) => {
   const [auth, setAuth] = useState(initialState);
   const navigation = useContext(NavigationContext);
+  const initializeDatabase = (uid: string) => {
+    // DBの作成先を出力
+    console.log(FileSystem.documentDirectory + 'SQLite/');
+    const db = SQLite.openDatabase('alpha_app');
+
+    db.transaction(
+      tx => {
+        tx.executeSql(
+          'create table if not exists users (uid text primary key not null, username text, iconPath text);',
+          null,
+          () => {
+            console.log('success');
+          },
+          () => {
+            console.log('fail');
+
+            return true;
+          },
+        );
+
+        tx.executeSql(
+          'create table if not exists anss (id integer primary key not null, uid text, postId text, ansId text);',
+          null,
+          () => {
+            console.log('success');
+          },
+          () => {
+            console.log('fail');
+
+            return true;
+          },
+        );
+
+        tx.executeSql(
+          'insert into users (uid) values (?);',
+          [uid],
+          () => {
+            console.log('success');
+          },
+          () => {
+            console.log('fail');
+
+            return true;
+          },
+        );
+      },
+      () => {
+        console.log('fail all');
+      },
+      () => {
+        console.log('success');
+      },
+    );
+  };
   const setAuthed = (b: string) => {
     let bool = false;
     if (b == 'true') {
@@ -47,8 +103,7 @@ const useAuth = (initialState = initialData) => {
         let uid: string;
         if (user != null) {
           uid = user.uid;
-          // TODO
-          // ローカルなSQLiteにユーザー情報を保存する
+          initializeDatabase(uid);
         }
         setAuthed('true');
       })
@@ -90,15 +145,7 @@ const AuthDisplay = () => {
         <Stack.Screen name="Splash" component={SplashScreen} />
       ) : auth.auth.isAuthed === false ? (
         <>
-          <Stack.Screen
-            name="SignIn"
-            component={SignInScreen}
-            options={
-              {
-                // title: 'Sign in',
-              }
-            }
-          />
+          <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
         </>
