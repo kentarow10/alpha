@@ -1,19 +1,23 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { useTheme } from 'react-native-paper';
 
-export default function App() {
+import { StackNavigator } from './stack';
+import { DrawerContent } from './drawerContent';
+
+const Drawer = createDrawerNavigator();
+
+export const RootNavigator = () => {
+  const theme = useTheme();
+  const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
+    <NavigationContainer theme={navigationTheme}>
+      <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
+        <Drawer.Screen name="Home" component={StackNavigator} />
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+};
