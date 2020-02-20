@@ -5,6 +5,7 @@ import {
   DarkTheme,
 } from 'react-native-paper';
 import { useColorScheme } from 'react-native-appearance';
+import { NavigationContainer } from '@react-navigation/native';
 
 import { PreferencesContext } from './context/preferencesContext';
 import Auth from './auth/auth';
@@ -42,7 +43,21 @@ export const Main = () => {
               }
         }
       >
-        <Auth />
+        <NavigationContainer
+          theme={
+            theme === 'light'
+              ? {
+                  ...DefaultTheme,
+                  colors: { ...DefaultTheme.colors, primary: '#1ba1f2' },
+                }
+              : {
+                  ...DarkTheme,
+                  colors: { ...DarkTheme.colors, primary: '#1ba1f2' },
+                }
+          }
+        >
+          <Auth />
+        </NavigationContainer>
       </PaperProvider>
     </PreferencesContext.Provider>
   );
