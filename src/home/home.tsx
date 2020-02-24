@@ -3,19 +3,88 @@ import { NavigationNativeContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { useTheme } from 'react-native-paper';
+import myNavCreator from './myNav/navCreator';
 
 import { StackNavigator } from './stack';
 import { DrawerContent } from './drawerContent';
+import { View } from 'react-native';
 
-const Drawer = createDrawerNavigator();
+// const Drawer = createDrawerNavigator();
+const Drawer = myNavCreator();
+
+const red = () => {
+  return <View style={{ backgroundColor: 'white', flex: 1 }}></View>;
+};
+const blue = () => {
+  return <View style={{ backgroundColor: 'white', flex: 1 }}></View>;
+};
+const yellow = () => {
+  return <View style={{ backgroundColor: 'white', flex: 1 }}></View>;
+};
+const orange = () => {
+  return <View style={{ backgroundColor: 'white', flex: 1 }}></View>;
+};
+const green = () => {
+  return <View style={{ backgroundColor: 'white', flex: 1 }}></View>;
+};
 
 export const RootNavigator = () => {
-  const theme = useTheme();
-  const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
-
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
-      <Drawer.Screen name="Home" component={StackNavigator} />
+      <Drawer.Screen
+        name="RED"
+        component={red}
+        options={{
+          inTab: true,
+          icon: {
+            name: 'account-outline',
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="BLUE"
+        component={blue}
+        options={{
+          inTab: true,
+          icon: {
+            name: 'home-outline',
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="YELLOW"
+        component={yellow}
+        options={{
+          inTab: true,
+          icon: {
+            name: 'link-variant',
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="ORANGE"
+        component={orange}
+        options={{
+          inTab: false,
+          icon: {
+            name: 'lightbulb-on-outline',
+            color: 'orange',
+            size: 20,
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="GREEN"
+        component={green}
+        options={{
+          inTab: false,
+          icon: {
+            name: 'leaf',
+            color: 'green',
+            size: 20,
+          },
+        }}
+      />
     </Drawer.Navigator>
   );
 };

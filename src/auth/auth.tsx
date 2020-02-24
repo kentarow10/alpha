@@ -27,12 +27,13 @@ const useAuth = (initialState = initialData) => {
   const initializeDatabase = (uid: string) => {
     // DBの作成先を出力
     console.log(FileSystem.documentDirectory + 'SQLite/');
+    console.log(uid);
     const db = SQLite.openDatabase('alpha_app');
 
     db.transaction(
       tx => {
         tx.executeSql(
-          'create table if not exists users (uid text primary key not null, username text, iconPath text);',
+          'create table if not exists users (id integer primary key not null, uid text, username text, iconPath text);',
           null,
           () => {
             console.log('success');
@@ -58,15 +59,26 @@ const useAuth = (initialState = initialData) => {
         );
 
         tx.executeSql(
-          'insert into users (uid) values (?);',
+          'select * from users where uid = (?)',
           [uid],
-          () => {
-            console.log('success');
-          },
-          () => {
-            console.log('fail');
+          (_, resultSet) => {
+            if (resultSet.rows.length === 0) {
+              tx.executeSql(
+                'insert into users (uid) values (?)',
+                [uid],
+                () => {
+                  console.log('success');
+                },
+                e => {
+                  console.log('fail');
+                  console.log(e);
 
-            return true;
+                  return true;
+                },
+              );
+            } else {
+              console.log('exists');
+            }
           },
         );
       },

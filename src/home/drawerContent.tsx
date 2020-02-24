@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-  DrawerContentComponentProps,
-  DrawerContentOptions,
+  // DrawerContentComponentProps,
+  // DrawerContentOptions,
   DrawerContentScrollView,
   DrawerItem,
 } from '@react-navigation/drawer';
+import {
+  DrawerContentComponentProps,
+  DrawerContentOptions,
+} from './myNav/types';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
 import {
   Avatar,
   Caption,
@@ -20,13 +24,17 @@ import {
   useTheme,
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
+
 import { PreferencesContext } from '../context/preferencesContext';
+import { BaseRouter, DrawerActions } from '@react-navigation/native';
 
 type Props = DrawerContentComponentProps<DrawerContentOptions>;
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   drawerContent: {
-    flex: 1,
+    // flex: 1,
+    height: height,
   },
   userInfoSection: {
     paddingLeft: 20,
@@ -74,7 +82,10 @@ export function DrawerContent(props: Props) {
   });
 
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView
+      {...props}
+      style={{ backgroundColor: paperTheme.colors.surface }}
+    >
       <Animated.View
         style={[
           styles.drawerContent,
@@ -117,35 +128,37 @@ export function DrawerContent(props: Props) {
           </View>
         </View>
         <Drawer.Section style={styles.drawerSection}>
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons
-                name="account-outline"
-                color={color}
-                size={size}
+          {props.state.routes
+            .filter(
+              route => props.descriptors[route.key].options.inTab === false,
+            )
+            .map(route => (
+              <DrawerItem
+                key={route.key}
+                icon={({ color, size }) => (
+                  <MaterialCommunityIcons
+                    name={
+                      props.descriptors[route.key].options.icon != undefined
+                        ? props.descriptors[route.key].options.icon.name
+                        : 'account-outline'
+                    }
+                    color={paperTheme.colors.text}
+                    size={
+                      props.descriptors[route.key].options.icon != undefined
+                        ? props.descriptors[route.key].options.icon.size
+                        : 20
+                    }
+                  />
+                )}
+                label={route.name}
+                onPress={() => {
+                  props.navigation.dispatch({
+                    ...DrawerActions.jumpTo(route.name),
+                    target: props.state.key,
+                  });
+                }}
               />
-            )}
-            label="Profile"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons name="tune" color={color} size={size} />
-            )}
-            label="Preferences"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons
-                name="bookmark-outline"
-                color={color}
-                size={size}
-              />
-            )}
-            label="Bookmarks"
-            onPress={() => {}}
-          />
+            ))}
         </Drawer.Section>
         <Drawer.Section title="Preferences">
           <TouchableRipple onPress={toggleTheme}>
