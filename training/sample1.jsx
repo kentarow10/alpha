@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-import Animated from 'react-native-reanimated';
+import { StyleSheet, View } from 'react-native';
+
+import Animated, { Easing } from 'react-native-reanimated';
 import { State, TapGestureHandler } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
@@ -31,7 +33,6 @@ const {
   block,
   interpolate,
   Extrapolate,
-  Easing,
 } = Animated;
 
 const runOpacityTimer = (clock, gestureState) => {

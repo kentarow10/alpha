@@ -1,8 +1,16 @@
 /* eslint-disable no-undef */
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 
-import Animated, { Easing, State } from 'react-native-reanimated';
+import Animated, { Easing } from 'react-native-reanimated';
+import { State, PanGestureHandler } from 'react-native-gesture-handler';
 
 const {
   add,
@@ -21,18 +29,23 @@ const {
   interpolate,
   Extrapolate,
 } = Animated;
+const { width, height } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // height: height,
+    // width: width,
     justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
+    backgroundColor: 'orange',
     padding: 8,
+    // zIndex: -1,
   },
   box: {
     width: 50,
     height: 50,
     backgroundColor: 'purple',
-    borderRadius: 5,
+    borderRadius: 50,
   },
 });
 
@@ -41,40 +54,33 @@ export default class Example extends React.Component {
     super();
     this._transX = new Value(0);
     this._transY = new Value(0);
-    this.offsetX = new Value(0);
-    this.offsetY = new Value(0);
+    this._panHandler = Animated.event(
+      [{ nativeEvent: { x: this._transX, y: this._transY } }],
+      {
+        useNativeDriver: true,
+      },
+    );
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <PanGestureHandler
-          onGestureEvent={event([
-            {
-              nativeEvent: ({ translationX: x, translationY: y, state }) =>
-                block([
-                  set(this._transX, add(x, offsetX)),
-                  set(this._transY, add(y, offsetY)),
-                  cond(eq(state, State.END), [
-                    set(this.offsetX, add(this.offsetX, x)),
-                    set(this.offsetY, add(this.offsetY, y)),
-                  ]),
-                ]),
-            },
-          ])}
-        >
+      <PanGestureHandler onGestureEvent={this._panHandler}>
+        <Animated.View style={styles.container}>
           <Animated.View
-            style={
-              (styles.box,
+            style={[
+              styles.box,
               {
                 transform: [
-                  { translateX: this._transX, translateY: this._transY },
+                  {
+                    translateX: this._transX,
+                    translateY: this._transY,
+                  },
                 ],
-              })
-            }
+              },
+            ]}
           />
-        </PanGestureHandler>
-      </View>
+        </Animated.View>
+      </PanGestureHandler>
     );
   }
 }

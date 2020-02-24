@@ -14,3 +14,16 @@ https://docs.expo.io/versions/latest/sdk/reanimated/
 
 pangestureHandlerをつかったサンプルを自作
 タッチしている場所にコンポーネントがついてくる動き
+
+* Sample4
+
+documentのpanGestureHandlerにあったサンプル
+
+* BasicNav
+
+基本から少し改変
+
+* Sample5
+
+BasicNavを使ってみる。
+

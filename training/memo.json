@@ -1,0 +1,297 @@
+
+// state
+Object {
+"history": Array [
+    Object {
+    "key": "RED-JQPwHUQrf",
+    "type": "route",
+    },
+],
+"index": 0,
+"key": "drawer-qComq811M",
+"routeNames": Array [
+    "RED",
+    "BLUE",
+    "YELLOW",
+],
+"routes": Array [
+    Object {
+    "key": "RED-JQPwHUQrf",
+    "name": "RED",
+    "params": undefined,
+    },
+    Object {
+    "key": "BLUE-gJITYcmNu",
+    "name": "BLUE",
+    "params": undefined,
+    },
+    Object {
+    "key": "YELLOW-_BJ6h7hX9",
+    "name": "YELLOW",
+    "params": undefined,
+    },
+],
+"stale": false,
+"type": "drawer",
+}
+// descriptors
+Object {
+"BLUE-gJITYcmNu": Object {
+    "navigation": Object {
+    "addListener": [Function addListener],
+    "canGoBack": [Function canGoBack],
+    "closeDrawer": [Function anonymous],
+    "dangerouslyGetParent": [Function dangerouslyGetParent],
+    "dangerouslyGetState": [Function anonymous],
+    "dispatch": [Function dispatch],
+    "goBack": [Function anonymous],
+    "isFocused": [Function isFocused],
+    "jumpTo": [Function anonymous],
+    "navigate": [Function anonymous],
+    "openDrawer": [Function anonymous],
+    "removeListener": [Function removeListener],
+    "reset": [Function anonymous],
+    "setOptions": [Function setOptions],
+    "setParams": [Function anonymous],
+    "toggleDrawer": [Function anonymous],
+    },
+    "options": Object {},
+    "render": [Function render],
+},
+"RED-JQPwHUQrf": Object {
+    "navigation": Object {
+    "addListener": [Function addListener],
+    "canGoBack": [Function canGoBack],
+    "closeDrawer": [Function anonymous],
+    "dangerouslyGetParent": [Function dangerouslyGetParent],
+    "dangerouslyGetState": [Function anonymous],
+    "dispatch": [Function dispatch],
+    "goBack": [Function anonymous],
+    "isFocused": [Function isFocused],
+    "jumpTo": [Function anonymous],
+    "navigate": [Function anonymous],
+    "openDrawer": [Function anonymous],
+    "removeListener": [Function removeListener],
+    "reset": [Function anonymous],
+    "setOptions": [Function setOptions],
+    "setParams": [Function anonymous],
+    "toggleDrawer": [Function anonymous],
+    },
+    "options": Object {},
+    "render": [Function render],
+},
+"YELLOW-_BJ6h7hX9": Object {
+    "navigation": Object {
+    "addListener": [Function addListener],
+    "canGoBack": [Function canGoBack],
+    "closeDrawer": [Function anonymous],
+    "dangerouslyGetParent": [Function dangerouslyGetParent],
+    "dangerouslyGetState": [Function anonymous],
+    "dispatch": [Function dispatch],
+    "goBack": [Function anonymous],
+    "isFocused": [Function isFocused],
+    "jumpTo": [Function anonymous],
+    "navigate": [Function anonymous],
+    "openDrawer": [Function anonymous],
+    "removeListener": [Function removeListener],
+    "reset": [Function anonymous],
+    "setOptions": [Function setOptions],
+    "setParams": [Function anonymous],
+    "toggleDrawer": [Function anonymous],
+    },
+    "options": Object {},
+    "render": [Function render],
+},
+}
+
+// navigation
+Object {
+"canGoBack": [Function canGoBack],
+"closeDrawer": [Function anonymous],
+"dispatch": [Function dispatch],
+"emit": [Function anonymous],
+"goBack": [Function anonymous],
+"isFocused": [Function anonymous],
+"jumpTo": [Function anonymous],
+"navigate": [Function anonymous],
+"openDrawer": [Function anonymous],
+"reset": [Function anonymous],
+"setParams": [Function anonymous],
+"toggleDrawer": [Function anonymous],
+}
+// children
+Array [
+Object {
+    "$$typeof": Symbol(react.element),
+    "_owner": FiberNode {
+    "tag": 0,
+    "key": null,
+    "type": [Function RootNavigator],
+    },
+    "_store": Object {},
+    "key": null,
+    "props": Object {
+    "component": [Function red],
+    "name": "RED",
+    },
+    "ref": null,
+    "type": [Function Screen],
+},
+Object {
+    "$$typeof": Symbol(react.element),
+    "_owner": FiberNode {
+    "tag": 0,
+    "key": null,
+    "type": [Function RootNavigator],
+    },
+    "_store": Object {},
+    "key": null,
+    "props": Object {
+    "component": [Function blue],
+    "name": "BLUE",
+    },
+    "ref": null,
+    "type": [Function Screen],
+},
+Object {
+    "$$typeof": Symbol(react.element),
+    "_owner": FiberNode {
+    "tag": 0,
+    "key": null,
+    "type": [Function RootNavigator],
+    },
+    "_store": Object {},
+    "key": null,
+    "props": Object {
+    "component": [Function yellow],
+    "name": "YELLOW",
+    },
+    "ref": null,
+    "type": [Function Screen],
+},
+]
+// backBehavior
+undefined
+
+Type '{ name: "RED"; component: () => Element; inTab: boolean; }' is not assignable to type '(IntrinsicAttributes & { name: "RED"; options?: DrawerNavigationOptions | ((props: { route: RouteProp<Record<string, object>, "RED">; navigation: any; }) => DrawerNavigationOptions); initialParams?: object; } & { ...; }) | (IntrinsicAttributes & ... 1 more ... & { ...; })'.
+  Property 'inTab' does not exist on type '(IntrinsicAttributes & { name: "RED"; options?: DrawerNavigationOptions | ((props: { route: RouteProp<Record<string, object>, "RED">; navigation: any; }) => DrawerNavigationOptions); initialParams?: object; } & { ...; }) | (IntrinsicAttributes & ... 1 more ... & { ...; })'.
+
+// children
+  Array [
+    Object {
+      "$$typeof": Symbol(react.element),
+      "_owner": FiberNode {
+        "tag": 0,
+        "key": null,
+        "type": [Function RootNavigator],
+      },
+      "_store": Object {},
+      "key": null,
+      "props": Object {
+        "component": [Function red],
+        "name": "RED",
+        "options": Object {
+          "inTab": true,
+        },
+      },
+      "ref": null,
+      "type": [Function Screen],
+    },
+    Object {
+      "$$typeof": Symbol(react.element),
+      "_owner": FiberNode {
+        "tag": 0,
+        "key": null,
+        "type": [Function RootNavigator],
+      },
+      "_store": Object {},
+      "key": null,
+      "props": Object {
+        "component": [Function blue],
+        "name": "BLUE",
+        "options": Object {
+          "inTab": true,
+        },
+      },
+      "ref": null,
+      "type": [Function Screen],
+    },
+    Object {
+      "$$typeof": Symbol(react.element),
+      "_owner": FiberNode {
+        "tag": 0,
+        "key": null,
+        "type": [Function RootNavigator],
+      },
+      "_store": Object {},
+      "key": null,
+      "props": Object {
+        "component": [Function yellow],
+        "name": "YELLOW",
+        "options": Object {
+          "inTab": true,
+        },
+      },
+      "ref": null,
+      "type": [Function Screen],
+    },
+    Object {
+      "$$typeof": Symbol(react.element),
+      "_owner": FiberNode {
+        "tag": 0,
+        "key": null,
+        "type": [Function RootNavigator],
+      },
+      "_store": Object {},
+      "key": null,
+      "props": Object {
+        "component": [Function orange],
+        "name": "ORANGE",
+      },
+      "ref": null,
+      "type": [Function Screen],
+    },
+    Object {
+      "$$typeof": Symbol(react.element),
+      "_owner": FiberNode {
+        "tag": 0,
+        "key": null,
+        "type": [Function RootNavigator],
+      },
+      "_store": Object {},
+      "key": null,
+      "props": Object {
+        "component": [Function green],
+        "name": "GREEN",
+      },
+      "ref": null,
+      "type": [Function Screen],
+    },
+  ]
+
+  <View style={[{ flexDirection: 'row' }, styles.tabBarStyle]}>
+  {state.routes.map(route => (
+    <TouchableOpacity
+      key={route.key}
+      onPress={() => {
+      //   const event = navigation.emit({
+      //     type: 'tabPress',
+      //     target: route.key,
+      //     data: {
+      //       isAlreadyFocused: route.key === state.routes[state.index].key,
+      //     },
+      //   });
+
+      //   if (!event.defaultPrevented) {
+          navigation.dispatch({
+            ...DrawerActions.jumpTo(route.name),
+            target: state.key,
+          });
+      //   }
+      }}
+      style={{ flex: 1 }}
+    >
+      <Text>{descriptors[route.key].options.title || route.name}</Text>
+    </TouchableOpacity>
+  ))}
+</View>
