@@ -2,15 +2,19 @@ import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 
 import { Me } from './me';
-import { Add, ChangeStatus, Delete } from '..';
+import { Comb, Ans, Post, Comment } from '../types';
+
+import { getMyInfo, getIconUrl, getMyCombs, getMyPosts } from './actions';
 
 const initialState: Me = {
-  uid: '',
-  username: '',
+  isLoading: false,
+  isError: false,
+  isImgError: false,
+  userName: '',
+  // iconPath: '',
   siBody: '',
-  myPosts: [],
-  myAnss: [],
   myCombs: [],
+  myPosts: [],
 };
 
 export const reducer: Reducer<Me> = (state = initialState, action) => {

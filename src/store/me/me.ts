@@ -1,12 +1,14 @@
 import { Post, Ans, Comb } from '../types';
 
 export type Me = {
-  uid: string;
-  username: string;
+  isLoading: boolean;
+  isError: boolean;
+  isImgError: boolean;
+  userName: string;
+  iconPath?: string;
   siBody: string;
-  myPosts: Post[];
-  myAnss: Ans[];
   myCombs: Comb[];
+  myPosts: Post[];
 };
 
 // export * from './actions';

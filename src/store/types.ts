@@ -1,17 +1,9 @@
 // 画面に対応するデータ
-
-export type Profile = {
-  isLoading: boolean;
-  isError: boolean;
-  userName: string;
-  iconPath?: string;
-  siBody: string;
-  myCombs: Comb[];
-  myPosts: Post[];
-};
+// storeで管理する方
+// 機能ごと、それぞれのディレクトリに定義する
 
 // カタチとして持っておきたい
-// firebaseと対応する？
+// firebaseと対応する
 
 export type User = {
   doc?: string;
@@ -35,8 +27,9 @@ export type Ans = {
   postDoc: string;
   orderThm: number;
   ownerId: string;
-  fromLinks: Comb[];
+  fromLinks: Comb[]; //Firebase上ではprimitiveでないものは、docを保存する
   toLinks: Comb[];
+  comments: Comment[];
 };
 
 export type Comb = {
@@ -45,7 +38,14 @@ export type Comb = {
   ansDoc: string;
   path: string;
   thm: string;
-  ans: string;
-  fromLinks: Comb[];
-  toLinks: Comb[];
+  body: string;
+  ans: Ans;
+};
+
+export type Comment = {
+  doc?: string;
+  ansDoc: string;
+  userName: string;
+  content: string;
+  numGood: number;
 };

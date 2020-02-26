@@ -2,7 +2,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import { db, storage } from '../../../firebase/firebase';
 import * as SQLite from 'expo-sqlite';
 import { Me } from './me';
-import { Profile, Comb, Ans, Post } from '../types';
+import { Comb, Ans, Post, Comment } from '../types';
 
 // 準備
 
@@ -37,15 +37,15 @@ const actionCreator = actionCreatorFactory('TODO');
 
 // plain Actions
 
-const getMyInfo = actionCreator<{ userName: string; siBody: string }>(
+export const getMyInfo = actionCreator<{ userName: string; siBody: string }>(
   'GET_MY_INFO',
 );
 
-const getIconUrl = actionCreator<{ iconUrl: string }>('GET_ICON_URL');
+export const getIconUrl = actionCreator<{ iconUrl: string }>('GET_ICON_URL');
 
-const getMyCombs = actionCreator<{ combs: Comb[] }>('GET_MY_COMB');
+export const getMyCombs = actionCreator<{ combs: Comb[] }>('GET_MY_COMB');
 
-const getMyPosts = actionCreator<{ posts: Post[] }>('GET_MY_POST');
+export const getMyPosts = actionCreator<{ posts: Post[] }>('GET_MY_POST');
 
 // async Actions
 
