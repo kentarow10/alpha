@@ -8,6 +8,7 @@ import myNavCreator from './myNav/navCreator';
 import { StackNavigator } from './stack';
 import { DrawerContent } from './drawerContent';
 import { View } from 'react-native';
+import Profile from '../profile/profile';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -32,8 +33,8 @@ export const RootNavigator = () => {
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
       <Drawer.Screen
-        name="RED"
-        component={red}
+        name="PROFILE"
+        component={Profile}
         options={{
           inTab: true,
           icon: {

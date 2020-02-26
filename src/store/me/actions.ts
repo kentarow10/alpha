@@ -33,7 +33,7 @@ async function getFromStorage(path: string) {
   }
 }
 
-const actionCreator = actionCreatorFactory('TODO');
+const actionCreator = actionCreatorFactory('ME');
 
 // plain Actions
 
@@ -43,28 +43,30 @@ export const getMyInfo = actionCreator<{ userName: string; siBody: string }>(
 
 export const getIconUrl = actionCreator<{ iconUrl: string }>('GET_ICON_URL');
 
-export const getMyCombs = actionCreator<{ combs: Comb[] }>('GET_MY_COMB');
+export const getMyCombs = actionCreator<Comb[]>('GET_MY_COMB');
 
-export const getMyPosts = actionCreator<{ posts: Post[] }>('GET_MY_POST');
+export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
 // async Actions
 
 export const asyncGetMyInfo = (uid: string) => {
   return dispatch => {
+    console.log(uid);
     db.collection('users')
       .doc(uid)
       .get()
       .then(function(doc) {
-        const userName = doc.data().userName;
-        const iconPath = doc.data().iconPath;
-        const siBody = doc.data().siBody;
-        getFromStorage(iconPath).then(url => {
-          dispatch(getIconUrl(url));
-        });
+        const userName = doc.data().un;
+        // const iconPath = doc.data().iconPath;
+        const siBody = doc.data().sib;
+        // getFromStorage(iconPath).then(url => {
+        //   dispatch(getIconUrl(url));
+        // });
 
         return { userName, siBody };
       })
       .then(myInfo => {
+        console.log(myInfo);
         dispatch(getMyInfo(myInfo));
       })
       .catch(function(error) {
@@ -73,17 +75,17 @@ export const asyncGetMyInfo = (uid: string) => {
   };
 };
 
-export const asyncGetMyCombs = (uid: string) => {
-  return dispatch => {
-    db.collection('combs')
-      .where('user', '==', uid)
-      .get()
-      .then(docs => {
-        const myCombs: Comb[] = [];
-        docs.forEach(doc => {});
-      });
-  };
-};
+// export const asyncGetMyCombs = (uid: string) => {
+//   return dispatch => {
+//     db.collection('combs')
+//       .where('user', '==', uid)
+//       .get()
+//       .then(docs => {
+//         const myCombs: Comb[] = [];
+//         docs.forEach(doc => {});
+//       });
+//   };
+// };
 
 export const asyncGetMyPosts = (uid: string) => {
   return dispatch => {

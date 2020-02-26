@@ -18,6 +18,13 @@ const initialState: Me = {
 };
 
 export const reducer: Reducer<Me> = (state = initialState, action) => {
+  if (isType(action, getMyInfo)) {
+    return {
+      ...state,
+      userName: action.payload.userName,
+      siBody: action.payload.siBody,
+    };
+  }
   //   if (isType(action, Add)) {
   //     return produce(state, draft => {
   //       draft.push({ title: action.payload.title, status: 'not yet' });

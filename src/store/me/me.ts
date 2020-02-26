@@ -11,6 +11,6 @@ export type Me = {
   myPosts: Post[];
 };
 
-// export * from './actions';
-// export * from './selectors';
-// export { default } from './reducers';
+export * from './actions';
+export * from './selector';
+export { default } from './reducer';
