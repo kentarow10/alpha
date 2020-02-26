@@ -32,18 +32,18 @@ const useAuth = (initialState = initialData) => {
 
     db.transaction(
       tx => {
-        tx.executeSql(
-          'create table if not exists users (id integer primary key not null, uid text, username text, iconPath text);',
-          null,
-          () => {
-            console.log('success');
-          },
-          () => {
-            console.log('fail');
+        // tx.executeSql(
+        //   'create table if not exists users (id integer primary key not null, uid text, username text, iconPath text);',
+        //   null,
+        //   () => {
+        //     console.log('success');
+        //   },
+        //   () => {
+        //     console.log('fail');
 
-            return true;
-          },
-        );
+        //     return true;
+        //   },
+        // );
 
         tx.executeSql(
           'create table if not exists anss (id integer primary key not null, uid text, postId text, ansId text);',
@@ -59,12 +59,12 @@ const useAuth = (initialState = initialData) => {
         );
 
         tx.executeSql(
-          'select * from users where uid = (?)',
+          'select * from anss where uid = (?)',
           [uid],
           (_, resultSet) => {
             if (resultSet.rows.length === 0) {
               tx.executeSql(
-                'insert into users (uid) values (?)',
+                'insert into anss (uid) values (?)',
                 [uid],
                 () => {
                   console.log('success');
