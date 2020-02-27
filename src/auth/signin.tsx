@@ -4,6 +4,7 @@ import { createContainer } from 'unstated-next';
 
 import { AuthC } from './auth';
 import { TextInput, Button } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -33,7 +34,7 @@ const SigninDisplay = () => {
   const auth = AuthC.useContainer();
 
   return (
-    <View>
+    <SafeAreaView>
       <TextInput
         // style={styles.field}
         label="メールアドレス"
@@ -58,7 +59,7 @@ const SigninDisplay = () => {
       >
         →
       </Button>
-    </View>
+    </SafeAreaView>
   );
 };
 

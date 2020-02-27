@@ -6,7 +6,6 @@
 // firebaseと対応する
 
 export type User = {
-  doc?: string;
   uid: string;
   userName: string;
   iconPath?: string;
@@ -27,9 +26,9 @@ export type Ans = {
   postDoc: string;
   orderThm: number;
   ownerId: string;
-  fromLinks: Comb[]; //Firebase上ではprimitiveでないものは、docを保存する
-  toLinks: Comb[];
-  comments: Comment[];
+  fromLinks: string[]; //Firebase上ではprimitiveでないものは、docを保存する
+  toLinks: string[];
+  comments: string[];
 };
 
 export type Comb = {

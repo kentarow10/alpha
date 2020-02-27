@@ -25,9 +25,7 @@ const useAuth = (initialState = initialData) => {
   const [auth, setAuth] = useState(initialState);
   const navigation = useContext(NavigationContext);
   const initializeDatabase = (uid: string) => {
-    // DBの作成先を出力
     console.log(FileSystem.documentDirectory + 'SQLite/');
-    console.log(uid);
     const db = SQLite.openDatabase('alpha_app');
 
     db.transaction(
@@ -115,6 +113,13 @@ const useAuth = (initialState = initialData) => {
         let uid: string;
         if (user != null) {
           uid = user.uid;
+          async () => {
+            try {
+              await AsyncStorage.setItem('uid', uid);
+            } catch (e) {
+              console.log(e);
+            }
+          };
           initializeDatabase(uid);
         }
         setAuthed('true');

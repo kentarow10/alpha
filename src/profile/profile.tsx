@@ -10,7 +10,7 @@ import {
   Button,
 } from 'react-native-paper';
 import { View, Button as Bt } from 'react-native';
-import { GetAllMe, asyncGetMyInfo } from '../store/me/me';
+import { GetAllMe, asyncGetMyInfo, asyncGetMyCombs } from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -25,7 +25,7 @@ const profile = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
-    console.log('called');
+    dispatch(asyncGetMyCombs(uid));
   }, []);
 
   return (
@@ -34,7 +34,7 @@ const profile = () => {
         <Card.Title
           title={me.userName}
           subtitle="Card Subtitle"
-          left={props => <Avatar.Icon {...props} icon="folder" />}
+          left={props => <Avatar.Image size={24} source={me.iconPath} />}
         />
         <Card.Content>
           <Title>{me.userName}</Title>

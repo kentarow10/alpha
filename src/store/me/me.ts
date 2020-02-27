@@ -1,9 +1,10 @@
 import { Post, Ans, Comb } from '../types';
 
 export type Me = {
-  isLoading: boolean;
+  isFetching: boolean;
   isError: boolean;
   isImgError: boolean;
+  showPostMode: boolean;
   userName: string;
   iconPath?: string;
   siBody: string;
