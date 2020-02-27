@@ -27,3 +27,9 @@ documentのpanGestureHandlerにあったサンプル
 
 BasicNavを使ってみる。
 
+* Sample6
+
+引っ張ったらfetchするUI
+
+
+
