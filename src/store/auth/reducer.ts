@@ -24,8 +24,9 @@ const reducer: Reducer<Auth> = reducerWithInitialState(initialState)
   }))
   .case(setUserInfo, (state, payload) => ({
     ...state,
+    isFetching: false,
     isFirst: payload.isFirst,
-    uid: payload.isFirst,
+    uid: payload.uid,
     userName: payload.userName,
   }));
 

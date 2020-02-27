@@ -1,13 +1,10 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage } from '../../../firebase/firebase';
-import * as SQLite from 'expo-sqlite';
 import { Me } from './me';
 import { Comb, Ans, Post, Comment } from '../types';
 
 // 準備
-
-const SQ = SQLite.openDatabase('alpha_app');
 
 const actionCreator = actionCreatorFactory('ME');
 
@@ -117,14 +114,15 @@ export const asyncGetMyInfo = (uid: string) => {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           const noimg = Asset.fromModule(require('../../../assets/icon.png'))
             .uri;
-          dispatch(getIconUrl(noimg));
+          console.log(noimg);
+          dispatch(getIconUrl({ iconUrl: noimg }));
         } else {
           getFromStorage(iconPath)
             .then(url => {
               dispatch(getIconUrl(url));
             })
             .catch(e => {
-              dispatch(fetchImgError());
+              dispatch(fetchImgError({}));
             });
         }
 
@@ -194,7 +192,7 @@ export const asyncGetMyPosts = (uid: string) => {
               });
             })
             .catch(e => {
-              dispatch(fetchImgError());
+              dispatch(fetchImgError({}));
             });
         });
 
@@ -208,15 +206,15 @@ export const asyncGetMyPosts = (uid: string) => {
 
 export const asyncUpdateSib = (uid: string, text: string) => {
   return dispatch => {
-    dispatch(startFetch());
+    dispatch(startFetch({}));
     db.collection('users')
       .doc(uid)
       .update({
         siBody: text,
       })
       .then(() => {
-        dispatch(endFetch());
-        dispatch(updateSiBody(text));
+        dispatch(endFetch({}));
+        dispatch(updateSiBody({ siBody: text }));
       });
   };
 };

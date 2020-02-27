@@ -8,7 +8,7 @@ import { useColorScheme } from 'react-native-appearance';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { PreferencesContext } from './context/preferencesContext';
-import Auth from './auth/auth';
+import Auth from './auth/nav';
 
 export const Main = () => {
   const colorScheme = useColorScheme();

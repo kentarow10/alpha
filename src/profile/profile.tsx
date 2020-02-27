@@ -34,7 +34,9 @@ const profile = () => {
         <Card.Title
           title={me.userName}
           subtitle="Card Subtitle"
-          left={props => <Avatar.Image size={24} source={me.iconPath} />}
+          left={props => (
+            <Avatar.Image size={24} source={{ uri: me.iconPath }} />
+          )}
         />
         <Card.Content>
           <Title>{me.userName}</Title>
