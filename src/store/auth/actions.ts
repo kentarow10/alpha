@@ -43,10 +43,42 @@ export const autoLogin = (dispatch: Dispatch<any>) => {
 
 // async actions
 
-export const createUser = (mail: string, pass: string, name: string) => {
+export const login = (mail: string, pass: string) => {
   return dispatch => {
     dispatch(trnStart({}));
-    console.log('create user');
+    const db = SQLite.openDatabase('alpha_app');
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(mail, pass)
+      .then(res => {
+        const uid = res.user.uid;
+        db.transaction(tx => {
+          tx.executeSql(
+            'select * from users where uid = (?)',
+            [uid],
+            (_, resultSet) => {
+              const authed = resultSet.rows.item(0).isFirst;
+              const userName = resultSet.rows.item(0).userName;
+              if (authed === 0) {
+                dispatch(setUserInfo({ isFirst: 0, uid, userName }));
+              } else {
+                dispatch(setUserInfo({ isFirst: 1, uid, userName }));
+              }
+            },
+          );
+        });
+      })
+      .catch(e => {
+        console.log(e);
+        dispatch(trnError({}));
+      });
+  };
+};
+
+// 動作確認済
+export const createUser2 = (mail: string, pass: string, name: string) => {
+  return dispatch => {
+    dispatch(trnStart({}));
     // const db = SQLite.openDatabase('alpha_app');
     firebase
       .auth()
@@ -65,95 +97,68 @@ export const createUser = (mail: string, pass: string, name: string) => {
         console.log(e);
         dispatch(trnError({}));
       });
-    // .then(() => {
-    //   db.transaction(tx => {
-    //     tx.executeSql(
-    //       'create table users (id integer primary key not null, isFirst integer, uid text, userName text);',
-    //       null,
-    //       () => {
-    //         console.log('success');
-    //       },
-    //       e => {
-    //         console.log(e);
-
-    //         return true;
-    //       },
-    //     );
-    //   });
-    //   const user = firebase.auth().currentUser;
-    //   const uid = user.uid;
-    //   db.transaction(tx => {
-    //     tx.executeSql(
-    //       'insert into users (isFirst, uid, userName) values (?,?,?)',
-    //       [1, uid, name],
-    //       () => {
-    //         dispatch(
-    //           setUserInfo({
-    //             isFetching: false,
-    //             isFirst: 1,
-    //             uid,
-    //             userName: name,
-    //           }),
-    //         );
-    //       },
-    //       e => {
-    //         console.log(e);
-    //         dispatch(trnError({}));
-
-    //         return true;
-    //       },
-    //     );
-    //   });
-    // });
   };
 };
 
-export const createUser2 = async (mail: string, pass: string, name: string) => {
+export const createUser = (mail: string, pass: string, name: string) => {
   return dispatch => {
     dispatch(trnStart({}));
     console.log('create user');
-    const db = SQLite.openDatabase('alpha_app');
+    const sq = SQLite.openDatabase('alpha_app');
     firebase
       .auth()
       .createUserWithEmailAndPassword(mail, pass)
-      .then(() => {
-        db.transaction(tx => {
-          tx.executeSql(
-            'create table users (id integer primary key not null, isFirst integer, uid text, userName text);',
-            null,
-            () => {
-              console.log('success');
-            },
-            e => {
-              console.log(e);
+      .then(res => {
+        const uid = res.user.uid;
+        sq.transaction(
+          tx => {
+            tx.executeSql(
+              'create table users (id integer primary key not null, isFirst integer, uid text, userName text);',
+              null,
+              () => {
+                console.log('success');
+              },
+              e => {
+                console.log(e);
 
-              return true;
-            },
-          );
-        });
-        const user = firebase.auth().currentUser;
-        const uid = user.uid;
-        db.transaction(tx => {
-          tx.executeSql(
-            'insert into users (isFirst, uid, userName) values (?,?,?)',
-            [1, uid, name],
-            () => {
-              dispatch(
-                setUserInfo({
-                  isFirst: 1,
-                  uid,
-                  userName: name,
-                }),
-              );
-            },
-            e => {
-              console.log(e);
-              dispatch(trnError({}));
+                return true;
+              },
+            );
 
-              return true;
-            },
-          );
-        });
+            tx.executeSql(
+              'insert into users (isFirst, uid, userName) values (?,?,?)',
+              [1, uid, name],
+              () => {
+                dispatch(
+                  setUserInfo({
+                    isFirst: 1,
+                    uid,
+                    userName: name,
+                  }),
+                );
+              },
+              e => {
+                console.log(e);
+                dispatch(trnError({}));
+
+                return true;
+              },
+            );
+          },
+          () => {
+            console.log('fail all');
+          },
+          () => {
+            console.log('success');
+            db.collection('users')
+              .doc(uid)
+              .set({
+                userName: name,
+                iconPath: '',
+                siBody: '',
+              });
+          },
+        );
       });
   };
 };

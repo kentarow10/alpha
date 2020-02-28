@@ -7,7 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { GetAuth } from '../store/auth/auth';
 import firebase from '../../firebase/firebase';
-// import SignInScreen from './signin';
+import SignInScreen from './signin';
 import SignUpScreen from './signup';
 // import ResetPassword from './resetpass';
 import { RootNavigator } from '../home/home';
@@ -32,7 +32,7 @@ const authNav = () => {
         <Stack.Screen name="Splash" component={SplashScreen} />
       ) : state.uid === '' ? (
         <>
-          {/* <Stack.Screen name="SignIn" component={SignInScreen} /> */}
+          <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           {/* <Stack.Screen name="ResetPassword" component={ResetPassword} /> */}
         </>
