@@ -166,43 +166,56 @@ export const asyncGetMyCombs = (uid: string) => {
   };
 };
 
-export const asyncGetMyPosts = (uid: string) => {
+export const asyncGetMyLastNicePosts = (uid: string) => {
   return dispatch => {
     db.collection('posts')
       .where('user', '==', uid)
+      .orderBy('lastNiceAt', 'asc')
       .get()
-      .then(function(querySnapshot) {
+      .then(snap => {
         const myposts: Post[] = [];
-        querySnapshot.forEach(function(doc) {
-          const thm = doc.data().thm;
-          const ownerId = doc.data().user;
-          const numNice = doc.data().numnice;
-          const createdAt = doc.data().createdAt;
-          storage
-            .ref(doc.data().path)
-            .getDownloadURL()
-            .then(function(url) {
-              myposts.push({
-                doc: doc.id,
-                path: url,
-                thm,
-                ownerId,
-                numNice,
-                createdAt,
-              });
-            })
-            .catch(e => {
-              dispatch(fetchImgError({}));
-            });
-        });
-
-        return myposts;
-      })
-      .then(myposts => {
-        dispatch(getMyPosts(myposts));
+        snap.forEach(doc => {});
       });
   };
 };
+
+// export const asyncGetMyPosts = (uid: string) => {
+//   return dispatch => {
+//     db.collection('posts')
+//       .where('user', '==', uid)
+//       .get()
+//       .then(function(querySnapshot) {
+//         const myposts: Post[] = [];
+//         querySnapshot.forEach(function(doc) {
+//           const thm = doc.data().thm;
+//           const ownerId = doc.data().user;
+//           const numNice = doc.data().numnice;
+//           const createdAt = doc.data().createdAt;
+//           storage
+//             .ref(doc.data().path)
+//             .getDownloadURL()
+//             .then(function(url) {
+//               myposts.push({
+//                 doc: doc.id,
+//                 path: url,
+//                 thm,
+//                 ownerId,
+//                 numNice,
+//                 createdAt,
+//               });
+//             })
+//             .catch(e => {
+//               dispatch(fetchImgError({}));
+//             });
+//         });
+
+//         return myposts;
+//       })
+//       .then(myposts => {
+//         dispatch(getMyPosts(myposts));
+//       });
+//   };
+// };
 
 export const asyncUpdateSib = (uid: string, text: string) => {
   return dispatch => {

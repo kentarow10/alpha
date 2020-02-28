@@ -18,7 +18,8 @@ export type Post = {
   thm: string[];
   ownerId: string;
   numNice: number;
-  createdAt: string;
+  createdAt: Date;
+  lastNiceAt: Date;
 };
 
 export type Ans = {
