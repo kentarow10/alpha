@@ -1,4 +1,4 @@
-import { Post, Ans, Comb } from '../types';
+import { Post, Ans, Comb, Nice } from '../types';
 
 export type Me = {
   isFetching: boolean;
@@ -10,7 +10,7 @@ export type Me = {
   siBody: string;
   myCombs: Comb[];
   myPosts: Post[];
-  myNicePosts: Post[];
+  myNicePosts: Nice[];
 };
 
 export * from './actions';
