@@ -14,6 +14,7 @@ import {
   endFetch,
   fetchImgError,
   fetchError,
+  getMyNicePosts,
 } from './actions';
 
 const initialState: Me = {
@@ -26,6 +27,7 @@ const initialState: Me = {
   siBody: '',
   myCombs: [],
   myPosts: [],
+  myNicePosts: [],
 };
 
 const reducer: Reducer<Me> = reducerWithInitialState(initialState)
@@ -63,6 +65,10 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
   .case(getMyPosts, (state, payload) => ({
     ...state,
     myPosts: payload,
+  }))
+  .case(getMyNicePosts, (state, payload) => ({
+    ...state,
+    myNicePosts: payload,
   }));
 
 export default reducer;

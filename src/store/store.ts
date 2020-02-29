@@ -4,8 +4,9 @@ import thunk from 'redux-thunk';
 
 import me from './me/me';
 import auth from './auth/auth';
+import timeline from './timeLine/timeLine';
 
-const reducers = combineReducers({ me, auth });
+const reducers = combineReducers({ me, auth, timeline });
 
 const storeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     },
     tabBarStyle:{
         height: 70,
-
-
+        position: "absolute",
+        bottom: 0,
   }
   });
 
@@ -200,24 +200,30 @@ export default function DrawerView({
           const descriptor = descriptors[route.key];
           const { unmountOnBlur } = descriptor.options;
           const isFocused = state.index === index;
+          console.log(index);
+          console.log('isFocused:'+isFocused);
 
           if (unmountOnBlur && !isFocused) {
+            console.log("return 1")
             return null;
           }
 
           if (lazy && !loaded.includes(index) && !isFocused) {
             // Don't render a screen if we've never navigated to it
+            console.log("return 2")
             return null;
           }
 
           return (
+            // <SafeAreaView>
             <ResourceSavingScene
               key={route.key}
               style={[StyleSheet.absoluteFill, { opacity: isFocused ? 1 : 0 }]}
               isVisible={isFocused}
             >
+              {/* <SafeAreaView> */}
               {descriptor.render()}
-              <View style={[{ flexDirection: 'row', backgroundColor: colors.card, borderTopWidth: 2, borderTopColor:"#f0f0f0" }, styles.tabBarStyle]}>
+              <View style={[{ flexDirection: 'row', backgroundColor: "blue", borderTopWidth: 2, borderTopColor:"#f0f0f0" }, styles.tabBarStyle]}>
               {tabList.map(route => (
                 <TouchableOpacity
                   key={route.key}
@@ -257,7 +263,9 @@ export default function DrawerView({
                 </TouchableOpacity>
               ))}
               </View>
+              {/* </SafeAreaView> */}
             </ResourceSavingScene>
+            // </SafeAreaView>
           );
         })}
       </ScreenContainer>

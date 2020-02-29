@@ -19,7 +19,12 @@ export type Post = {
   ownerId: string;
   numNice: number;
   createdAt: Date;
-  lastNiceAt: Date;
+};
+
+export type Nice = {
+  postDoc: string;
+  path: string;
+  by: string;
 };
 
 export type Ans = {

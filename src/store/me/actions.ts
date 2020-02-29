@@ -1,8 +1,8 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import { db, storage } from '../../../firebase/firebase';
+import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Me } from './me';
-import { Comb, Ans, Post, Comment } from '../types';
+import { Comb, Ans, Post, Comment, Nice } from '../types';
 
 // 準備
 
@@ -96,9 +96,31 @@ export const getMyCombs = actionCreator<Comb[]>('GET_MY_COMB');
 
 export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
+export const getMyNicePosts = actionCreator<Nice[]>('GET_MY_NICE_POST');
+
 export const updateSiBody = actionCreator<{ siBody: string }>('UPDATE_SIBODY');
 
 // async Actions
+
+export const asyncGetMyNicePosts = (uid: string) => {
+  return dispatch => {
+    const ref = rtdb.ref(uid);
+    console.log(ref);
+    console.log('value');
+    ref.once('value', snap => {
+      console.log(snap);
+      console.log('called');
+      const mynices: Nice[] = [];
+      snap.forEach(post => {
+        const postDoc = post.key;
+        const path = post.val().path;
+        const by = post.val().by;
+        mynices.push({ postDoc, path, by });
+      });
+      dispatch(getMyNicePosts(mynices));
+    });
+  };
+};
 
 export const asyncGetMyInfo = (uid: string) => {
   return dispatch => {
@@ -162,19 +184,6 @@ export const asyncGetMyCombs = (uid: string) => {
           });
         });
         dispatch(getMyCombs(myCombs));
-      });
-  };
-};
-
-export const asyncGetMyLastNicePosts = (uid: string) => {
-  return dispatch => {
-    db.collection('posts')
-      .where('user', '==', uid)
-      .orderBy('lastNiceAt', 'asc')
-      .get()
-      .then(snap => {
-        const myposts: Post[] = [];
-        snap.forEach(doc => {});
       });
   };
 };

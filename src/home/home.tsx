@@ -9,6 +9,8 @@ import { StackNavigator } from './stack';
 import { DrawerContent } from './drawerContent';
 import { View } from 'react-native';
 import Profile from '../profile/profile';
+import MyNices from '../drawer/getNice';
+import TimeLine from '../timeline/timeline';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -43,8 +45,8 @@ export const RootNavigator = () => {
         }}
       />
       <Drawer.Screen
-        name="BLUE"
-        component={blue}
+        name="TIMELINE"
+        component={TimeLine}
         options={{
           inTab: true,
           icon: {
@@ -63,8 +65,8 @@ export const RootNavigator = () => {
         }}
       />
       <Drawer.Screen
-        name="ORANGE"
-        component={orange}
+        name="いいねした投稿"
+        component={MyNices}
         options={{
           inTab: false,
           icon: {

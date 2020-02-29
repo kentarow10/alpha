@@ -10,6 +10,7 @@ export type Me = {
   siBody: string;
   myCombs: Comb[];
   myPosts: Post[];
+  myNicePosts: Post[];
 };
 
 export * from './actions';
