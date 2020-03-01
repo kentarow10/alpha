@@ -38,6 +38,7 @@ import {
   DrawerContentComponentProps,
 } from '../types';
 import DrawerPositionContext from '@react-navigation/drawer/src/utils/DrawerPositionContext';
+import { Appbar } from 'react-native-paper';
 
 type Props = DrawerNavigationConfig & {
   state: DrawerNavigationState;
@@ -73,16 +74,7 @@ const getDefaultDrawerWidth = ({
 // 多分gesturehandlerを囲む時に使いたい
 const GestureHandlerWrapper = GestureHandlerRootView;
 
-const styles = StyleSheet.create({
-    content: {
-      flex: 1,
-    },
-    tabBarStyle:{
-        height: 70,
-        position: "absolute",
-        bottom: 0,
-  }
-  });
+
 
 /**
  * 本体
@@ -117,6 +109,19 @@ export default function DrawerView({
   const drawerGestureRef = React.useRef<PanGestureHandler>(null);
 
   const { colors } = useTheme();
+
+  const styles = StyleSheet.create({
+    content: {
+      flex: 1,
+    },
+    tabBarStyle:{
+        height: 70,
+        position: "absolute",
+        bottom: 0,
+        backgroundColor: colors.background,
+        // backgroundColor: "white",
+  }
+  });
 
   // findで先頭取得している？先頭が現在の状態で、それのタイプがdrawerなら開いている、ということ
   const isDrawerOpen = Boolean(state.history.find(it => it.type === 'drawer'));
@@ -215,15 +220,14 @@ export default function DrawerView({
           }
 
           return (
-            // <SafeAreaView>
             <ResourceSavingScene
               key={route.key}
               style={[StyleSheet.absoluteFill, { opacity: isFocused ? 1 : 0 }]}
               isVisible={isFocused}
             >
-              {/* <SafeAreaView> */}
+
               {descriptor.render()}
-              <View style={[{ flexDirection: 'row', backgroundColor: "blue", borderTopWidth: 2, borderTopColor:"#f0f0f0" }, styles.tabBarStyle]}>
+              <View style={[{ flexDirection: 'row' }, styles.tabBarStyle]}>
               {tabList.map(route => (
                 <TouchableOpacity
                   key={route.key}
@@ -252,7 +256,8 @@ export default function DrawerView({
                         ? descriptors[route.key].options.icon.name
                         : 'account-outline'
                     }
-                    color={colors.text}
+                    color={"white"}
+                    // color={colors.text}
                     size={
                       descriptors[route.key].options.icon.size != undefined
                         ? descriptors[route.key].options.icon.size
@@ -263,9 +268,7 @@ export default function DrawerView({
                 </TouchableOpacity>
               ))}
               </View>
-              {/* </SafeAreaView> */}
             </ResourceSavingScene>
-            // </SafeAreaView>
           );
         })}
       </ScreenContainer>

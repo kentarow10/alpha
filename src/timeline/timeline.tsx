@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import * as Font from 'expo-font';
 import {
   useTheme,
   Card,
@@ -8,6 +9,9 @@ import {
   Title,
   Paragraph,
   Button,
+  Appbar,
+  Provider,
+  Portal,
 } from 'react-native-paper';
 import {
   View,
@@ -16,55 +20,258 @@ import {
   Dimensions,
   Image,
   SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import { Text } from 'react-native-paper';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
 import { GetPosts } from '../store/timeLine/selector';
 import { asyncGetPosts } from '../store/timeLine/actions';
+import { NavigationContext } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
+const imgW = (WIDTH - 81) / 2;
+const imgH = imgW * 1.414;
+
 const timeLine = () => {
   const dispatch = useDispatch();
+  const navigation = useContext(NavigationContext);
   const posts = useSelector(GetPosts);
+  const { colors } = useTheme();
+
+  const styles = StyleSheet.create({
+    img: {
+      width: imgW,
+      height: imgH,
+    },
+    headerBar: {
+      backgroundColor: colors.background,
+      width: WIDTH,
+      height: 50,
+    },
+    content: {
+      backgroundColor: 'white',
+      flex: 1,
+    },
+    area: {
+      backgroundColor: '#ff0038',
+      opacity: 0.8,
+      height: 18,
+      width: imgW,
+      position: 'absolute',
+      bottom: 0,
+    },
+    text: {
+      marginTop: 4,
+      color: 'white',
+      fontFamily: 'MyFont',
+      fontSize: 12,
+      textAlign: 'right',
+    },
+  });
+  const getFont = async () => {
+    await Font.loadAsync({
+      MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
+    });
+  };
 
   useEffect(() => {
+    getFont();
     dispatch(asyncGetPosts());
-    console.log(posts);
   }, []);
 
   return (
     <React.Fragment>
       <SafeAreaView style={{ height: HEIGHT }}>
-        <FlatList
-          data={posts.posts}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={1}
-          renderItem={item => (
-            <Card>
-              <Card.Title
-                title={item.item.ownerId}
-                left={props => <Avatar.Icon {...props} icon="folder" />}
-              />
-              <Card.Content>
-                <Title>Card title</Title>
-                <Paragraph>Card content</Paragraph>
-              </Card.Content>
-              <Image
-                source={{ uri: item.item.path }}
-                resizeMode="contain"
-                style={{ width: WIDTH, height: 200, backgroundColor: 'black' }}
-              />
-              {/* <Card.Cover source={{ uri: item.item.path }} /> */}
-              <Card.Actions>
-                <Button>Cancel</Button>
-                <Button>Ok</Button>
-              </Card.Actions>
-            </Card>
-          )}
-        />
+        <View style={styles.headerBar}>
+          <Text
+            style={{
+              height: 40,
+              marginTop: 10,
+              color: 'white',
+              fontSize: 28,
+              textAlign: 'center',
+              //   fontWeight: '900',
+              fontFamily: 'MyFont',
+            }}
+          >
+            シェアピ
+          </Text>
+        </View>
+        <View style={styles.content}>
+          <FlatList
+            data={posts.posts}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={2}
+            style={{ marginBottom: 36 }}
+            renderItem={item => {
+              if (item.index % 2 === 1) {
+                return (
+                  <View style={{ flexDirection: 'column' }}>
+                    <View style={{ height: 57, width: imgW }}></View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate('POSTED', {
+                          doc: item.item.doc,
+                          path: item.item.path,
+                          thm: item.item.thm,
+                          ownerId: item.item.ownerId,
+                          numNice: item.item.numNice,
+                          createdAt: item.item.createdAt,
+                        });
+                      }}
+                    >
+                      <Card
+                        style={{
+                          width: imgW,
+                          height: imgH,
+                          backgroundColor: 'black',
+                          marginLeft: 13.5,
+                          marginRight: 27,
+                          shadowColor: '#ccc',
+                          shadowOffset: {
+                            width: 0,
+                            height: 6,
+                          },
+                          shadowRadius: 15,
+                          shadowOpacity: 0.6,
+                        }}
+                      >
+                        <Image
+                          source={{ uri: item.item.path }}
+                          resizeMode="cover"
+                          style={styles.img}
+                        />
+                        <Provider>
+                          <Portal>
+                            <View style={styles.area}>
+                              <Provider>
+                                <Portal>
+                                  <Text style={styles.text}>by username</Text>
+                                </Portal>
+                              </Provider>
+                            </View>
+                          </Portal>
+                        </Provider>
+                      </Card>
+                    </TouchableOpacity>
+                  </View>
+                );
+              } else if (item.index !== 0) {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('POSTED', {
+                        doc: item.item.doc,
+                        path: item.item.path,
+                        thm: item.item.thm,
+                        ownerId: item.item.ownerId,
+                        numNice: item.item.numNice,
+                        createdAt: item.item.createdAt,
+                      });
+                    }}
+                  >
+                    <Card
+                      style={{
+                        width: imgW,
+                        height: imgH,
+                        backgroundColor: 'black',
+                        marginLeft: 27,
+                        marginRight: 13.5,
+                        shadowColor: '#ccc',
+                        shadowOffset: {
+                          width: 0,
+                          height: 6,
+                        },
+                        shadowRadius: 15,
+                        shadowOpacity: 0.6,
+                      }}
+                    >
+                      <Image
+                        source={{ uri: item.item.path }}
+                        resizeMode="cover"
+                        style={styles.img}
+                      />
+                      <Provider>
+                        <Portal>
+                          <View style={styles.area}>
+                            <Provider>
+                              <Portal>
+                                <Text style={styles.text}>by username</Text>
+                              </Portal>
+                            </Provider>
+                          </View>
+                        </Portal>
+                      </Provider>
+                    </Card>
+                  </TouchableOpacity>
+                );
+              } else {
+                return (
+                  <View style={{ flexDirection: 'column' }}>
+                    <View
+                      style={{
+                        height: 16,
+                        width: imgW,
+                        marginLeft: 27,
+                        marginRight: 13.5,
+                      }}
+                    ></View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate('POSTED', {
+                          doc: item.item.doc,
+                          path: item.item.path,
+                          thm: item.item.thm,
+                          ownerId: item.item.ownerId,
+                          numNice: item.item.numNice,
+                          createdAt: item.item.createdAt,
+                        });
+                      }}
+                    >
+                      <Card
+                        style={{
+                          width: imgW,
+                          height: imgH,
+                          backgroundColor: 'black',
+                          marginLeft: 27,
+                          marginRight: 13.5,
+                          shadowColor: '#ccc',
+                          shadowOffset: {
+                            width: 0,
+                            height: 6,
+                          },
+                          shadowRadius: 15,
+                          shadowOpacity: 0.6,
+                        }}
+                      >
+                        <Image
+                          source={{ uri: item.item.path }}
+                          resizeMode="cover"
+                          style={styles.img}
+                        />
+                        <Provider>
+                          <Portal>
+                            <View style={styles.area}>
+                              <Provider>
+                                <Portal>
+                                  <Text style={styles.text}>by username</Text>
+                                </Portal>
+                              </Provider>
+                            </View>
+                          </Portal>
+                        </Provider>
+                      </Card>
+                    </TouchableOpacity>
+                  </View>
+                );
+              }
+            }}
+          />
+        </View>
       </SafeAreaView>
     </React.Fragment>
   );

@@ -130,7 +130,7 @@ export function DrawerContent(props: Props) {
         <Drawer.Section style={styles.drawerSection}>
           {props.state.routes
             .filter(
-              route => props.descriptors[route.key].options.inTab === false,
+              route => props.descriptors[route.key].options.inNav === true,
             )
             .map(route => (
               <DrawerItem

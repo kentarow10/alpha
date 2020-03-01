@@ -253,9 +253,13 @@ export type MyDrawerNavigationOptions = {
    */
   unmountOnBlur?: boolean;
   /**
-   * タブに入れるか、ドロワーに入れるか
+   * タブに入れるか
    */
   inTab?: boolean;
+  /**
+   * ドロワーに入れるか
+   */
+  inNav?: boolean;
   /**
    * import { MaterialCommunityIcons } from '@expo/vector-icons';
    * これで表示させることのできるIconの名前と色とサイズ

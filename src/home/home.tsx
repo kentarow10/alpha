@@ -11,6 +11,7 @@ import { View } from 'react-native';
 import Profile from '../profile/profile';
 import MyNices from '../drawer/getNice';
 import TimeLine from '../timeline/timeline';
+import Posted from '../behind/posted';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -68,7 +69,7 @@ export const RootNavigator = () => {
         name="いいねした投稿"
         component={MyNices}
         options={{
-          inTab: false,
+          inNav: true,
           icon: {
             name: 'lightbulb-on-outline',
             color: 'orange',
@@ -80,7 +81,7 @@ export const RootNavigator = () => {
         name="GREEN"
         component={green}
         options={{
-          inTab: false,
+          inNav: true,
           icon: {
             name: 'leaf',
             color: 'green',
@@ -88,6 +89,7 @@ export const RootNavigator = () => {
           },
         }}
       />
+      <Drawer.Screen name="POSTED" component={Posted} />
     </Drawer.Navigator>
   );
 };
