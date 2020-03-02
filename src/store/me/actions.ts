@@ -107,7 +107,7 @@ export const asyncGetMyNicePosts = (uid: string) => {
     const ref = rtdb.ref(uid);
     console.log(ref);
     console.log('value');
-    ref.once('value', snap => {
+    ref.once('value').then(snap => {
       console.log(snap);
       console.log('called');
       const mynices: Nice[] = [];
