@@ -17,6 +17,7 @@
     "@types/react-redux": "^7.1.7",
     "@types/redux-thunk": "^2.1.0",
     "expo": "~36.0.0",
+    "expo-image-picker": "~8.0.1",
     "expo-sqlite": "~8.0.0",
     "firebase": "^7.8.1",
     "react": "~16.9.0",

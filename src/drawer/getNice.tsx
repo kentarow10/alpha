@@ -37,14 +37,14 @@ const getNice = () => {
   return (
     <SafeAreaView style={{ backgroundColor: 'white', height: HEIGHT }}>
       <FlatList
-        data={me.myNicePosts}
+        data={[1, 2, 3, 4]}
         // data={profilekai.profilekai.nodes}
         keyExtractor={(item, index) => index.toString()}
         numColumns={1}
         renderItem={item => (
           <View>
-            <Text>{item.item.path}</Text>
-            <Text>{item.item.by}</Text>
+            <Text>{item.item}</Text>
+            <Text>{item.item}</Text>
           </View>
         )}
       />

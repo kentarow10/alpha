@@ -42,6 +42,17 @@ const timeLine = () => {
   const posts = useSelector(GetPosts);
   const { colors } = useTheme();
 
+  const getFont = async () => {
+    await Font.loadAsync({
+      MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
+    });
+  };
+
+  useEffect(() => {
+    getFont();
+    dispatch(asyncGetPosts());
+  }, []);
+
   const styles = StyleSheet.create({
     img: {
       width: imgW,
@@ -72,16 +83,6 @@ const timeLine = () => {
       textAlign: 'right',
     },
   });
-  const getFont = async () => {
-    await Font.loadAsync({
-      MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
-    });
-  };
-
-  useEffect(() => {
-    getFont();
-    dispatch(asyncGetPosts());
-  }, []);
 
   return (
     <React.Fragment>

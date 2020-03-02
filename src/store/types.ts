@@ -5,6 +5,22 @@
 // カタチとして持っておきたい
 // firebaseと対応する
 
+// export type FireStorePost =
+
+export type PostedParams = {
+  postDoc: string;
+  path: string;
+  owner: string;
+  thms: string[];
+  createdAt: Date;
+  ansDoc: string;
+  uri: string;
+  body: string;
+  ans_by: string;
+  ans_at: Date;
+  orderThm: number;
+};
+
 export type User = {
   uid: string;
   userName: string;
