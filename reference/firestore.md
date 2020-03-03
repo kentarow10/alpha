@@ -8,12 +8,13 @@
     * createdAt
     * subcollection('answers')
         * $ansDocument
+            * postDoc
             * uri
             * body
             * owner
             * createdAt
             * orderThm
-            * subcollection('comment')
+            * subcollection('comments')
                 * $commentDocument
                     * body
                     * owner
@@ -21,8 +22,14 @@
 
 ## collection('users')
 * $uid
+    * name
     * iconPath
     * siBody
+    * nices
+        * postDoc
+    * gotits
+        * ansDoc
+    
 
 # 最初の画面
 

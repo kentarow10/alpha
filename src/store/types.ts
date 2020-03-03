@@ -5,7 +5,39 @@
 // カタチとして持っておきたい
 // firebaseと対応する
 
-// export type FireStorePost =
+type FireStoreUser = {
+  userColl: 'users';
+  uid: string;
+  iconPath: string;
+  siBody: string;
+};
+
+type FireStorePost = {
+  postColl: 'posts';
+  postDoc: string;
+  path: string;
+  owner: string;
+  thms: string[];
+  createdAt: Date;
+  ansColl: 'answers';
+  ansDoc: string;
+  uri: string;
+  body: string;
+  ansBy: string;
+  ansAt: Date;
+  orderThm: number;
+  comColl: 'comments';
+  comDoc: string;
+  comBody: string;
+  commentedAt: Date;
+};
+
+export type DetailParams = {
+  postedParam: PostedParams;
+  commentBody: string;
+  commentOwner: string;
+  commentedAt: Date;
+};
 
 export type PostedParams = {
   postDoc: string;

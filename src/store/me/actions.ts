@@ -102,15 +102,25 @@ export const updateSiBody = actionCreator<{ siBody: string }>('UPDATE_SIBODY');
 
 // async Actions
 
+export const asyncGetMyGotitAnss = (uid: string) => {
+  return dispatch => {
+    rtdb
+      .ref('/' + uid + '/gotits')
+      .once('value')
+      .then(snap => {
+        console.log(snap);
+        const mygotits;
+      });
+  };
+};
+
 export const asyncGetMyNicePosts = (uid: string) => {
   return dispatch => {
     rtdb
-      .ref('/' + uid)
+      .ref('/' + uid + '/nices')
       .once('value')
       .then(snap => {
-        console.log('called');
         console.log(snap);
-        console.log('called');
         const mynices: Nice[] = [];
         snap.forEach(post => {
           const postDoc = post.key;
@@ -120,7 +130,6 @@ export const asyncGetMyNicePosts = (uid: string) => {
         });
         dispatch(getMyNicePosts(mynices));
       });
-    console.log('value');
   };
 };
 

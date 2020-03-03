@@ -11,13 +11,6 @@ import { createContainer } from 'unstated-next';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  rect: {
-    width: 200,
-    height: 200,
-    backgroundColor: 'tomato',
   },
 });
 
