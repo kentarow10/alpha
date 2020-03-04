@@ -71,7 +71,7 @@ export type Post = {
 
 export type Nice = {
   postDoc: string;
-  path: string;
+  uri: string;
   by: string;
 };
 
@@ -83,6 +83,16 @@ export type Ans = {
   fromLinks: string[]; //Firebase上ではprimitiveでないものは、docを保存する
   toLinks: string[];
   comments: string[];
+};
+
+export type Gotit = {
+  ansDoc: string;
+  postDoc: string;
+  uri: string;
+  thm: string;
+  ans: string;
+  postedBy: string;
+  answeredBy: string;
 };
 
 export type Comb = {

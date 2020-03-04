@@ -25,11 +25,21 @@
     * name
     * iconPath
     * siBody
-    * nices
-        * postDoc
-    * gotits
-        * ansDoc
+    * subcollection('nices')：一覧表示で必要になる情報
+        * $postDocument(自動生成でなく指定する)
+            * uri
+            * owner
+            * createdAt
+    * subcollection('gotits')：一覧表示で必要になる情報
+        * $ansDocument(自動生成でなく指定する)
+            * postDoc
+            * uri
+            * thm
+            * ans
+            * postedBy
+            * answeredBy
     
+* onSnapshot()でドキュメントをリスンできる
 
 # 最初の画面
 

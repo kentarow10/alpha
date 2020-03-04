@@ -2,7 +2,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Me } from './me';
-import { Comb, Ans, Post, Comment, Nice } from '../types';
+import { Comb, Ans, Post, Comment, Nice, Gotit } from '../types';
 
 // 準備
 
@@ -98,40 +98,65 @@ export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
 export const getMyNicePosts = actionCreator<Nice[]>('GET_MY_NICE_POST');
 
+export const getMyGotitAnss = actionCreator<Nice[]>('GET_MY_GOTIT_ANS');
+
 export const updateSiBody = actionCreator<{ siBody: string }>('UPDATE_SIBODY');
 
 // async Actions
 
-export const asyncGetMyGotitAnss = (uid: string) => {
-  return dispatch => {
-    rtdb
-      .ref('/' + uid + '/gotits')
-      .once('value')
-      .then(snap => {
-        console.log(snap);
-        const mygotits;
-      });
-  };
-};
+// drawerの各項目から呼ばれる
+
+// 自分がいいねした投稿一覧
 
 export const asyncGetMyNicePosts = (uid: string) => {
   return dispatch => {
-    rtdb
-      .ref('/' + uid + '/nices')
-      .once('value')
+    db.collection('users')
+      .doc(uid)
+      .collection('nices')
+      .get()
       .then(snap => {
-        console.log(snap);
         const mynices: Nice[] = [];
-        snap.forEach(post => {
-          const postDoc = post.key;
-          const path = post.val().path;
-          const by = post.val().by;
-          mynices.push({ postDoc, path, by });
+        snap.forEach(doc => {
+          const nice: Nice = {
+            postDoc: doc.id,
+            uri: doc.data().uri,
+            by: doc.data().owner,
+          };
+          mynices.push(nice);
         });
         dispatch(getMyNicePosts(mynices));
       });
   };
 };
+
+// 自分が分かる！した投稿と回答の組一覧
+
+export const asyncGetMyGotitAnss = (uid: string) => {
+  return dispatch => {
+    db.collection('users')
+      .doc(uid)
+      .collection('gotits')
+      .get()
+      .then(snap => {
+        const mygotits: Gotit[] = [];
+        snap.forEach(doc => {
+          const gotit: Gotit = {
+            ansDoc: doc.id,
+            postDoc: doc.data().postDoc,
+            uri: doc.data().uri,
+            thm: doc.data().thm,
+            ans: doc.data().ans,
+            postedBy: doc.data().postedBy,
+            answeredBy: doc.data().answeredBy,
+          };
+          mygotits.push(gotit);
+        });
+        dispatch(getMyGotitAnss(mygotits));
+      });
+  };
+};
+
+// プロフィール画面から呼ばれる
 
 export const asyncGetMyInfo = (uid: string) => {
   return dispatch => {

@@ -1,15 +1,25 @@
 import { Post, Ans, Comb, Nice } from '../types';
 
 export type Me = {
+  userName: string;
+  iconPath?: string;
+  siBody: string;
+  mescreen: MeScreen;
+  nicesscreen: MyNiceScreen;
+};
+
+type MeScreen = {
   isFetching: boolean;
   isError: boolean;
   isImgError: boolean;
   showPostMode: boolean;
-  userName: string;
-  iconPath?: string;
-  siBody: string;
   myCombs: Comb[];
   myPosts: Post[];
+};
+
+type MyNiceScreen = {
+  isFetching: boolean;
+  isError: boolean;
   myNicePosts: Nice[];
 };
 
