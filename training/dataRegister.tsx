@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { StyleSheet, View, SafeAreaView, Text } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Text, Image } from 'react-native';
 import firebase, { db, storage, rtdb } from '../firebase/firebase';
 
 import Animated, { Easing } from 'react-native-reanimated';
@@ -23,6 +23,7 @@ const initialData = {
   thm3: '',
   uri: '',
   imageName: '',
+  ans: '',
 };
 
 const usePost = (initialState = initialData) => {
@@ -35,18 +36,28 @@ const usePost = (initialState = initialData) => {
   const setPass = (v: string) => {
     setPost({ ...postState, pass: v });
   };
+  const set1 = (v: string) => {
+    setPost({ ...postState, thm1: v });
+  };
+
+  const set2 = (v: string) => {
+    setPost({ ...postState, thm2: v });
+  };
+  const set3 = (v: string) => {
+    setPost({ ...postState, thm3: v });
+  };
+
+  const setAns = (v: string) => {
+    setPost({ ...postState, ans: v });
+  };
 
   const emailAuth = (email: string, pass: string) => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, pass)
       .then(response => {
-        const user = firebase.auth().currentUser;
-        let uid: string;
-        if (user != null) {
-          uid = user.uid;
-          setPost({ ...postState, uid });
-        }
+        const u = response.user.uid;
+        setPost({ ...postState, uid: u });
       })
       .catch(error => {
         alert(error.message);
@@ -105,6 +116,10 @@ const usePost = (initialState = initialData) => {
     postState,
     setMail,
     setPass,
+    set1,
+    set2,
+    set3,
+    setAns,
     emailAuth,
     onChooseImagePress,
     uploadImage,
@@ -137,13 +152,47 @@ const Register = () => {
         }}
         mode="contained"
       >
-        →
+        認証
       </Button>
       <Text>写真を選択</Text>
-      <Text>お題１</Text>
-      <Text>お題２</Text>
-      <Text>お題３</Text>
+      <Image
+        source={{ uri: post.postState.uri }}
+        resizeMode="contain"
+        style={{ width: 400, height: 150, backgroundColor: 'black' }}
+      />
+      <Button
+        onPress={() => {
+          post.onChooseImagePress();
+        }}
+        mode="contained"
+      >
+        写真を選択
+      </Button>
+      <TextInput
+        label="お題１"
+        mode="outlined"
+        value={post.postState.thm1}
+        onChangeText={post}
+      />
+      <TextInput
+        label="お題２"
+        mode="outlined"
+        value={post.postState.thm2}
+        onChangeText={post.setPass}
+      />
+      <TextInput
+        label="お題３"
+        mode="outlined"
+        value={post.postState.thm3}
+        onChangeText={post.setPass}
+      />
       <Text>回答する</Text>
+      <TextInput
+        label="お題１への回答"
+        mode="outlined"
+        value={post.postState.ans}
+        onChangeText={post.setPass}
+      />
     </SafeAreaView>
   );
 };
