@@ -34,28 +34,6 @@ const getAns = async (ansDoc: string) => {
   return ans;
 };
 
-const getLinkCombs = (docs: string[]) => {
-  const combs: Comb[] = [];
-  docs.forEach(async d => {
-    const combData = await db
-      .collection('combs')
-      .doc(d)
-      .get();
-    const comb: Comb = {
-      doc: combData.id,
-      postDoc: combData.data().postDoc,
-      ansDoc: combData.data().ansDoc,
-      path: combData.data().path,
-      thm: combData.data().thm,
-      body: combData.data().body,
-      ans: combData.data().ans,
-    };
-    combs.push(comb);
-  });
-
-  return combs;
-};
-
 const getComments = (docs: string[]) => {
   const comments: Comment[] = [];
   docs.forEach(async d => {

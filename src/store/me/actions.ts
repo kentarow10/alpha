@@ -2,7 +2,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Me } from './me';
-import { Comb, Ans, Post, Comment, Nice, Gotit } from '../types';
+import { Comb, Ans, Post, Comment, Nice } from '../types';
 
 // 準備
 
@@ -32,28 +32,6 @@ const getAns = async (ansDoc: string) => {
   };
 
   return ans;
-};
-
-const getLinkCombs = (docs: string[]) => {
-  const combs: Comb[] = [];
-  docs.forEach(async d => {
-    const combData = await db
-      .collection('combs')
-      .doc(d)
-      .get();
-    const comb: Comb = {
-      doc: combData.id,
-      postDoc: combData.data().postDoc,
-      ansDoc: combData.data().ansDoc,
-      path: combData.data().path,
-      thm: combData.data().thm,
-      body: combData.data().body,
-      ans: combData.data().ans,
-    };
-    combs.push(comb);
-  });
-
-  return combs;
 };
 
 const getComments = (docs: string[]) => {
@@ -98,7 +76,9 @@ export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
 export const getMyNicePosts = actionCreator<Nice[]>('GET_MY_NICE_POST');
 
-export const getMyGotitAnss = actionCreator<Nice[]>('GET_MY_GOTIT_ANS');
+export const getMyGotitAnss = actionCreator<Comb[]>('GET_MY_GOTIT_ANS');
+
+export const getMyLinkedAnss = actionCreator<Comb[]>('GET_MY_LINKED_ANS');
 
 export const updateSiBody = actionCreator<{ siBody: string }>('UPDATE_SIBODY');
 
@@ -129,7 +109,7 @@ export const asyncGetMyNicePosts = (uid: string) => {
   };
 };
 
-// 自分が分かる！した投稿と回答の組一覧
+// 自分が分かる！した回答一覧
 
 export const asyncGetMyGotitAnss = (uid: string) => {
   return dispatch => {
@@ -138,9 +118,9 @@ export const asyncGetMyGotitAnss = (uid: string) => {
       .collection('gotits')
       .get()
       .then(snap => {
-        const mygotits: Gotit[] = [];
+        const mygotits: Comb[] = [];
         snap.forEach(doc => {
-          const gotit: Gotit = {
+          const gotit: Comb = {
             ansDoc: doc.id,
             postDoc: doc.data().postDoc,
             uri: doc.data().uri,
@@ -152,6 +132,36 @@ export const asyncGetMyGotitAnss = (uid: string) => {
           mygotits.push(gotit);
         });
         dispatch(getMyGotitAnss(mygotits));
+      });
+  };
+};
+
+// ほかのユーザーからリンクされた自分の回答一覧
+
+export const asyncGetMyLinkedAnss = (uid: string) => {
+  return dispatch => {
+    rtdb
+      .ref('/' + uid + '/linked/')
+      .once('value')
+      .then(snap => {
+        console.log(snap.val());
+        const linkeds = snap.val();
+        const combs: Comb[] = [];
+        for (const ansd in linkeds) {
+          const postDoc = linkeds[ansd].postDoc;
+          const uri = linkeds[ansd].uri;
+          const thm = linkeds[ansd].thm;
+          const body = linkeds[ansd].body;
+          const comb: Comb = {
+            ansDoc: ansd,
+            postDoc,
+            uri,
+            thm,
+            ans: body,
+          };
+          combs.push(comb);
+        }
+        dispatch(getMyLinkedAnss(combs));
       });
   };
 };
@@ -191,76 +201,6 @@ export const asyncGetMyInfo = (uid: string) => {
       });
   };
 };
-
-export const asyncGetMyCombs = (uid: string) => {
-  return dispatch => {
-    db.collection('combs')
-      .where('user', '==', uid)
-      .get()
-      .then(docs => {
-        const myCombs: Comb[] = [];
-        docs.forEach(doc => {
-          const docId = doc.id;
-          const postDoc = doc.data().postDoc;
-          const ansDoc = doc.data().ansDoc;
-          const path = doc.data().path;
-          const thm = doc.data().thm;
-          const body = doc.data().body;
-          getAns(ansDoc).then(a => {
-            const comb: Comb = {
-              doc: docId,
-              postDoc,
-              ansDoc,
-              path,
-              thm,
-              body,
-              ans: a,
-            };
-            myCombs.push(comb);
-          });
-        });
-        dispatch(getMyCombs(myCombs));
-      });
-  };
-};
-
-// export const asyncGetMyPosts = (uid: string) => {
-//   return dispatch => {
-//     db.collection('posts')
-//       .where('user', '==', uid)
-//       .get()
-//       .then(function(querySnapshot) {
-//         const myposts: Post[] = [];
-//         querySnapshot.forEach(function(doc) {
-//           const thm = doc.data().thm;
-//           const ownerId = doc.data().user;
-//           const numNice = doc.data().numnice;
-//           const createdAt = doc.data().createdAt;
-//           storage
-//             .ref(doc.data().path)
-//             .getDownloadURL()
-//             .then(function(url) {
-//               myposts.push({
-//                 doc: doc.id,
-//                 path: url,
-//                 thm,
-//                 ownerId,
-//                 numNice,
-//                 createdAt,
-//               });
-//             })
-//             .catch(e => {
-//               dispatch(fetchImgError({}));
-//             });
-//         });
-
-//         return myposts;
-//       })
-//       .then(myposts => {
-//         dispatch(getMyPosts(myposts));
-//       });
-//   };
-// };
 
 export const asyncUpdateSib = (uid: string, text: string) => {
   return dispatch => {

@@ -11,12 +11,7 @@ import {
 } from 'react-native-paper';
 import { View, Button as Bt, FlatList, Dimensions } from 'react-native';
 import { Text } from 'react-native-paper';
-import {
-  GetAllMe,
-  asyncGetMyInfo,
-  asyncGetMyCombs,
-  asyncGetMyNicePosts,
-} from '../store/me/me';
+import { GetAllMe, asyncGetMyInfo, asyncGetMyNicePosts } from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GetUid } from '../store/auth/auth';

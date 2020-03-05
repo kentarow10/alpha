@@ -53,13 +53,6 @@ export type PostedParams = {
   orderThm: number;
 };
 
-export type User = {
-  uid: string;
-  userName: string;
-  iconPath?: string;
-  siBody: string;
-};
-
 export type Post = {
   doc?: string;
   path: string;
@@ -67,12 +60,6 @@ export type Post = {
   ownerId: string;
   numNice: number;
   createdAt: Date;
-};
-
-export type Nice = {
-  postDoc: string;
-  uri: string;
-  by: string;
 };
 
 export type Ans = {
@@ -85,25 +72,15 @@ export type Ans = {
   comments: string[];
 };
 
-export type Gotit = {
-  ansDoc: string;
-  postDoc: string;
-  uri: string;
-  thm: string;
-  ans: string;
-  postedBy: string;
-  answeredBy: string;
-};
-
-export type Comb = {
-  doc?: string;
-  postDoc: string;
-  ansDoc: string;
-  path: string;
-  thm: string;
-  body: string;
-  ans: Ans;
-};
+// export type Comb = {
+//   doc?: string;
+//   postDoc: string;
+//   ansDoc: string;
+//   path: string;
+//   thm: string;
+//   body: string;
+//   ans: Ans;
+// };
 
 export type Comment = {
   doc?: string;
@@ -112,3 +89,47 @@ export type Comment = {
   content: string;
   numGood: number;
 };
+
+// me
+
+export type User = {
+  uid: string;
+  userName: string;
+  iconPath?: string;
+  siBody: string;
+};
+
+export type Nice = {
+  postDoc: string;
+  uri: string;
+  by: string;
+};
+
+export type Comb = {
+  ansDoc: string;
+  postDoc: string;
+  uri: string;
+  thm: string;
+  ans: string;
+  postedBy?: string;
+  answeredBy?: string;
+};
+
+// export type Gotit = {
+//   ansDoc: string;
+//   postDoc: string;
+//   uri: string;
+//   thm: string;
+//   ans: string;
+//   postedBy: string;
+//   answeredBy: string;
+// };
+
+// export type Linked = {
+//   ansDoc: string;
+//   postDoc: string;
+//   uri: string;
+//   thm: string;
+//   ans: string;
+
+// }
