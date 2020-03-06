@@ -1,10 +1,3 @@
-// 画面に対応するデータ
-// storeで管理する方
-// 機能ごと、それぞれのディレクトリに定義する
-
-// カタチとして持っておきたい
-// firebaseと対応する
-
 type FireStoreUser = {
   userColl: 'users';
   uid: string;
@@ -41,21 +34,16 @@ export type DetailParams = {
 
 export type PostedParams = {
   postDoc: string;
-  path: string;
+  uri: string;
   owner: string;
   thms: string[];
   createdAt: Date;
-  ansDoc: string;
-  uri: string;
-  body: string;
-  ans_by: string;
-  ans_at: Date;
-  orderThm: number;
 };
 
 export type Post = {
   doc?: string;
   path: string;
+  uri?: string;
   thm: string[];
   ownerId: string;
   numNice: number;
@@ -63,13 +51,13 @@ export type Post = {
 };
 
 export type Ans = {
-  doc?: string;
-  postDoc: string;
+  ansDoc?: string;
+  postDoc?: string;
+  uri?: string;
+  body: string;
+  ansBy: string;
+  ansAt: Date;
   orderThm: number;
-  ownerId: string;
-  fromLinks: string[]; //Firebase上ではprimitiveでないものは、docを保存する
-  toLinks: string[];
-  comments: string[];
 };
 
 // export type Comb = {

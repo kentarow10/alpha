@@ -4,7 +4,7 @@
 * $postDocument
     * path
     * owner
-    * thm
+    * thms
     * createdAt
     * subcollection('answers')
         * $ansDocument

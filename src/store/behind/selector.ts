@@ -1,0 +1,9 @@
+import { createSelector } from 'reselect';
+import { State } from '../store';
+
+import { Posted } from './behind';
+
+export const GetPosts = createSelector<State, Posted, Posted>(
+  (state: State) => state.posted,
+  (posted: Posted) => posted, // 最終的にここが返される
+);

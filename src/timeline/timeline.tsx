@@ -226,8 +226,8 @@ const timeLine = () => {
                         navigation.navigate('POSTED', {
                           doc: item.item.doc,
                           path: item.item.path,
-                          thm: item.item.thm,
                           ownerId: item.item.ownerId,
+                          thms: item.item.thms,
                           numNice: item.item.numNice,
                           createdAt: item.item.createdAt,
                         });

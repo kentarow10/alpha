@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
 import {
@@ -23,10 +23,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Text } from 'react-native-paper';
+import { NavigationContext, useRoute } from '@react-navigation/native';
+import { PostedParams } from '../store/types';
+import { getParams, asyncGetAnss } from '../store/behind/actions';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
-import { GetPosts } from '../store/timeLine/selector';
-import { asyncGetPosts } from '../store/timeLine/actions';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -34,6 +35,16 @@ const HEIGHT = Dimensions.get('window').height;
 const timeLine = () => {
   const dispatch = useDispatch();
   const { colors } = useTheme();
+  const posts = useSelector();
+  // const navigation = useContext(NavigationContext);
+  const route = useRoute();
+  const params: PostedParams = {
+    postDoc: route.params.postDoc,
+    uri: route.params.uri,
+    owner: route.params.owner,
+    thms: route.params.thms,
+    createdAt: route.params.createdAt,
+  };
 
   const styles = StyleSheet.create({
     headerBar: {
@@ -60,9 +71,9 @@ const timeLine = () => {
   };
 
   useEffect(() => {
-    getFont();
-    dispatch(asyncGetPosts());
-  }, []);
+    dispatch(getParams(params));
+    dispatch(asyncGetAnss(route.params.postDoc));
+  }, [route.params]);
 
   return (
     <React.Fragment>
@@ -75,14 +86,19 @@ const timeLine = () => {
               color: 'white',
               fontSize: 28,
               textAlign: 'center',
-              //   fontWeight: '900',
               fontFamily: 'MyFont',
             }}
           >
             シェアピ
           </Text>
         </View>
-        <View style={styles.content}></View>
+        <View style={styles.content}>
+          <Image
+            source={{ uri: item.item.path }}
+            resizeMode="contain"
+            style={styles.img}
+          />
+        </View>
       </SafeAreaView>
     </React.Fragment>
   );
