@@ -25,6 +25,22 @@ type FireStorePost = {
   commentedAt: Date;
 };
 
+export type NavigationParamList = {
+  POSTED: {
+    postDoc: string;
+    uri: string;
+    owner: string;
+    thms: string[];
+    createdAt: Date;
+  };
+  DETAIL: {
+    postedParam: PostedParams;
+    commentBody: string;
+    commentOwner: string;
+    commentedAt: Date;
+  };
+};
+
 export type DetailParams = {
   postedParam: PostedParams;
   commentBody: string;

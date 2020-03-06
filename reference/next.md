@@ -32,6 +32,7 @@
 * directory
 
 * src
+    * types.ts:paramList,DBの構成
     * main.tsx
     * navigations
         * authNavigation

@@ -21,14 +21,24 @@ import {
 import { PostedParams, NavigationParamList } from '../store/types';
 import { PostedState, getParams, asyncGetAnss } from '../store/behind/behind';
 
+// import { SafeAreaView } from 'react-native-safe-area-context';
+
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const posted = () => {
+const timeLine = () => {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const posted = useSelector(PostedState);
-  const route = useRoute<RouteProp<NavigationParamList, 'DETAIL'>>();
+  // const navigation = useContext(NavigationContext);
+  const route = useRoute<RouteProp<NavigationParamList, 'POSTED'>>();
+  const params: PostedParams = {
+    postDoc: route.params.postDoc,
+    uri: route.params.uri,
+    owner: route.params.owner,
+    thms: route.params.thms,
+    createdAt: route.params.createdAt,
+  };
 
   const styles = StyleSheet.create({
     headerBar: {
@@ -54,7 +64,10 @@ const posted = () => {
     });
   };
 
-  useEffect(() => {}, [route.params]);
+  useEffect(() => {
+    dispatch(getParams(params));
+    dispatch(asyncGetAnss(route.params.postDoc));
+  }, [route.params]);
 
   return (
     <React.Fragment>
@@ -86,4 +99,4 @@ const posted = () => {
   );
 };
 
-export default posted;
+export default timeLine;
