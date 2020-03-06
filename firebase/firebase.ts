@@ -13,7 +13,7 @@ const firebaseConfig = {
   storageBucket: My.STORAGEBUCKET,
   messagingSenderId: My.MESSAGINGSENDERID,
   appId: My.APPID,
-  measurementId: My.MEASUREMENTID,
+  // measurementId: My.MEASUREMENTID,
 };
 firebase.initializeApp(firebaseConfig);
 export const storage = firebase.storage();

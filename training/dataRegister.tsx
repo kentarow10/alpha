@@ -19,9 +19,8 @@ const styles = StyleSheet.create({
 });
 
 const initialData = {
-  mail: '',
-  pass: '',
-  uid: '',
+  mail: 'test2@test.com',
+  pass: 'password',
   thm1: '',
   thm2: '',
   thm3: '',
@@ -29,6 +28,7 @@ const initialData = {
   showURL: '',
   imageName: '',
   ans: '',
+  uid: '',
 };
 
 const usePost = (initialState = initialData) => {
@@ -44,29 +44,31 @@ const usePost = (initialState = initialData) => {
   const set1 = (v: string) => {
     setPost({ ...postState, thm1: v });
   };
-
   const set2 = (v: string) => {
     setPost({ ...postState, thm2: v });
   };
   const set3 = (v: string) => {
     setPost({ ...postState, thm3: v });
   };
-
+  const setuid = (v: string) => {
+    setPost({ ...postState, uid: v });
+  };
   const setAns = (v: string) => {
     setPost({ ...postState, ans: v });
   };
-
   const setShowURL = (v: string) => {
     setPost({ ...postState, showURL: v });
   };
-
   const emailAuth = (email: string, pass: string) => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, pass)
       .then(response => {
         const u = response.user.uid;
-        setPost({ ...postState, uid: u });
+
+        // setuid(u);
+        setPost({ ...postState, mail: '', pass: '', uid: u });
+        console.log(postState.uid + ':user id');
       })
       .catch(error => {
         alert(error.message);
@@ -84,8 +86,12 @@ const usePost = (initialState = initialData) => {
   const onChooseImagePress = async () => {
     const result = await ImagePicker.launchImageLibraryAsync();
     if (!result.cancelled) {
-      const filename = result.uri.split('/');
+      const uriList = result.uri.split('/');
+      const filename = uriList.pop();
+      console.log(result.width);
+      console.log(result.height);
       console.log(filename);
+      console.log(postState.uid);
       selFile(result.uri, filename);
     }
   };
@@ -109,6 +115,7 @@ const usePost = (initialState = initialData) => {
 
     db.collection('posts')
       .add({
+        // path: 'test' + dt + imageName,
         path: `${postState.uid}/${dt}/${imageName}`,
         owner: postState.uid,
         thms: thms,
@@ -116,10 +123,12 @@ const usePost = (initialState = initialData) => {
       })
       .then(() => {
         alert('投稿完了しました!');
+        alert(postState.uid);
       })
       .catch(error => {
         console.error('Error writing document: ', error);
       });
+    // const ref = storage.ref().child('test' + dt + imageName);
     const ref = storage.ref().child(`${postState.uid}/${dt}/${imageName}`);
 
     return ref.put(blob);
@@ -148,10 +157,10 @@ const usePost = (initialState = initialData) => {
   const answer = async () => {
     const date = firebase.firestore.FieldValue.serverTimestamp();
     db.collection('posts')
-      .doc('BETA UCHI')
+      .doc('mg1glXTQQv4aK5EScEsV')
       .collection('answers')
       .add({
-        postDoc: 'BETA UCHI',
+        postDoc: 'mg1glXTQQv4aK5EScEsV',
         uri: postState.showURL,
         body: postState.ans,
         owner: postState.uid,
@@ -173,6 +182,7 @@ const usePost = (initialState = initialData) => {
     set1,
     set2,
     set3,
+    setuid,
     setAns,
     emailAuth,
     onChooseImagePress,
@@ -223,11 +233,19 @@ const Register = () => {
         <Button
           onPress={() => {
             post.onChooseImagePress();
+            console.log('state');
+            console.log(post.postState);
           }}
           mode="contained"
         >
           写真を選択
         </Button>
+        <TextInput
+          label="uid"
+          mode="outlined"
+          value={post.postState.uid}
+          onChangeText={post.setuid}
+        />
         <TextInput
           label="お題１"
           mode="outlined"
@@ -265,11 +283,11 @@ const Register = () => {
           label="お題１への回答"
           mode="outlined"
           value={post.postState.ans}
-          onChangeText={post.setPass}
+          onChangeText={post.setAns}
         />
         <Button
           onPress={() => {
-            post.uploadImage(post.postState.uri, post.postState.imageName);
+            post.answer();
           }}
           mode="contained"
         >
