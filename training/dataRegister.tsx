@@ -26,9 +26,14 @@ const initialData = {
   thm3: '',
   uri: '',
   showURL: '',
+  width: 0,
+  height: 0,
   imageName: '',
   ans: '',
   uid: '',
+  postedBy: '',
+  ansBy: '',
+  postedAt: new Date(),
 };
 
 const usePost = (initialState = initialData) => {
@@ -59,6 +64,18 @@ const usePost = (initialState = initialData) => {
   const setShowURL = (v: string) => {
     setPost({ ...postState, showURL: v });
   };
+  const setPostedBy = (v: string) => {
+    setPost({ ...postState, postedBy: v });
+  };
+  const setPostedAt = (v: Date) => {
+    setPost({ ...postState, postedAt: v });
+  };
+  const setAnsBy = (v: string) => {
+    setPost({ ...postState, ansBy: v });
+  };
+  const setWH = (w: number, h: number) => {
+    setPost({ ...postState, width: w, height: h });
+  };
   const emailAuth = (email: string, pass: string) => {
     firebase
       .auth()
@@ -74,13 +91,14 @@ const usePost = (initialState = initialData) => {
         alert(error.message);
       });
   };
-
-  const selFile = (uri: string, nm: string) => {
+  const selFile = (uri: string, nm: string, width: number, height: number) => {
     console.log(nm);
     setPost({
       ...postState,
       uri,
       imageName: nm,
+      width,
+      height,
     });
   };
   const onChooseImagePress = async () => {
@@ -88,11 +106,10 @@ const usePost = (initialState = initialData) => {
     if (!result.cancelled) {
       const uriList = result.uri.split('/');
       const filename = uriList.pop();
-      console.log(result.width);
-      console.log(result.height);
-      console.log(filename);
-      console.log(postState.uid);
-      selFile(result.uri, filename);
+      console.log('aaaaaaa');
+      console.log(result);
+      //   setWH(result.width, result.height);
+      selFile(result.uri, filename, result.width, result.height);
     }
   };
   const uploadImage = async (uri, imageName) => {
@@ -112,11 +129,14 @@ const usePost = (initialState = initialData) => {
     } else {
       thms.push(postState.thm1);
     }
-
+    console.log('attempt posting');
+    console.log(postState);
     db.collection('posts')
       .add({
         // path: 'test' + dt + imageName,
         path: `${postState.uid}/${dt}/${imageName}`,
+        width: postState.width,
+        height: postState.height,
         owner: postState.uid,
         thms: thms,
         createdAt: date,
@@ -142,30 +162,57 @@ const usePost = (initialState = initialData) => {
 
   const fetchFirstPost = async () => {
     db.collection('posts')
+      .doc('LFQqbHLwj7YsjZM4amKu')
       .get()
-      .then(snap => {
-        const gazo = [];
-        snap.forEach(doc => {
-          const path = doc.data().path;
-          console.log(path);
-          gazo.push(path);
+      .then(async doc => {
+        const path = doc.data().path;
+        const postedat = doc.data().createdAt.toDate();
+        const url = await getFromStorage(path);
+        // setPostedAt(postedat);
+        // setPostedBy(doc.data().owner);
+        // setWH(doc.data().width, doc.data().height);
+        setPost({
+          ...postState,
+          postedAt: postedat,
+          postedBy: doc.data().owner,
+          width: doc.data().width,
+          height: doc.data().height,
+          thm1: doc.data().thms[0],
+          thm2: doc.data().thms[1],
+          thm3: doc.data().thms[2],
+          showURL: url,
         });
-        getFromStorage(gazo[0]).then(url => setShowURL(url));
       });
   };
 
   const answer = async () => {
     const date = firebase.firestore.FieldValue.serverTimestamp();
+    const thms = [];
+    if (postState.thm3) {
+      thms.push(postState.thm1);
+      thms.push(postState.thm2);
+      thms.push(postState.thm3);
+    } else if (postState.thm2) {
+      thms.push(postState.thm1);
+      thms.push(postState.thm2);
+    } else {
+      thms.push(postState.thm1);
+    }
     db.collection('posts')
-      .doc('mg1glXTQQv4aK5EScEsV')
+      .doc('LFQqbHLwj7YsjZM4amKu')
       .collection('answers')
       .add({
-        postDoc: 'mg1glXTQQv4aK5EScEsV',
+        postDoc: 'LFQqbHLwj7YsjZM4amKu',
         uri: postState.showURL,
-        body: postState.ans,
-        owner: postState.uid,
-        createdAt: date,
+        width: postState.width,
+        height: postState.height,
+        thms: thms,
         orderThm: 1,
+        body: postState.ans,
+        postedBy: postState.postedBy,
+        ansBy: postState.uid,
+        postedAt: postState.postedAt,
+        ansAt: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(() => {
         alert('回答完了');
@@ -200,6 +247,10 @@ const Register = () => {
   useEffect(() => {
     post.fetchFirstPost();
   }, []);
+
+  useEffect(() => {
+    console.log(post);
+  }, [post]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -14,7 +14,7 @@ const signin = () => {
   const dispatch = useDispatch();
   //   const state = useSelector(GetAuth);
   const [signup, setSignup] = useState({
-    email: 'test@test.com',
+    email: 'test1@test.com',
     pass: 'password',
   });
   const setEmail = (v: string) => {

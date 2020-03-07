@@ -168,6 +168,22 @@ export const asyncGetMyLinkedAnss = (uid: string) => {
 
 // プロフィール画面から呼ばれる
 
+export const asyncGetMyCombs = (uid: string) => {
+  return dispatch => {
+    db.collectionGroup('answers')
+      .where('owner', '==', uid)
+      .get()
+      .then(snap => {
+        const myanss: Comb[] = [];
+        snap.forEach(doc => {
+          const ans: Comb = {
+            // TODO
+          };
+        });
+      });
+  };
+};
+
 export const asyncGetMyInfo = (uid: string) => {
   return dispatch => {
     console.log(uid);

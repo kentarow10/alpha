@@ -49,7 +49,7 @@ const timeLine = () => {
   };
 
   useEffect(() => {
-    getFont();
+    // getFont();
     dispatch(asyncGetPosts());
   }, []);
 

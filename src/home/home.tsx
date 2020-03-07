@@ -9,7 +9,7 @@ import { StackNavigator } from './stack';
 import { DrawerContent } from './drawerContent';
 import { View } from 'react-native';
 import Profile from '../profile/profile';
-import MyNices from '../drawer/getNice';
+import MyNices from '../drawer/myNices';
 import TimeLine from '../timeline/timeline';
 import Posted from '../behind/posted';
 

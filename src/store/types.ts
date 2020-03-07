@@ -66,15 +66,15 @@ export type Post = {
   createdAt: Date;
 };
 
-export type Ans = {
-  ansDoc?: string;
-  postDoc?: string;
-  uri?: string;
-  body: string;
-  ansBy: string;
-  ansAt: Date;
-  orderThm: number;
-};
+// export type Ans = {
+//   ansDoc?: string;
+//   postDoc?: string;
+//   uri?: string;
+//   body: string;
+//   ansBy: string;
+//   ansAt: Date;
+//   orderThm: number;
+// };
 
 // export type Comb = {
 //   doc?: string;
@@ -113,10 +113,13 @@ export type Comb = {
   ansDoc: string;
   postDoc: string;
   uri: string;
-  thm: string;
-  ans: string;
+  thms: string[];
+  orderThm: string;
+  body: string;
   postedBy?: string;
-  answeredBy?: string;
+  ansBy?: string;
+  postedAt: Date;
+  ansAt: Date;
 };
 
 // export type Gotit = {

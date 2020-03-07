@@ -4,7 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppearanceProvider } from 'react-native-appearance';
 
 // import { Main } from './src/main';
-import { Store } from './src/store/store';
+// import { Store } from './src/store/store';
 
 // export default function App() {
 //   return (
@@ -18,14 +18,8 @@ import { Store } from './src/store/store';
 //   );
 // }
 
-import Main from './training/dataRegister';
+import Data from './training/dataRegister';
 
 export default function App() {
-  return (
-    <SafeAreaProvider>
-      <AppearanceProvider>
-        <Main />
-      </AppearanceProvider>
-    </SafeAreaProvider>
-  );
+  return <Data />;
 }
