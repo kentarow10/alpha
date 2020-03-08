@@ -2,7 +2,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { TimeLime } from './timeLine';
-import { Comb, Ans, Post, Comment, Nice } from '../types';
+import { Comb, Post, Comment, Nice } from '../types';
 
 // 準備
 
@@ -16,23 +16,23 @@ async function getFromStorage(path: string) {
   return url;
 }
 
-const getAns = async (ansDoc: string) => {
-  const ansData = await db
-    .collection('anss')
-    .doc(ansDoc)
-    .get();
-  const ans: Ans = {
-    doc: ansData.id,
-    postDoc: ansData.data().postDoc,
-    orderThm: ansData.data().orderThm,
-    ownerId: ansData.data().ownerId,
-    fromLinks: ansData.data().fromLinks,
-    toLinks: ansData.data().toLinks,
-    comments: ansData.data().comments,
-  };
+// const getAns = async (ansDoc: string) => {
+//   const ansData = await db
+//     .collection('anss')
+//     .doc(ansDoc)
+//     .get();
+//   const ans: Ans = {
+//     doc: ansData.id,
+//     postDoc: ansData.data().postDoc,
+//     orderThm: ansData.data().orderThm,
+//     ownerId: ansData.data().ownerId,
+//     fromLinks: ansData.data().fromLinks,
+//     toLinks: ansData.data().toLinks,
+//     comments: ansData.data().comments,
+//   };
 
-  return ans;
-};
+//   return ans;
+// };
 
 const getComments = (docs: string[]) => {
   const comments: Comment[] = [];
@@ -75,21 +75,24 @@ export const asyncGetPosts = () => {
         const posts: Post[] = [];
         snap.forEach(doc => {
           console.log(doc.data());
-          const thm = doc.data().thm;
-          const ownerId = doc.data().user;
-          const numNice = doc.data().numnice;
-          const createdAt = doc.data().createdAt;
+          const thms = doc.data().thms;
+          const owner = doc.data().owner;
+          const width = doc.data().width;
+          const height = doc.data().height;
+          const createdAt = doc.data().createdAt.toDate();
           storage
             .ref(doc.data().path)
             .getDownloadURL()
-            .then(function(url) {
+            .then(function(uri) {
               posts.push({
-                doc: doc.id,
-                path: url,
-                thm,
-                ownerId,
-                numNice,
-                createdAt,
+                postDoc: doc.id,
+                uri,
+                path: doc.data().path,
+                thms,
+                owner,
+                width,
+                height,
+                postedAt: createdAt,
               });
             })
             .catch(e => {

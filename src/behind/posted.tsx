@@ -2,7 +2,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
-import { useTheme } from 'react-native-paper';
+import { useTheme, Button } from 'react-native-paper';
 import {
   View,
   Button as Bt,
@@ -28,7 +28,8 @@ const posted = () => {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const posted = useSelector(PostedState);
-  const route = useRoute<RouteProp<NavigationParamList, 'DETAIL'>>();
+  const route = useRoute<RouteProp<NavigationParamList, 'POSTED'>>();
+  const prm = route.params;
 
   const styles = StyleSheet.create({
     headerBar: {
@@ -43,7 +44,7 @@ const posted = () => {
     text: {
       marginTop: 4,
       color: 'white',
-      fontFamily: 'MyFont',
+      // fontFamily: 'MyFont',
       fontSize: 12,
       textAlign: 'right',
     },
@@ -54,7 +55,18 @@ const posted = () => {
     });
   };
 
-  useEffect(() => {}, [route.params]);
+  useEffect(() => {
+    console.log(prm);
+    dispatch(
+      getParams({
+        postDoc: prm.postDoc,
+        uri: prm.uri,
+        owner: prm.owner,
+        thms: prm.thms,
+        createdAt: prm.postedAt,
+      }),
+    );
+  }, [route.params]);
 
   return (
     <React.Fragment>
@@ -67,18 +79,26 @@ const posted = () => {
               color: 'white',
               fontSize: 28,
               textAlign: 'center',
-              fontFamily: 'MyFont',
+              // fontFamily: 'MyFont',
             }}
           >
             シェアピ
           </Text>
         </View>
         <View style={styles.content}>
-          <Image
+          <Button
+            style={{ height: 30, width: 30, backgroundColor: 'red' }}
+            onPress={() => {
+              console.log(posted);
+            }}
+          >
+            aaaa
+          </Button>
+          {/* <Image
             source={{ uri: posted.ppram.uri }}
             resizeMode="contain"
             // style={styles.img}
-          />
+          /> */}
           {/* react-native-swiper */}
         </View>
       </SafeAreaView>

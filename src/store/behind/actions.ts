@@ -15,7 +15,13 @@ export const startFetch = actionCreator<{}>('START_FETCH');
 
 export const getAnss = actionCreator<Ans[]>('GET_ANS');
 
-export const getParams = actionCreator<PostedParams>('GET_PARAMS');
+export const getParams = actionCreator<{
+  postDoc: string;
+  uri: string;
+  owner: string;
+  thms: string[];
+  createdAt: Date;
+}>('GET_PARAMS');
 
 // Async Actions
 

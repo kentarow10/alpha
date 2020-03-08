@@ -1,4 +1,4 @@
-import { Post, Ans, Comb, Nice } from '../types';
+import { Post, Comb, Nice } from '../types';
 
 export type TimeLime = {
   isFetching: boolean;

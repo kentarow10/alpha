@@ -34,5 +34,11 @@ export const postedReducer: Reducer<Posted> = reducerWithInitialState(
   }))
   .case(getParams, (state, payload) => ({
     ...state,
-    ppram: payload,
+    ppram: {
+      postDoc: payload.postDoc,
+      uri: payload.uri,
+      owner: payload.owner,
+      thms: payload.thms,
+      createdAt: payload.createdAt,
+    },
   }));

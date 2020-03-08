@@ -29,9 +29,11 @@ export type NavigationParamList = {
   POSTED: {
     postDoc: string;
     uri: string;
+    width: number;
+    height: number;
     owner: string;
     thms: string[];
-    createdAt: Date;
+    postedAt: Date;
   };
   DETAIL: {
     postedParam: PostedParams;
@@ -57,13 +59,15 @@ export type PostedParams = {
 };
 
 export type Post = {
-  doc?: string;
-  path: string;
+  postDoc?: string;
+  path?: string;
   uri?: string;
-  thm: string[];
-  ownerId: string;
-  numNice: number;
-  createdAt: Date;
+  width?: number;
+  height?: number;
+  thms: string[];
+  owner: string;
+  numNice?: number;
+  postedAt: Date;
 };
 
 // export type Ans = {

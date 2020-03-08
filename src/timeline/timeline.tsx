@@ -29,6 +29,7 @@ import { Text } from 'react-native-paper';
 import { GetPosts } from '../store/timeLine/selector';
 import { asyncGetPosts } from '../store/timeLine/actions';
 import { NavigationContext } from '@react-navigation/native';
+import { TimeLime } from '../store/timeLine/timeLine';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -39,7 +40,7 @@ const imgH = imgW * 1.414;
 const timeLine = () => {
   const dispatch = useDispatch();
   const navigation = useContext(NavigationContext);
-  const posts = useSelector(GetPosts);
+  const posts: TimeLime = useSelector(GetPosts);
   const { colors } = useTheme();
 
   const getFont = async () => {
@@ -78,7 +79,7 @@ const timeLine = () => {
     text: {
       marginTop: 4,
       color: 'white',
-      fontFamily: 'MyFont',
+      // fontFamily: 'MyFont',
       fontSize: 12,
       textAlign: 'right',
     },
@@ -96,17 +97,56 @@ const timeLine = () => {
               fontSize: 28,
               textAlign: 'center',
               //   fontWeight: '900',
-              fontFamily: 'MyFont',
+              // fontFamily: 'MyFont',
             }}
           >
             シェアピ
           </Text>
         </View>
         <View style={styles.content}>
-          <FlatList
+          <Button
+            onPress={() => {
+              console.log(posts.posts);
+              console.log([1, 2, 3]);
+              // alert(posts.posts);
+            }}
+            style={{ height: 30, width: 40, backgroundColor: 'blue' }}
+          >
+            おお
+          </Button>
+          {/* <FlatList
+            // data={[1, 2, 3, 4, 5, 6, 7, 8]}
+            data={posts.posts}
+            keyExtractor={(item, index) => index.toString()}
+            // horizontal={true}
+            // numColumns={2}
+            style={{ marginBottom: 36 }}
+            renderItem={item => {
+              return (
+                <View style={{ height: 30, width: 30, backgroundColor: 'red' }}>
+                  <Text>{item.item.owner}</Text>
+                </View>
+              );
+            }}
+          /> */}
+
+          {/* <FlatList
             data={posts.posts}
             keyExtractor={(item, index) => index.toString()}
             numColumns={2}
+            style={{ marginBottom: 36 }}
+            renderItem={item => {
+              return (
+                <View
+                  style={{ height: 30, width: 30, backgroundColor: 'red' }}
+                ></View>
+              );
+            }}
+          /> */}
+          <FlatList
+            data={posts.posts}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={1}
             style={{ marginBottom: 36 }}
             renderItem={item => {
               if (item.index % 2 === 1) {
@@ -116,12 +156,13 @@ const timeLine = () => {
                     <TouchableOpacity
                       onPress={() => {
                         navigation.navigate('POSTED', {
-                          doc: item.item.doc,
-                          path: item.item.path,
-                          thm: item.item.thm,
-                          ownerId: item.item.ownerId,
-                          numNice: item.item.numNice,
-                          createdAt: item.item.createdAt,
+                          postDoc: item.item.postDoc,
+                          uri: item.item.uri,
+                          width: item.item.width,
+                          height: item.item.height,
+                          thms: item.item.thms,
+                          owner: item.item.owner,
+                          postedAt: item.item.postedAt,
                         });
                       }}
                     >
@@ -142,7 +183,7 @@ const timeLine = () => {
                         }}
                       >
                         <Image
-                          source={{ uri: item.item.path }}
+                          source={{ uri: item.item.uri }}
                           resizeMode="cover"
                           style={styles.img}
                         />
@@ -166,12 +207,14 @@ const timeLine = () => {
                   <TouchableOpacity
                     onPress={() => {
                       navigation.navigate('POSTED', {
-                        doc: item.item.doc,
+                        doc: item.item.postDoc,
                         path: item.item.path,
-                        thm: item.item.thm,
-                        ownerId: item.item.ownerId,
-                        numNice: item.item.numNice,
-                        createdAt: item.item.createdAt,
+                        uri: item.item.uri,
+                        width: item.item.width,
+                        height: item.item.height,
+                        thms: item.item.thms,
+                        owner: item.item.owner,
+                        postedAt: item.item.postedAt,
                       });
                     }}
                   >
@@ -192,7 +235,7 @@ const timeLine = () => {
                       }}
                     >
                       <Image
-                        source={{ uri: item.item.path }}
+                        source={{ uri: item.item.uri }}
                         resizeMode="cover"
                         style={styles.img}
                       />
@@ -224,12 +267,14 @@ const timeLine = () => {
                     <TouchableOpacity
                       onPress={() => {
                         navigation.navigate('POSTED', {
-                          doc: item.item.doc,
+                          doc: item.item.postDoc,
                           path: item.item.path,
-                          ownerId: item.item.ownerId,
+                          uri: item.item.uri,
+                          width: item.item.width,
+                          height: item.item.height,
                           thms: item.item.thms,
-                          numNice: item.item.numNice,
-                          createdAt: item.item.createdAt,
+                          owner: item.item.owner,
+                          postedAt: item.item.postedAt,
                         });
                       }}
                     >
@@ -250,7 +295,7 @@ const timeLine = () => {
                         }}
                       >
                         <Image
-                          source={{ uri: item.item.path }}
+                          source={{ uri: item.item.uri }}
                           resizeMode="cover"
                           style={styles.img}
                         />

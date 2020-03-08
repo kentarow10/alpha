@@ -1,10 +1,10 @@
-import { Ans, PostedParams } from '../types';
+import { PostedParams } from '../types';
 
 export type Posted = {
   isFetching: boolean;
   isError: boolean;
   ppram: PostedParams;
-  anss: Ans[];
+  anss: any[];
 };
 
 export * from './actions';
