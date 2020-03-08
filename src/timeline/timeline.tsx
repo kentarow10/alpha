@@ -207,7 +207,7 @@ const timeLine = () => {
                   <TouchableOpacity
                     onPress={() => {
                       navigation.navigate('POSTED', {
-                        doc: item.item.postDoc,
+                        postDoc: item.item.postDoc,
                         path: item.item.path,
                         uri: item.item.uri,
                         width: item.item.width,
@@ -267,7 +267,7 @@ const timeLine = () => {
                     <TouchableOpacity
                       onPress={() => {
                         navigation.navigate('POSTED', {
-                          doc: item.item.postDoc,
+                          postDoc: item.item.postDoc,
                           path: item.item.path,
                           uri: item.item.uri,
                           width: item.item.width,

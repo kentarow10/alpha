@@ -59,7 +59,7 @@ export const Main = () => {
                 ...DefaultTheme,
                 colors: {
                   ...DefaultTheme.colors,
-                  primary: 'white',
+                  primary: 'black',
                   background: '#00cffa',
                   surface: '#ffffff',
                   accent: '#ff1744',

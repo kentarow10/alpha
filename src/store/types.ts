@@ -36,24 +36,44 @@ export type NavigationParamList = {
     postedAt: Date;
   };
   DETAIL: {
-    postedParam: PostedParams;
-    commentBody: string;
-    commentOwner: string;
-    commentedAt: Date;
+    postDoc: string;
+    ansDoc: string;
+    uri: string;
+    width: number;
+    height: number;
+    thm: string;
+    body: string;
+    numNice: number;
+    postedBy: string;
+    ansBy: string;
+    postedAt: Date;
+    ansAt: Date;
   };
 };
 
 export type DetailParams = {
-  postedParam: PostedParams;
-  commentBody: string;
-  commentOwner: string;
-  commentedAt: Date;
+  postDoc: string;
+  ansDoc: string;
+  uri: string;
+  width: number;
+  height: number;
+  thm: string;
+  body: string;
+  numNice: number;
+  postedBy: string;
+  ansBy: string;
+  postedAt: Date;
+  ansAt: Date;
 };
 
 export type PostedParams = {
   postDoc: string;
   uri: string;
   owner: string;
+  width: number;
+  height: number;
+  numNice: number;
+  niceByList: string[];
   thms: string[];
   createdAt: Date;
 };
@@ -70,15 +90,15 @@ export type Post = {
   postedAt: Date;
 };
 
-// export type Ans = {
-//   ansDoc?: string;
-//   postDoc?: string;
-//   uri?: string;
-//   body: string;
-//   ansBy: string;
-//   ansAt: Date;
-//   orderThm: number;
-// };
+export type Ans = {
+  ansDoc?: string;
+  postDoc?: string;
+  uri?: string;
+  body: string;
+  ansBy: string;
+  ansAt: Date;
+  orderThm: number;
+};
 
 // export type Comb = {
 //   doc?: string;

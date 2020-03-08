@@ -3,6 +3,7 @@ import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Me } from './me';
 import { Comb, Ans, Post, Comment, Nice } from '../types';
+import { MyName } from './selector';
 
 // 準備
 
@@ -112,58 +113,58 @@ export const asyncGetMyNicePosts = (uid: string) => {
 // 自分が分かる！した回答一覧
 
 export const asyncGetMyGotitAnss = (uid: string) => {
-  return dispatch => {
-    db.collection('users')
-      .doc(uid)
-      .collection('gotits')
-      .get()
-      .then(snap => {
-        const mygotits: Comb[] = [];
-        snap.forEach(doc => {
-          const gotit: Comb = {
-            ansDoc: doc.id,
-            postDoc: doc.data().postDoc,
-            uri: doc.data().uri,
-            thm: doc.data().thm,
-            ans: doc.data().ans,
-            postedBy: doc.data().postedBy,
-            answeredBy: doc.data().answeredBy,
-          };
-          mygotits.push(gotit);
-        });
-        dispatch(getMyGotitAnss(mygotits));
-      });
-  };
+  // return dispatch => {
+  //   db.collection('users')
+  //     .doc(uid)
+  //     .collection('gotits')
+  //     .get()
+  //     .then(snap => {
+  //       const mygotits: Comb[] = [];
+  //       snap.forEach(doc => {
+  //         const gotit: Comb = {
+  //           ansDoc: doc.id,
+  //           postDoc: doc.data().postDoc,
+  //           uri: doc.data().uri,
+  //           thm: doc.data().thm,
+  //           ans: doc.data().ans,
+  //           postedBy: doc.data().postedBy,
+  //           answeredBy: doc.data().answeredBy,
+  //         };
+  //         mygotits.push(gotit);
+  //       });
+  //       dispatch(getMyGotitAnss(mygotits));
+  //     });
+  // };
 };
 
 // ほかのユーザーからリンクされた自分の回答一覧
 
 export const asyncGetMyLinkedAnss = (uid: string) => {
-  return dispatch => {
-    rtdb
-      .ref('/' + uid + '/linked/')
-      .once('value')
-      .then(snap => {
-        console.log(snap.val());
-        const linkeds = snap.val();
-        const combs: Comb[] = [];
-        for (const ansd in linkeds) {
-          const postDoc = linkeds[ansd].postDoc;
-          const uri = linkeds[ansd].uri;
-          const thm = linkeds[ansd].thm;
-          const body = linkeds[ansd].body;
-          const comb: Comb = {
-            ansDoc: ansd,
-            postDoc,
-            uri,
-            thm,
-            ans: body,
-          };
-          combs.push(comb);
-        }
-        dispatch(getMyLinkedAnss(combs));
-      });
-  };
+  // return dispatch => {
+  //   rtdb
+  //     .ref('/' + uid + '/linked/')
+  //     .once('value')
+  //     .then(snap => {
+  //       console.log(snap.val());
+  //       const linkeds = snap.val();
+  //       const combs: Comb[] = [];
+  //       for (const ansd in linkeds) {
+  //         const postDoc = linkeds[ansd].postDoc;
+  //         const uri = linkeds[ansd].uri;
+  //         const thm = linkeds[ansd].thm;
+  //         const body = linkeds[ansd].body;
+  //         const comb: Comb = {
+  //           ansDoc: ansd,
+  //           postDoc,
+  //           uri,
+  //           thm,
+  //           ans: body,
+  //         };
+  //         combs.push(comb);
+  //       }
+  //       dispatch(getMyLinkedAnss(combs));
+  //     });
+  // };
 };
 
 // プロフィール画面から呼ばれる
@@ -171,14 +172,24 @@ export const asyncGetMyLinkedAnss = (uid: string) => {
 export const asyncGetMyCombs = (uid: string) => {
   return dispatch => {
     db.collectionGroup('answers')
-      .where('owner', '==', uid)
+      .where('ansBy', '==', uid)
       .get()
       .then(snap => {
         const myanss: Comb[] = [];
         snap.forEach(doc => {
           const ans: Comb = {
-            // TODO
+            postDoc: doc.data().postDoc,
+            ansDoc: doc.data().ansDoc,
+            uri: doc.data().uri,
+            thms: doc.data().thms,
+            orderThm: doc.data().orderThm,
+            body: doc.data().body,
+            postedBy: doc.data().postedBy,
+            ansBy: doc.data().ansBy,
+            postedAt: doc.data().postedAt,
+            ansAt: doc.data().ansAt,
           };
+          myanss.push(ans);
         });
       });
   };

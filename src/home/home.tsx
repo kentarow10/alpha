@@ -12,6 +12,7 @@ import Profile from '../profile/profile';
 import MyNices from '../drawer/myNices';
 import TimeLine from '../timeline/timeline';
 import Posted from '../behind/posted';
+import Detail from '../behind/detail';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -90,6 +91,7 @@ export const RootNavigator = () => {
         }}
       />
       <Drawer.Screen name="POSTED" component={Posted} />
+      <Drawer.Screen name="DETAIL" component={Detail} />
     </Drawer.Navigator>
   );
 };

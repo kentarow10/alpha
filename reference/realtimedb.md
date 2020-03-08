@@ -15,8 +15,8 @@ jsonのカタチ
             * body
 
 * $postDoc
-    * nices---部分的に表示させたいデータをもつ
-        * num
+    * nicesCount
+    * nices
         * $uid
 
 * $ansDoc

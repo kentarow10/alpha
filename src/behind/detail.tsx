@@ -19,7 +19,14 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import { PostedParams, NavigationParamList } from '../store/types';
-import { PostedState, getParams, asyncGetAnss } from '../store/behind/behind';
+import {
+  PostedState,
+  getParams,
+  asyncGetAnss,
+  DetailState,
+  detailInit,
+} from '../store/behind/behind';
+import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -29,16 +36,9 @@ const HEIGHT = Dimensions.get('window').height;
 const timeLine = () => {
   const dispatch = useDispatch();
   const { colors } = useTheme();
-  const posted = useSelector(PostedState);
-  // const navigation = useContext(NavigationContext);
-  const route = useRoute<RouteProp<NavigationParamList, 'POSTED'>>();
-  const params: PostedParams = {
-    postDoc: route.params.postDoc,
-    uri: route.params.uri,
-    owner: route.params.owner,
-    thms: route.params.thms,
-    createdAt: route.params.createdAt,
-  };
+  const detail = useSelector(DetailState);
+  const route = useRoute<RouteProp<NavigationParamList, 'DETAIL'>>();
+  const prm = route.params;
 
   const styles = StyleSheet.create({
     headerBar: {
@@ -53,7 +53,7 @@ const timeLine = () => {
     text: {
       marginTop: 4,
       color: 'white',
-      fontFamily: 'MyFont',
+      // fontFamily: 'MyFont',
       fontSize: 12,
       textAlign: 'right',
     },
@@ -65,8 +65,22 @@ const timeLine = () => {
   };
 
   useEffect(() => {
-    dispatch(getParams(params));
-    dispatch(asyncGetAnss(route.params.postDoc));
+    dispatch(
+      detailInit({
+        postDoc: prm.postDoc,
+        ansDoc: prm.ansDoc,
+        uri: prm.uri,
+        width: prm.width,
+        height: prm.height,
+        thm: prm.thm,
+        body: prm.body,
+        numNice: prm.numNice,
+        postedBy: prm.postedBy,
+        ansBy: prm.ansBy,
+        postedAt: prm.postedAt,
+        ansAt: prm.ansAt,
+      }),
+    );
   }, [route.params]);
 
   return (
@@ -80,7 +94,7 @@ const timeLine = () => {
               color: 'white',
               fontSize: 28,
               textAlign: 'center',
-              fontFamily: 'MyFont',
+              // fontFamily: 'MyFont',
             }}
           >
             シェアピ
@@ -88,11 +102,17 @@ const timeLine = () => {
         </View>
         <View style={styles.content}>
           <Image
-            source={{ uri: posted.ppram.uri }}
+            source={{ uri: detail.dpram.uri }}
             resizeMode="contain"
+            style={{
+              width: detail.dpram.width,
+              height: detail.dpram.height,
+              backgroundColor: 'black',
+            }}
             // style={styles.img}
           />
-          {/* react-native-swiper */}
+          <Text>{detail.dpram.thm}</Text>
+          <Text>{detail.dpram.body}</Text>
         </View>
       </SafeAreaView>
     </React.Fragment>
