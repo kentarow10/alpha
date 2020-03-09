@@ -17,24 +17,6 @@ async function getFromStorage(path: string) {
   return url;
 }
 
-const getAns = async (ansDoc: string) => {
-  const ansData = await db
-    .collection('anss')
-    .doc(ansDoc)
-    .get();
-  const ans: Ans = {
-    doc: ansData.id,
-    postDoc: ansData.data().postDoc,
-    orderThm: ansData.data().orderThm,
-    ownerId: ansData.data().ownerId,
-    fromLinks: ansData.data().fromLinks,
-    toLinks: ansData.data().toLinks,
-    comments: ansData.data().comments,
-  };
-
-  return ans;
-};
-
 const getComments = (docs: string[]) => {
   const comments: Comment[] = [];
   docs.forEach(async d => {
@@ -169,6 +151,51 @@ export const asyncGetMyLinkedAnss = (uid: string) => {
 
 // プロフィール画面から呼ばれる
 
+// プロフィール画面初期化
+
+export const asyncGetMyPosts = (uid: string) => {
+  return dispatch => {
+    db.collection('posts')
+      .where('owner', '==', uid)
+      .get()
+      .then(snap => {
+        const posts: Post[] = [];
+        snap.forEach(doc => {
+          console.log(doc.data());
+          const thms = doc.data().thms;
+          const owner = doc.data().owner;
+          const width = doc.data().width;
+          const height = doc.data().height;
+          const createdAt = doc.data().createdAt.toDate();
+          storage
+            .ref(doc.data().path)
+            .getDownloadURL()
+            .then(function(uri) {
+              posts.push({
+                postDoc: doc.id,
+                uri,
+                path: doc.data().path,
+                thms,
+                owner,
+                width,
+                height,
+                postedAt: createdAt,
+              });
+            })
+            .catch(e => {
+              dispatch(fetchError({}));
+            });
+          dispatch(getMyCombs(posts));
+        });
+      })
+      .catch(() => {
+        dispatch(fetchError({}));
+      });
+  };
+};
+
+// 自分のピン一覧取得
+
 export const asyncGetMyCombs = (uid: string) => {
   return dispatch => {
     db.collectionGroup('answers')
@@ -191,6 +218,7 @@ export const asyncGetMyCombs = (uid: string) => {
           };
           myanss.push(ans);
         });
+        dispatch(getMyCombs(myanss));
       });
   };
 };

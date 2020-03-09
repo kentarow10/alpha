@@ -1,11 +1,5 @@
 import { actionCreatorFactory } from 'typescript-fsa';
-import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
-import {
-  NavigationContext,
-  useRoute,
-  RouteProp,
-} from '@react-navigation/native';
 import {
   Comb,
   Ans,

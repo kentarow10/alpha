@@ -20,8 +20,8 @@ jsonのカタチ
         * $uid
 
 * $ansDoc
-    * gotits---部分的に表示させたいデータをもつ
-        * num
+    * gotitsCount
+    * gotits
         * $uid
     * mutual
         * $ansDoc---部分的に表示させたいデータはもつ

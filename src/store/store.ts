@@ -6,6 +6,7 @@ import me from './me/me';
 import auth from './auth/auth';
 import timeline from './timeLine/timeLine';
 import { postedReducer, detailReducer } from './behind/behind';
+import { screenMgr } from './screenMgr/mgr';
 
 const reducers = combineReducers({
   me,
@@ -13,6 +14,7 @@ const reducers = combineReducers({
   timeline,
   postedReducer,
   detailReducer,
+  screenMgr,
 });
 
 const storeEnhancers =

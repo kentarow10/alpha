@@ -99,6 +99,7 @@ export default function DrawerView({
   gestureHandlerProps,
   minSwipeDistance,
   sceneContainerStyle,
+  mypinsMode,
 }: Props) {
   const [loaded, setLoaded] = React.useState([state.index]);
   const [drawerWidth, setDrawerWidth] = React.useState(() =>

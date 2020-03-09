@@ -7,6 +7,7 @@ import {
   DrawerRouterOptions,
   DrawerRouter,
 } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 import DrawerView from './view/tabAndDrawer';
 import {
@@ -14,6 +15,7 @@ import {
   DrawerNavigationEventMap,
 } from '@react-navigation/drawer/src/types';
 import { MyDrawerNavigationOptions } from './types';
+import { ScreenMgrState } from '../../store/screenMgr/mgr';
 
 type Props = DefaultNavigatorOptions<MyDrawerNavigationOptions> &
   DrawerRouterOptions &
@@ -38,9 +40,12 @@ function DrawerNavigator({
     screenOptions,
   });
 
+  const mypinsMode = useSelector(ScreenMgrState);
+
   return (
     <DrawerView
       {...rest}
+      mypinsMode={mypinsMode}
       state={state}
       descriptors={descriptors}
       navigation={navigation}

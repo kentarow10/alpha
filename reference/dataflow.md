@@ -1,4 +1,6 @@
-# 投稿
+# CRUD
+* CREATE, DELETE
+# 投稿する
 ## firestore
 
 * collection('posts')
@@ -10,23 +12,18 @@
 
 ## realtime
 
-操作なし
+* rtdb.ref(postDoc).set({ nicesCount: 0, nices: {example: true} });
 
 # 投稿削除
 ## firestore
 
-* collection('posts')
-    * $postDocument
-        * path
-        * owner
-        * thm
-        * createdAt
+* collection('posts').doc(postDoc).delete()
 
 ## realtime
 
-操作なし
+* rtdb.ref(postDoc).remove();
 
-# 回答
+# 回答する
 
 ## firestore
 
@@ -43,39 +40,78 @@
 
 ## realtime
 
-操作なし
+* rtdb.ref(ansDoc).set({ gotitsCount: 0, gotits: {example: true} });
 
 # 回答削除
 
 ## firestore
 
+* collection('posts').doc(postDoc)
+
+## realtime
+
+* rtdb.ref(ansDoc).remove();
+
+# コメントする
+## firestore
+
 * collection('posts')
 * doc(postDoc)
 * collection('answers')
-    * $ansDoc
-        * postDoc
-        * uri
-        * body
-        * owner
-        * createdAt
-        * orderThm
+* doc(ansDoc)
+    * subcollection('comments')
+        * content
+        * comBy
+        * comAt
 
 ## realtime
 
-操作なし
+なし
 
-# コメント
+# いいねを押す
 ## firestore
+
+* collection('users')
+    * $uid
+        * subcollection('nices')
+            * $postDocument
+                * uri
+                * postedAt
+
 ## realtime
 
-# いいね
+* rtdb.ref(postDoc).set({ nicesCount: +1, nices: {uid: true} });
+* rtdb.ref(postDoc).set({ nicesCount: -1, nices: {uid: null} });
+
+# 分かるを押す
 ## firestore
+
+* collection('users')
+    * $uid
+        * subcollection('gotits')
+            * $postDocument
+                * postDoc
+                * uri
+                * thm
+                * ans
+                * postedBy
+                * answeredBy
+                * postedAt
+                * answeredBy
+
 ## realtime
 
-# 分かる
-## firestore
-## realtime
+* rtdb.ref(ansDoc).set({ gotisCount: +1, gotits: {uid: true} });
+* rtdb.ref(ansDoc).set({ gotitsCount: -1, gotits: {uid: null} });
 
 # リンク（した・された）
 ## firestore
+
+なし
+
 ## realtime
+
+
+
+
+* UPDATE

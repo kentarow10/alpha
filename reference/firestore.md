@@ -28,8 +28,7 @@
     * subcollection('nices')：一覧表示で必要になる情報
         * $postDocument(自動生成でなく指定する)
             * uri
-            * owner
-            * createdAt
+            * postedAt
     * subcollection('gotits')：一覧表示で必要になる情報
         * $ansDocument(自動生成でなく指定する)
             * postDoc
@@ -37,6 +36,8 @@
             * thm
             * ans
             * postedBy
+            * answeredBy
+            * postedAt
             * answeredBy
     
 * onSnapshot()でドキュメントをリスンできる
@@ -76,24 +77,6 @@
 * 自分のlinks
     * uid指定
     * type: comb[]
-
-
-
-# 裏で待っているの画面
-
-* posted
-    * 渡される
-        * subcollection('answers')までの情報
-    * realtimeから取得
-        * $postDoc/nices/以下のnumとuidリスト
-        * $ansDoc/gotits/以下のnumとuidリスト
-    
-* detail
-    * 渡される
-        * subcollection('comment')までの情報
-    * realtimeから取得
-        * $ansDoc/from/
-        * $ansDoc/to/
 
 
 
