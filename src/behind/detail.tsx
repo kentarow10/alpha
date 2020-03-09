@@ -2,7 +2,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
-import { useTheme } from 'react-native-paper';
+import { useTheme, Button } from 'react-native-paper';
 import {
   View,
   Button as Bt,
@@ -27,6 +27,7 @@ import {
   detailInit,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
+import { mypinModeOn } from '../store/screenMgr/mgr';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -37,6 +38,7 @@ const timeLine = () => {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const detail = useSelector(DetailState);
+  const navigation = useContext(NavigationContext);
   const route = useRoute<RouteProp<NavigationParamList, 'DETAIL'>>();
   const prm = route.params;
 
@@ -113,6 +115,14 @@ const timeLine = () => {
           />
           <Text>{detail.dpram.thm}</Text>
           <Text>{detail.dpram.body}</Text>
+          <Button
+            onPress={() => {
+              dispatch(mypinModeOn({}));
+              navigation.toggleDrawer();
+            }}
+          >
+            リンクする
+          </Button>
         </View>
       </SafeAreaView>
     </React.Fragment>

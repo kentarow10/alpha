@@ -9,10 +9,18 @@ import {
   Paragraph,
   Button,
 } from 'react-native-paper';
-import { View, Button as Bt } from 'react-native';
-import { GetAllMe, asyncGetMyInfo, asyncGetMyCombs } from '../store/me/me';
+import { View, Button as Bt, Image, Text } from 'react-native';
+import {
+  GetAllMe,
+  asyncGetMyInfo,
+  asyncGetMyCombs,
+  asyncTest,
+} from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList } from 'react-native-gesture-handler';
+import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
+import { asyncGetAnss } from '../store/behind/behind';
 
 const profile = () => {
   const dispatch = useDispatch();
@@ -25,7 +33,8 @@ const profile = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
-    dispatch(asyncGetMyCombs(uid));
+    // dispatch(asyncGetMyCombs(uid));
+    dispatch(asyncTest());
   }, []);
 
   return (
@@ -48,6 +57,23 @@ const profile = () => {
           <Button>Ok</Button>
         </Card.Actions>
       </Card>
+      <FlatList
+        // data={me.myCombs}
+        data={[1, 2, 3, 4]}
+        renderItem={item => {
+          return (
+            <View>
+              <Text>{item.item}</Text>
+              {/* <Image
+                source={{ uri: item.item.uri }}
+                style={{ width: 50, height: 50 }}
+              />
+              <Text>{item.item.thms[item.item.orderThm - 1]}</Text>
+              <Text>{item.item.body}</Text> */}
+            </View>
+          );
+        }}
+      />
     </SafeAreaView>
   );
 };

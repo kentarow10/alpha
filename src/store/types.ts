@@ -138,7 +138,7 @@ export type Comb = {
   postDoc: string;
   uri: string;
   thms: string[];
-  orderThm: string;
+  orderThm: number;
   body: string;
   postedBy?: string;
   ansBy?: string;

@@ -187,6 +187,7 @@ export default function DrawerView({
       <DrawerPositionContext.Provider value={drawerPosition}>
         {drawerContent({
           ...drawerContentOptions,
+          mypinsMode: mypinsMode,
           progress: progress,
           state: state,
           navigation: navigation,

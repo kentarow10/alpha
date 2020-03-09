@@ -185,7 +185,7 @@ export const asyncGetMyPosts = (uid: string) => {
             .catch(e => {
               dispatch(fetchError({}));
             });
-          dispatch(getMyCombs(posts));
+          dispatch(getMyPosts(posts));
         });
       })
       .catch(() => {
@@ -196,30 +196,52 @@ export const asyncGetMyPosts = (uid: string) => {
 
 // 自分のピン一覧取得
 
-export const asyncGetMyCombs = (uid: string) => {
+export const asyncTest = () => {
+  console.log('pinsss');
+
   return dispatch => {
-    db.collectionGroup('answers')
-      .where('ansBy', '==', uid)
-      .get()
-      .then(snap => {
-        const myanss: Comb[] = [];
-        snap.forEach(doc => {
-          const ans: Comb = {
-            postDoc: doc.data().postDoc,
-            ansDoc: doc.data().ansDoc,
-            uri: doc.data().uri,
-            thms: doc.data().thms,
-            orderThm: doc.data().orderThm,
-            body: doc.data().body,
-            postedBy: doc.data().postedBy,
-            ansBy: doc.data().ansBy,
-            postedAt: doc.data().postedAt,
-            ansAt: doc.data().ansAt,
-          };
-          myanss.push(ans);
-        });
-        dispatch(getMyCombs(myanss));
+    console.log('pinsss2');
+    const anss = db.collectionGroup('answers').where('orderThm', '==', 1);
+    // console.log(anss);
+    anss.get().then(snap => {
+      console.log(snap);
+      console.log('pins');
+      snap.forEach(doc => {
+        console.log(doc.data().uri);
+        console.log('doc.data().uri');
       });
+    });
+  };
+};
+
+export const asyncGetMyCombs = (uid: string) => {
+  console.log('pinsss');
+
+  return dispatch => {
+    console.log('pinsss2');
+    const anss = db.collectionGroup('answers').where('ansBy', '==', uid);
+    // console.log(anss);
+    anss.get().then(snap => {
+      console.log(snap);
+      console.log('pins');
+      const myanss: Comb[] = [];
+      snap.forEach(doc => {
+        const ans: Comb = {
+          postDoc: doc.data().postDoc,
+          ansDoc: doc.data().ansDoc,
+          uri: doc.data().uri,
+          thms: doc.data().thms,
+          orderThm: doc.data().orderThm,
+          body: doc.data().body,
+          postedBy: doc.data().postedBy,
+          ansBy: doc.data().ansBy,
+          postedAt: doc.data().postedAt,
+          ansAt: doc.data().ansAt,
+        };
+        myanss.push(ans);
+      });
+      dispatch(getMyCombs(myanss));
+    });
   };
 };
 

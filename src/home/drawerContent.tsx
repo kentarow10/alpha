@@ -11,7 +11,13 @@ import {
   DrawerContentOptions,
 } from './myNav/types';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Dimensions,
+  Image,
+} from 'react-native';
 import {
   Avatar,
   Caption,
@@ -27,6 +33,9 @@ import Animated from 'react-native-reanimated';
 
 import { PreferencesContext } from '../context/preferencesContext';
 import { BaseRouter, DrawerActions } from '@react-navigation/native';
+import { FlatList } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
+import { GetAllMe } from '../store/me/me';
 
 type Props = DrawerContentComponentProps<DrawerContentOptions>;
 const { width, height } = Dimensions.get('window');
@@ -75,6 +84,7 @@ const styles = StyleSheet.create({
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
   const { theme, toggleTheme } = React.useContext(PreferencesContext);
+  const mypins = useSelector(GetAllMe);
 
   const translateX = Animated.interpolate(props.progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
@@ -95,81 +105,121 @@ export function DrawerContent(props: Props) {
           },
         ]}
       >
-        <View style={styles.userInfoSection}>
-          <TouchableOpacity
-            style={{ marginLeft: 10 }}
-            onPress={() => {
-              props.navigation.toggleDrawer();
-            }}
-          >
-            <Avatar.Image
-              source={{
-                uri:
-                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-              }}
-              size={50}
-            />
-          </TouchableOpacity>
-          <Title style={styles.title}>Dawid Urbaniak</Title>
-          <Caption style={styles.caption}>@trensik</Caption>
-          <View style={styles.row}>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                202
-              </Paragraph>
-              <Caption style={styles.caption}>Obserwuje</Caption>
-            </View>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                159
-              </Paragraph>
-              <Caption style={styles.caption}>Obserwujący</Caption>
-            </View>
-          </View>
-        </View>
-        <Drawer.Section style={styles.drawerSection}>
-          {props.state.routes
-            .filter(
-              route => props.descriptors[route.key].options.inNav === true,
-            )
-            .map(route => (
-              <DrawerItem
-                key={route.key}
-                icon={({ color, size }) => (
-                  <MaterialCommunityIcons
-                    name={
-                      props.descriptors[route.key].options.icon != undefined
-                        ? props.descriptors[route.key].options.icon.name
-                        : 'account-outline'
-                    }
-                    color={paperTheme.colors.text}
-                    size={
-                      props.descriptors[route.key].options.icon != undefined
-                        ? props.descriptors[route.key].options.icon.size
-                        : 20
-                    }
-                  />
-                )}
-                label={route.name}
+        {props.mypinsMode ? (
+          <>
+            <View style={styles.userInfoSection}>
+              <TouchableOpacity
+                style={{ marginLeft: 10 }}
                 onPress={() => {
-                  props.navigation.dispatch({
-                    ...DrawerActions.jumpTo(route.name),
-                    target: props.state.key,
-                  });
+                  props.navigation.toggleDrawer();
+                }}
+              >
+                <Avatar.Image
+                  source={{
+                    uri:
+                      'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                  }}
+                  size={50}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.drawerSection}>
+              <FlatList
+                data={mypins.myCombs}
+                renderItem={item => {
+                  return (
+                    <View>
+                      <Image
+                        source={{ uri: item.item.uri }}
+                        style={{ width: 50, height: 50 }}
+                      />
+                      <Text>{item.item.thms[item.item.orderThm - 1]}</Text>
+                      <Text>{item.item.body}</Text>
+                    </View>
+                  );
                 }}
               />
-            ))}
-        </Drawer.Section>
-        <Drawer.Section title="Preferences">
-          <TouchableRipple onPress={toggleTheme}>
-            <View style={styles.preference}>
-              <Text>Dark Theme</Text>
-              <View pointerEvents="none">
-                <Switch value={theme === 'dark'} />
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={styles.userInfoSection}>
+              <TouchableOpacity
+                style={{ marginLeft: 10 }}
+                onPress={() => {
+                  props.navigation.toggleDrawer();
+                }}
+              >
+                <Avatar.Image
+                  source={{
+                    uri:
+                      'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                  }}
+                  size={50}
+                />
+              </TouchableOpacity>
+              <Title style={styles.title}>Dawid Urbaniak</Title>
+              <Caption style={styles.caption}>@trensik</Caption>
+              <View style={styles.row}>
+                <View style={styles.section}>
+                  <Paragraph style={[styles.paragraph, styles.caption]}>
+                    202
+                  </Paragraph>
+                  <Caption style={styles.caption}>Obserwuje</Caption>
+                </View>
+                <View style={styles.section}>
+                  <Paragraph style={[styles.paragraph, styles.caption]}>
+                    159
+                  </Paragraph>
+                  <Caption style={styles.caption}>Obserwujący</Caption>
+                </View>
               </View>
             </View>
-          </TouchableRipple>
-        </Drawer.Section>
+            <Drawer.Section style={styles.drawerSection}>
+              {props.state.routes
+                .filter(
+                  route => props.descriptors[route.key].options.inNav === true,
+                )
+                .map(route => (
+                  <DrawerItem
+                    key={route.key}
+                    icon={({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name={
+                          props.descriptors[route.key].options.icon != undefined
+                            ? props.descriptors[route.key].options.icon.name
+                            : 'account-outline'
+                        }
+                        color={paperTheme.colors.text}
+                        size={
+                          props.descriptors[route.key].options.icon != undefined
+                            ? props.descriptors[route.key].options.icon.size
+                            : 20
+                        }
+                      />
+                    )}
+                    label={route.name}
+                    onPress={() => {
+                      props.navigation.dispatch({
+                        ...DrawerActions.jumpTo(route.name),
+                        target: props.state.key,
+                      });
+                    }}
+                  />
+                ))}
+            </Drawer.Section>
+            <Drawer.Section title="Preferences">
+              <TouchableRipple onPress={toggleTheme}>
+                <View style={styles.preference}>
+                  <Text>Dark Theme</Text>
+                  <View pointerEvents="none">
+                    <Switch value={theme === 'dark'} />
+                  </View>
+                </View>
+              </TouchableRipple>
+            </Drawer.Section>
+          </>
+        )}
       </Animated.View>
     </DrawerContentScrollView>
   );

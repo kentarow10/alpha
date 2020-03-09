@@ -40,12 +40,12 @@ function DrawerNavigator({
     screenOptions,
   });
 
-  const mypinsMode = useSelector(ScreenMgrState);
+  const screenMgrState = useSelector(ScreenMgrState);
 
   return (
     <DrawerView
       {...rest}
-      mypinsMode={mypinsMode}
+      mypinsMode={screenMgrState.mypinMode}
       state={state}
       descriptors={descriptors}
       navigation={navigation}

@@ -132,6 +132,10 @@ export type DrawerContentComponentProps<T = DrawerContentOptions> = T & {
    * `0` is closed, `1` is open.
    */
   progress: Animated.Node<number>;
+  /**
+   * drawerの内容をmypinモードにするか否か
+   */
+  mypinsMode?: boolean;
 };
 
 export type DrawerContentOptions = {
