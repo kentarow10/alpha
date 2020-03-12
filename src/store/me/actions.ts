@@ -196,24 +196,6 @@ export const asyncGetMyPosts = (uid: string) => {
 
 // 自分のピン一覧取得
 
-export const asyncTest = () => {
-  console.log('pinsss');
-
-  return dispatch => {
-    console.log('pinsss2');
-    const anss = db.collectionGroup('answers').where('orderThm', '==', 1);
-    // console.log(anss);
-    anss.get().then(snap => {
-      console.log(snap);
-      console.log('pins');
-      snap.forEach(doc => {
-        console.log(doc.data().uri);
-        console.log('doc.data().uri');
-      });
-    });
-  };
-};
-
 export const asyncGetMyCombs = (uid: string) => {
   console.log('pinsss');
 

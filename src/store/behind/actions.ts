@@ -1,4 +1,5 @@
 import { actionCreatorFactory } from 'typescript-fsa';
+import * as ImagePicker from 'expo-image-picker';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import {
   Comb,
@@ -61,7 +62,39 @@ export const getNice = actionCreator<{ numNice: number; niceByList: string[] }>(
 
 export const detailInit = actionCreator<DetailParams>('DETAIL_INIT');
 
+export const add2nd = actionCreator<{}>('ADD_2ND');
+export const add3rd = actionCreator<{}>('ADD_3RD');
+
+export const setImage = actionCreator<{
+  uri: string;
+  filename: string;
+  width: number;
+  height: number;
+}>('SET_IMG');
+
 // Async Actions
+
+// 画像の選択
+
+export const asyncChooseImage = () => {
+  return dispatch => {
+    ImagePicker.launchImageLibraryAsync().then(res => {
+      if (!res.cancelled) {
+        const uriList = res.uri.split('/');
+        const filename = uriList.pop();
+
+        dispatch(
+          setImage({
+            uri: res.uri,
+            filename,
+            width: res.width,
+            height: res.height,
+          }),
+        );
+      }
+    });
+  };
+};
 
 // 良いねのリスン
 

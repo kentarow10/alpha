@@ -14,6 +14,16 @@ export type Detail = {
   dpram: DetailParams;
 };
 
+export type PostScreen = {
+  addThm2: boolean;
+  addThm3: boolean;
+  thm: string[];
+  url: string;
+  width: number;
+  height: number;
+  imageName: string;
+};
+
 export * from './actions';
 export * from './selector';
-export { postedReducer, detailReducer } from './reducer';
+export { postedReducer, detailReducer, postReducer } from './reducer';

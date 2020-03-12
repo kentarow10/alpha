@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { State } from '../store';
 
-import { Posted, Detail } from './behind';
+import { Posted, Detail, PostScreen } from './behind';
 
 export const PostedState = createSelector<State, Posted, Posted>(
   (state: State) => state.postedReducer,
@@ -11,4 +11,9 @@ export const PostedState = createSelector<State, Posted, Posted>(
 export const DetailState = createSelector<State, Detail, Detail>(
   (state: State) => state.detailReducer,
   (detail: Detail) => detail, // 最終的にここが返される
+);
+
+export const PostState = createSelector<State, PostScreen, PostScreen>(
+  (state: State) => state.postReducer,
+  (ps: PostScreen) => ps, // 最終的にここが返される
 );

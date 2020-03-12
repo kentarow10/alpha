@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   useTheme,
@@ -10,21 +10,18 @@ import {
   Button,
 } from 'react-native-paper';
 import { View, Button as Bt, Image, Text } from 'react-native';
-import {
-  GetAllMe,
-  asyncGetMyInfo,
-  asyncGetMyCombs,
-  asyncTest,
-} from '../store/me/me';
+import { GetAllMe, asyncGetMyInfo, asyncGetMyCombs } from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList } from 'react-native-gesture-handler';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import { asyncGetAnss } from '../store/behind/behind';
+import { NavigationContext } from '@react-navigation/native';
 
 const profile = () => {
   const dispatch = useDispatch();
   const me = useSelector(GetAllMe);
+  const navigation = useContext(NavigationContext);
   const user = firebase.auth().currentUser;
   let uid = '';
   if (user != null) {
@@ -33,8 +30,7 @@ const profile = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
-    // dispatch(asyncGetMyCombs(uid));
-    dispatch(asyncTest());
+    dispatch(asyncGetMyCombs(uid));
   }, []);
 
   return (
@@ -53,23 +49,27 @@ const profile = () => {
         </Card.Content>
         <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
         <Card.Actions>
-          <Button>Cancel</Button>
-          <Button>Ok</Button>
+          <Button
+            onPress={() => {
+              navigation.navigate('POST');
+            }}
+          >
+            投稿する
+          </Button>
         </Card.Actions>
       </Card>
       <FlatList
-        // data={me.myCombs}
-        data={[1, 2, 3, 4]}
+        data={me.myCombs}
+        // data={[1, 2, 3, 4]}
         renderItem={item => {
           return (
             <View>
-              <Text>{item.item}</Text>
-              {/* <Image
+              <Image
                 source={{ uri: item.item.uri }}
                 style={{ width: 50, height: 50 }}
               />
               <Text>{item.item.thms[item.item.orderThm - 1]}</Text>
-              <Text>{item.item.body}</Text> */}
+              <Text>{item.item.body}</Text>
             </View>
           );
         }}

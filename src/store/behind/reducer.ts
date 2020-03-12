@@ -2,8 +2,17 @@ import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
-import { Posted, Detail } from './behind';
-import { startFetch, getAnss, getParams, getNice, detailInit } from './actions';
+import { Posted, Detail, PostScreen } from './behind';
+import {
+  startFetch,
+  getAnss,
+  getParams,
+  getNice,
+  detailInit,
+  add2nd,
+  add3rd,
+  setImage,
+} from './actions';
 
 // posted screen
 
@@ -91,4 +100,35 @@ export const detailReducer: Reducer<Detail> = reducerWithInitialState(
   .case(detailInit, (state, payload) => ({
     ...state,
     dpram: payload,
+  }));
+
+// post screen
+
+const initialPost: PostScreen = {
+  addThm2: false,
+  addThm3: false,
+  thm: [],
+  url: '',
+  width: 200,
+  height: 280,
+  imageName: '',
+};
+
+export const postReducer: Reducer<PostScreen> = reducerWithInitialState(
+  initialPost,
+)
+  .case(add2nd, (state, payload) => ({
+    ...state,
+    addThm2: true,
+  }))
+  .case(add3rd, (state, payload) => ({
+    ...state,
+    addThm3: true,
+  }))
+  .case(setImage, (state, payload) => ({
+    ...state,
+    url: payload.uri,
+    imageName: payload.filename,
+    width: payload.width,
+    height: payload.height,
   }));
