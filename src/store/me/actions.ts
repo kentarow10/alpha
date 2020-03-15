@@ -156,17 +156,17 @@ export const asyncGetMyLinkedAnss = (uid: string) => {
 export const asyncGetMyPosts = (uid: string) => {
   return dispatch => {
     db.collection('posts')
-      .where('owner', '==', uid)
+      .where('postBy', '==', uid)
       .get()
       .then(snap => {
         const posts: Post[] = [];
         snap.forEach(doc => {
           console.log(doc.data());
           const thms = doc.data().thms;
-          const owner = doc.data().owner;
-          const width = doc.data().width;
-          const height = doc.data().height;
-          const createdAt = doc.data().createdAt.toDate();
+          const owner = doc.data().postedBy;
+          const width = doc.data().w;
+          const height = doc.data().h;
+          const createdAt = doc.data().postAt.toDate();
           storage
             .ref(doc.data().path)
             .getDownloadURL()
@@ -188,7 +188,8 @@ export const asyncGetMyPosts = (uid: string) => {
           dispatch(getMyPosts(posts));
         });
       })
-      .catch(() => {
+      .catch(e => {
+        console.log(e);
         dispatch(fetchError({}));
       });
   };
@@ -234,9 +235,9 @@ export const asyncGetMyInfo = (uid: string) => {
       .doc(uid)
       .get()
       .then(function(doc) {
-        const userName = doc.data().un;
+        const userName = doc.data().name;
         const iconPath = doc.data().iconPath;
-        const siBody = doc.data().sib;
+        const siBody = doc.data().siBody;
         if (!iconPath) {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           const noimg = Asset.fromModule(require('../../../assets/icon.png'))

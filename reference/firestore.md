@@ -3,22 +3,30 @@
 ## collection('posts')
 * $postDocument
     * path
-    * owner
+    * w
+    * h
+    * postBy
     * thms
-    * createdAt
+    * postAt
     * subcollection('answers')
         * $ansDocument
             * postDoc
             * uri
             * body
-            * owner
-            * createdAt
+            * ansBy
+            * ansAt
             * orderThm
+            * w
+            * h
+            * tate
+            * postBy
+            * thms
+            * postAt
             * subcollection('comments')
                 * $commentDocument
                     * body
-                    * owner
-                    * createdAt
+                    * commentBy
+                    * commentAt
 
 ## collection('users')
 * $uid

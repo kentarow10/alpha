@@ -14,6 +14,7 @@ import TimeLine from '../timeline/timeline';
 import Posted from '../behind/posted';
 import Detail from '../behind/detail';
 import Post from '../behind/post';
+import { answer } from '../behind/answer';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -94,6 +95,7 @@ export const RootNavigator = () => {
       <Drawer.Screen name="POSTED" component={Posted} />
       <Drawer.Screen name="DETAIL" component={Detail} />
       <Drawer.Screen name="POST" component={Post} />
+      <Drawer.Screen name="ANSWER" component={answer} />
     </Drawer.Navigator>
   );
 };

@@ -12,7 +12,32 @@ import {
   add2nd,
   add3rd,
   setImage,
+  remove2nd,
+  remove3rd,
 } from './actions';
+
+const initialBehind: Behind = {
+  screenName: 'POSTED',
+  // posted
+  ppram: {
+    postDoc: '',
+    uri: '',
+    width: 0,
+    height: 0,
+    thms: [],
+    numNice: 0,
+    niceByList: [],
+    postBy: '',
+    postAt: new Date(),
+  },
+  anss: [],
+  // answer
+  body: '',
+  // detail
+  ansDoc: '',
+  ansBy: '',
+  ansAt: '',
+};
 
 // posted screen
 
@@ -124,6 +149,14 @@ export const postReducer: Reducer<PostScreen> = reducerWithInitialState(
   .case(add3rd, (state, payload) => ({
     ...state,
     addThm3: true,
+  }))
+  .case(remove2nd, (state, payload) => ({
+    ...state,
+    addThm2: false,
+  }))
+  .case(remove3rd, (state, payload) => ({
+    ...state,
+    addThm3: false,
   }))
   .case(setImage, (state, payload) => ({
     ...state,

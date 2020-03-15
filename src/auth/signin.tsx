@@ -12,9 +12,10 @@ import { TextInput, Button } from 'react-native-paper';
 
 const signin = () => {
   const dispatch = useDispatch();
+  const navigation = useContext(NavigationContext);
   //   const state = useSelector(GetAuth);
   const [signup, setSignup] = useState({
-    email: 'test1@test.com',
+    email: 'test@test.com',
     pass: 'password',
   });
   const setEmail = (v: string) => {
@@ -49,6 +50,15 @@ const signin = () => {
         // style={styles.btnLogin}
       >
         →
+      </Button>
+      <Button
+        onPress={() => {
+          navigation.navigate('SignUp');
+        }}
+        mode="contained"
+        // style={styles.btnLogin}
+      >
+        ユーザー登録
       </Button>
     </SafeAreaView>
   );

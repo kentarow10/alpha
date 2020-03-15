@@ -1,6 +1,6 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import * as ImagePicker from 'expo-image-picker';
-import { db, storage, rtdb } from '../../../firebase/firebase';
+import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
 import {
   Comb,
   Ans,
@@ -64,6 +64,8 @@ export const detailInit = actionCreator<DetailParams>('DETAIL_INIT');
 
 export const add2nd = actionCreator<{}>('ADD_2ND');
 export const add3rd = actionCreator<{}>('ADD_3RD');
+export const remove2nd = actionCreator<{}>('REMOVE_2ND');
+export const remove3rd = actionCreator<{}>('REMOVE_3RD');
 
 export const setImage = actionCreator<{
   uri: string;
@@ -73,6 +75,114 @@ export const setImage = actionCreator<{
 }>('SET_IMG');
 
 // Async Actions
+
+// 回答送信
+
+export const asyncAnswer = (
+  pparam: PostedParams,
+  orderThm: number,
+  body: string,
+  ansBy: string,
+) => {
+  return async dispatch => {
+    const ansAt = firebase.firestore.FieldValue.serverTimestamp();
+    const tate = pparam.height > pparam.width;
+
+    db.collection('posts')
+      .doc(pparam.postDoc)
+      .collection('answers')
+      .add({
+        postDoc: pparam.postDoc,
+        uri: pparam.uri,
+        body,
+        ansBy,
+        ansAt,
+        orderThm,
+        w: pparam.width,
+        h: pparam.height,
+        tate,
+        thms: pparam.thms,
+        postBy: pparam.owner,
+        postAt: pparam.createdAt,
+      })
+      .then(res => {
+        const ansRef = rtdb.ref(res.id);
+        ansRef.set({
+          gCount: 0,
+          gs: {
+            userid: 'まだいません',
+          },
+          mutual: {
+            ansDoc: 'まだありません',
+          },
+          from: {
+            ansDoc: 'まだありません',
+          },
+          to: {
+            ansDoc: 'まだありません',
+          },
+        });
+        alert('回答しました！');
+      });
+  };
+};
+
+// 画像のアップロード
+export const asyncUploadImage = (
+  uid: string,
+  uri: string,
+  width: number,
+  height: number,
+  imageName: string,
+  thm1: string,
+  thm2: string,
+  thm3: string,
+  add2nd: boolean,
+  add3rd: boolean,
+) => {
+  return async dispatch => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const d = new Date();
+    const dt = d.toString().substr(4, 20);
+    const date = firebase.firestore.FieldValue.serverTimestamp();
+    const thms = [];
+    if (add2nd && add3rd) {
+      thms.push(thm1);
+      thms.push(thm2);
+      thms.push(thm3);
+    } else if (add2nd) {
+      thms.push(thm1);
+      thms.push(thm2);
+    } else {
+      thms.push(thm1);
+    }
+    const isTate = height > width;
+    db.collection('posts')
+      .add({
+        path: `${uid}/${dt}/${imageName}`,
+        w: width,
+        h: height,
+        tate: isTate,
+        postBy: uid,
+        thms: thms,
+        postAt: date,
+      })
+      .then(res => {
+        console.log(res.id);
+        const postRef = rtdb.ref(res.id);
+        postRef.set({ nicesCount: 0, nices: { test: true } });
+
+        alert('投稿完了しました!');
+      })
+      .catch(error => {
+        console.error('Error writing document: ', error);
+      });
+    const ref = storage.ref().child(`${uid}/${dt}/${imageName}`);
+
+    return ref.put(blob);
+  };
+};
 
 // 画像の選択
 
@@ -116,13 +226,30 @@ export const asyncListenNice = (postDoc: string) => {
 
 // 良いねを押した時
 
-export const asyncNice = (postDoc: string, uid: string) => {
+export const asyncNice = (
+  postDoc: string,
+  uid: string,
+  uri: string,
+  postBy: string,
+) => {
   return dispatch => {
     if (postDoc === undefined) return;
-    console.log(postDoc);
     const postRef = rtdb.ref(postDoc);
-    console.log(postRef);
-    // postRef.set({ nicesCount: 1, nices: {} });
+    const myNicesRef = rtdb.ref(uid + '/nices');
+    myNicesRef.transaction(function(niceposts) {
+      if (niceposts) {
+        if (niceposts[postDoc]) {
+          niceposts[postDoc] = null;
+        } else {
+          niceposts[postDoc] = {
+            uri,
+            postBy,
+          };
+        }
+      }
+
+      return niceposts;
+    });
 
     postRef.transaction(function(post) {
       if (post) {

@@ -49,6 +49,15 @@ export type NavigationParamList = {
     postedAt: Date;
     ansAt: Date;
   };
+  // ANSWER: {
+  //   postDoc: string;
+  //   postBy: string;
+  //   postAt: Date;
+  //   uri: string;
+  //   width: number;
+  //   height: number;
+  //   thms: string[];
+  // };
 };
 
 export type DetailParams = {

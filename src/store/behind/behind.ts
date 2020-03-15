@@ -24,6 +24,13 @@ export type PostScreen = {
   imageName: string;
 };
 
+export type Behind = {
+  isFetching: boolean;
+  isError: boolean;
+  ppram: PostedParams;
+  anss: Ans[];
+};
+
 export * from './actions';
 export * from './selector';
 export { postedReducer, detailReducer, postReducer } from './reducer';

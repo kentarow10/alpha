@@ -32,11 +32,16 @@
 * collection('answers')
     * $ansDoc
         * postDoc
-        * uri
-        * body
-        * owner
-        * createdAt
-        * orderThm
+            * uri
+            * body
+            * ansBy
+            * ansAt
+            * orderThm
+            * w
+            * h
+            * postBy
+            * thms
+            * postAt
 
 ## realtime
 
@@ -61,8 +66,8 @@
 * doc(ansDoc)
     * subcollection('comments')
         * content
-        * comBy
-        * comAt
+        * commentBy
+        * commentAt
 
 ## realtime
 

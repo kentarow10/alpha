@@ -10,7 +10,12 @@ import {
   Button,
 } from 'react-native-paper';
 import { View, Button as Bt, Image, Text } from 'react-native';
-import { GetAllMe, asyncGetMyInfo, asyncGetMyCombs } from '../store/me/me';
+import {
+  GetAllMe,
+  asyncGetMyInfo,
+  asyncGetMyCombs,
+  asyncGetMyPosts,
+} from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList } from 'react-native-gesture-handler';
@@ -30,6 +35,7 @@ const profile = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
+    dispatch(asyncGetMyPosts(uid));
     dispatch(asyncGetMyCombs(uid));
   }, []);
 
@@ -44,10 +50,8 @@ const profile = () => {
           )}
         />
         <Card.Content>
-          <Title>{me.userName}</Title>
           <Paragraph>{me.siBody}</Paragraph>
         </Card.Content>
-        <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
         <Card.Actions>
           <Button
             onPress={() => {
@@ -58,8 +62,27 @@ const profile = () => {
           </Button>
         </Card.Actions>
       </Card>
+      <Text>自分の投稿</Text>
+      <FlatList
+        data={me.myPosts}
+        horizontal={true}
+        // data={[1, 2, 3, 4]}
+        renderItem={item => {
+          return (
+            <View>
+              <Image
+                source={{ uri: item.item.uri }}
+                style={{ width: 150, height: 150 }}
+              />
+              <Text>{item.item.owner}</Text>
+            </View>
+          );
+        }}
+      />
+      <Text>自分の回答</Text>
       <FlatList
         data={me.myCombs}
+        horizontal={true}
         // data={[1, 2, 3, 4]}
         renderItem={item => {
           return (

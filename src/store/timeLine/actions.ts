@@ -74,12 +74,13 @@ export const asyncGetPosts = () => {
       .then(snap => {
         const posts: Post[] = [];
         snap.forEach(doc => {
+          console.log('doc.data()');
           console.log(doc.data());
           const thms = doc.data().thms;
-          const owner = doc.data().owner;
-          const width = doc.data().width;
-          const height = doc.data().height;
-          const createdAt = doc.data().createdAt.toDate();
+          const owner = doc.data().postBy;
+          const width = doc.data().w;
+          const height = doc.data().h;
+          const createdAt = doc.data().postAt.toDate();
           storage
             .ref(doc.data().path)
             .getDownloadURL()
@@ -96,6 +97,7 @@ export const asyncGetPosts = () => {
               });
             })
             .catch(e => {
+              console.log(e);
               dispatch(fetchError({}));
             });
           dispatch(getPosts(posts));

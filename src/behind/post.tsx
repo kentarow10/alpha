@@ -22,12 +22,21 @@ import Swiper from 'react-native-swiper';
 import { GetAllMe, asyncGetMyInfo, asyncGetMyCombs } from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native-gesture-handler';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import {
   asyncGetAnss,
   PostState,
   asyncChooseImage,
+  remove3rd,
+  remove2nd,
+  add2nd,
+  add3rd,
+  asyncUploadImage,
 } from '../store/behind/behind';
 import { GetUid } from '../store/auth/auth';
 
@@ -44,7 +53,6 @@ const post = () => {
     },
     wrapper: {
       height: 100,
-      backgroundColor: 'red',
     },
     slide1: {
       flex: 1,
@@ -80,82 +88,163 @@ const post = () => {
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-      <View style={styles.headerBar}>
-        <Text
-          style={{
-            height: 40,
-            marginTop: 10,
-            color: 'white',
-            fontSize: 28,
-            textAlign: 'center',
-            // fontFamily: 'MyFont',
+      <ScrollView>
+        <View style={styles.headerBar}>
+          <Text
+            style={{
+              height: 40,
+              marginTop: 10,
+              color: 'white',
+              fontSize: 28,
+              textAlign: 'center',
+              // fontFamily: 'MyFont',
+            }}
+          >
+            シェアピ
+          </Text>
+        </View>
+        <Card>
+          {state.url === '' ? (
+            <>
+              <Button
+                onPress={() => {
+                  dispatch(asyncChooseImage());
+                }}
+              >
+                画像を選択
+              </Button>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(asyncChooseImage());
+                }}
+              >
+                <Image
+                  source={{ uri: state.url }}
+                  resizeMode="contain"
+                  style={{ width: W, height: 400, backgroundColor: 'black' }}
+                />
+              </TouchableOpacity>
+            </>
+          )}
+        </Card>
+        <Button
+          onPress={() => {
+            console.log(state);
           }}
         >
-          シェアピ
-        </Text>
-      </View>
-      <Card>
-        {state.url === '' ? (
-          <>
-            <Button
-              onPress={() => {
-                dispatch(asyncChooseImage());
-              }}
-            >
-              画像を選択
-            </Button>
-          </>
+          状態
+        </Button>
+        {state.addThm3 && state.addThm2 ? (
+          <Swiper style={styles.wrapper} showsButtons={true}>
+            <TextInput
+              label="お題１"
+              mode="outlined"
+              value={thm1}
+              onChangeText={setThm1}
+            />
+            <>
+              <Button
+                onPress={() => {
+                  dispatch(remove2nd({}));
+                }}
+              >
+                お題取り消し
+              </Button>
+              <TextInput
+                label="お題２"
+                mode="outlined"
+                value={thm2}
+                onChangeText={setThm2}
+              />
+            </>
+            <>
+              <Button
+                onPress={() => {
+                  dispatch(remove3rd({}));
+                }}
+              >
+                お題取り消し
+              </Button>
+              <TextInput
+                label="お題３"
+                mode="outlined"
+                value={thm3}
+                onChangeText={setThm3}
+              />
+            </>
+          </Swiper>
+        ) : state.addThm2 ? (
+          <Swiper style={styles.wrapper} showsButtons={true}>
+            <TextInput
+              label="お題１"
+              mode="outlined"
+              value={thm1}
+              onChangeText={setThm1}
+            />
+            <>
+              <Button
+                onPress={() => {
+                  dispatch(remove2nd({}));
+                }}
+              >
+                お題取り消し
+              </Button>
+              <TextInput
+                label="お題２"
+                mode="outlined"
+                value={thm2}
+                onChangeText={setThm2}
+              />
+              <Button
+                onPress={() => {
+                  dispatch(add3rd({}));
+                }}
+              >
+                お題追加
+              </Button>
+            </>
+          </Swiper>
         ) : (
           <>
-            <TouchableOpacity
+            <TextInput
+              label="お題１"
+              mode="outlined"
+              value={thm1}
+              onChangeText={setThm1}
+            />
+            <Button
               onPress={() => {
-                dispatch(asyncChooseImage());
+                dispatch(add2nd({}));
               }}
             >
-              <Image
-                source={{ uri: state.url }}
-                resizeMode="contain"
-                style={{ width: W, height: 400, backgroundColor: 'black' }}
-              />
-            </TouchableOpacity>
+              お題追加
+            </Button>
           </>
         )}
-      </Card>
-
-      {/* <TextInput
-          label="お題１"
-          mode="outlined"
-          value={thm1}
-          onChangeText={setThm1}
-        /> */}
-
-      <Swiper style={styles.wrapper} showsButtons={true}>
-        <View style={styles.slide1}>
-          <Text style={styles.text}>Hello Swiper</Text>
-        </View>
-        <TextInput
-          label="お題２"
-          mode="outlined"
-          value={thm2}
-          onChangeText={setThm2}
-        />
-        <View style={styles.slide3}>
-          <Text style={styles.text}>And simple</Text>
-        </View>
-      </Swiper>
-
-      {/* <TextInput
-          label="お題２"
-          mode="outlined"
-          value={thm2}
-          onChangeText={setThm2}
-        />
-        <TextInput
-          label="お題３"
-          mode="outlined"
-          value={thm3}
-          onChangeText={setThm3}
-        /> */}
+        <Button
+          onPress={() => {
+            dispatch(
+              asyncUploadImage(
+                uid,
+                state.url,
+                state.width,
+                state.height,
+                state.imageName,
+                thm1,
+                thm2,
+                thm3,
+                state.addThm2,
+                state.addThm3,
+              ),
+            );
+          }}
+        >
+          投稿！
+        </Button>
+      </ScrollView>
     </SafeAreaView>
   );
 };

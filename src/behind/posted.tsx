@@ -123,7 +123,14 @@ const posted = () => {
           />
           <Button
             onPress={() => {
-              dispatch(asyncNice(posted.ppram.postDoc, uid));
+              dispatch(
+                asyncNice(
+                  posted.ppram.postDoc,
+                  uid,
+                  posted.ppram.uri,
+                  posted.ppram.owner,
+                ),
+              );
             }}
           >
             良いね
@@ -141,6 +148,13 @@ const posted = () => {
               );
             }}
           />
+          <Button
+            onPress={() => {
+              navigation.navigate('ANSWER');
+            }}
+          >
+            回答する
+          </Button>
           <Text>{posted.ppram.thms[0]}</Text>
           <Text>{posted.ppram.thms[0]}の回答</Text>
           <FlatList

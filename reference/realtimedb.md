@@ -7,6 +7,17 @@
 jsonのカタチ
 
 * uid
+    * nices
+        * $postDoc
+            * uri
+            * postBy
+    * gotit
+        * $ansDoc
+            * postDoc
+            * uri
+            * thm
+            * body
+            * ansBy
     * linked---部分的に表示させたいデータはもつ
         * $ansDoc
             * postDoc

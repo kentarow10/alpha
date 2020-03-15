@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import firebase, { db, storage } from '../../../firebase/firebase';
+import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
 import { Auth } from './auth';
@@ -112,6 +112,43 @@ export const createUser = (mail: string, pass: string, name: string) => {
       .createUserWithEmailAndPassword(mail, pass)
       .then(res => {
         const uid = res.user.uid;
+
+        const userRef = rtdb.ref(uid);
+        userRef.child('linked').set({
+          sampleAnsDoc: {
+            postDoc: 'postDoc',
+            uri: 'uri',
+            thm: 'thm',
+            body: 'body',
+          },
+        });
+        userRef.child('nices').set({
+          samplePostDoc: {
+            uri: 'uri',
+            postBy: 'postBy',
+          },
+        });
+        userRef.child('gotits').set({
+          sampleAnsDoc: {
+            postDoc: 'postDoc',
+            uri: 'uri',
+            thm: ['thm1', 'thm2', 'thm3'],
+            body: 'body',
+            ansBy: 'ansBy',
+          },
+        });
+
+        db.collection('users')
+          .doc(uid)
+          .set({
+            name,
+            iconPath: '',
+            siBody: '',
+          })
+          .catch(e => {
+            alert(e);
+          });
+
         sq.transaction(
           tx => {
             tx.executeSql(
