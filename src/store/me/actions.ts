@@ -211,7 +211,7 @@ export const asyncGetMyCombs = (uid: string) => {
       snap.forEach(doc => {
         const ans: Comb = {
           postDoc: doc.data().postDoc,
-          ansDoc: doc.data().ansDoc,
+          ansDoc: doc.id,
           uri: doc.data().uri,
           thms: doc.data().thms,
           orderThm: doc.data().orderThm,

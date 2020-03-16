@@ -10,7 +10,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from './myNav/types';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -18,6 +18,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import Modal from 'react-native-modal';
 import {
   Avatar,
   Caption,
@@ -28,14 +29,17 @@ import {
   Title,
   TouchableRipple,
   useTheme,
+  Button,
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
 
 import { PreferencesContext } from '../context/preferencesContext';
 import { BaseRouter, DrawerActions } from '@react-navigation/native';
-import { FlatList } from 'react-native-gesture-handler';
-import { useSelector } from 'react-redux';
+import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
+import { useSelector, useDispatch } from 'react-redux';
 import { GetAllMe } from '../store/me/me';
+import { asyncLink, DetailState } from '../store/behind/behind';
+import { rtdb } from '../../firebase/firebase';
 
 type Props = DrawerContentComponentProps<DrawerContentOptions>;
 const { width, height } = Dimensions.get('window');
@@ -79,12 +83,61 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
+  modal: {
+    backgroundColor: 'white',
+    padding: 10,
+    height: height / 4,
+    width: (width * 2) / 3,
+    borderWidth: 15,
+    borderRadius: 45,
+    borderColor: 'white',
+  },
 });
 
 export function DrawerContent(props: Props) {
+  const dispatch = useDispatch();
   const paperTheme = useTheme();
   const { theme, toggleTheme } = React.useContext(PreferencesContext);
   const mypins = useSelector(GetAllMe);
+  const detail = useSelector(DetailState);
+  const [modal, setModal] = useState(false);
+  const [selectedItem, setItem] = useState({
+    ansDoc: '',
+    postDoc: '',
+    uri: '',
+    thm: '',
+    body: '',
+  });
+
+  const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
+    const fromRef = rtdb.ref(fromAnsDoc);
+    const toRef = rtdb.ref(toAnsDoc);
+    let c1 = false;
+    let c2 = false;
+    fromRef.transaction(function(frommmm) {
+      if (frommmm.from[toAnsDoc]) {
+        c1 = true;
+      }
+    });
+    toRef.transaction(function(toooo) {
+      if (toooo.to[fromAnsDoc]) {
+        c2 = true;
+      }
+    });
+    if (c1 && c2) {
+      const refFrom = rtdb.ref(fromAnsDoc + '/mutual/' + toAnsDoc);
+      // refFrom.set({
+      //   ...fromRef.from[toAnsDoc],
+      // });
+      console.log('相互');
+
+      return true;
+    } else if (c1 || c2) {
+      console.log('おかしい');
+    } else {
+      return false;
+    }
+  };
 
   const translateX = Animated.interpolate(props.progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
@@ -128,18 +181,66 @@ export function DrawerContent(props: Props) {
                 data={mypins.myCombs}
                 renderItem={item => {
                   return (
-                    <View>
-                      <Image
-                        source={{ uri: item.item.uri }}
-                        style={{ width: 50, height: 50 }}
-                      />
-                      <Text>{item.item.thms[item.item.orderThm - 1]}</Text>
-                      <Text>{item.item.body}</Text>
-                    </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        console.log(item.item);
+                        setItem({
+                          ansDoc: item.item.ansDoc,
+                          postDoc: item.item.postDoc,
+                          uri: item.item.uri,
+                          thm: item.item.thms[item.item.orderThm - 1],
+                          body: item.item.body,
+                        });
+                        setModal(true);
+                      }}
+                    >
+                      <View>
+                        <Image
+                          source={{ uri: item.item.uri }}
+                          style={{ width: 50, height: 50 }}
+                        />
+                        <Text>{item.item.thms[item.item.orderThm - 1]}</Text>
+                        <Text>{item.item.body}</Text>
+                      </View>
+                    </TouchableOpacity>
                   );
                 }}
               />
             </View>
+            <Modal
+              isVisible={modal}
+              onBackdropPress={() => {
+                setModal(false);
+              }}
+            >
+              <View style={styles.modal}>
+                <Text>この回答からリンクしますか？</Text>
+                <Button
+                  onPress={() => {
+                    mutualCheck(selectedItem.ansDoc, detail.dpram.ansDoc);
+                  }}
+                >
+                  相互チェック
+                </Button>
+
+                <Button
+                  onPress={() => {
+                    dispatch(
+                      asyncLink(
+                        detail.dpram,
+                        selectedItem.ansDoc,
+                        selectedItem.postDoc,
+                        selectedItem.uri,
+                        selectedItem.thm,
+                        selectedItem.body,
+                      ),
+                    );
+                  }}
+                >
+                  OK!
+                </Button>
+              </View>
+            </Modal>
           </>
         ) : (
           <>

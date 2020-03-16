@@ -25,9 +25,12 @@ import {
   asyncGetAnss,
   DetailState,
   detailInit,
+  asyncGotit,
+  asyncListenGotit,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import { mypinModeOn } from '../store/screenMgr/mgr';
+import { GetUid } from '../store/auth/auth';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -37,10 +40,13 @@ const HEIGHT = Dimensions.get('window').height;
 const timeLine = () => {
   const dispatch = useDispatch();
   const { colors } = useTheme();
+  const uid = useSelector(GetUid);
   const detail = useSelector(DetailState);
+  const posted = useSelector(PostedState);
   const navigation = useContext(NavigationContext);
   const route = useRoute<RouteProp<NavigationParamList, 'DETAIL'>>();
   const prm = route.params;
+  const proportion = posted.ppram.height / posted.ppram.width;
 
   const styles = StyleSheet.create({
     headerBar: {
@@ -67,6 +73,7 @@ const timeLine = () => {
   };
 
   useEffect(() => {
+    dispatch(asyncListenGotit(prm.ansDoc));
     dispatch(
       detailInit({
         postDoc: prm.postDoc,
@@ -107,14 +114,22 @@ const timeLine = () => {
             source={{ uri: detail.dpram.uri }}
             resizeMode="contain"
             style={{
-              width: detail.dpram.width,
-              height: detail.dpram.height,
+              width: WIDTH,
+              height: WIDTH * proportion,
               backgroundColor: 'black',
             }}
             // style={styles.img}
           />
           <Text>{detail.dpram.thm}</Text>
           <Text>{detail.dpram.body}</Text>
+          <Button
+            onPress={() => {
+              dispatch(asyncGotit(detail.dpram, uid));
+            }}
+          >
+            わかる！
+          </Button>
+          <Text>{detail.numGotit}</Text>
           <Button
             onPress={() => {
               dispatch(mypinModeOn({}));

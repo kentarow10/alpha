@@ -40,6 +40,83 @@ const toggleNice = (postRef, uid) => {
   return post;
 };
 
+const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
+  const fromRef = rtdb.ref(fromAnsDoc);
+  const toRef = rtdb.ref(toAnsDoc);
+  let c1 = false;
+  let c2 = false;
+  fromRef.transaction(function(from) {
+    console.log(from);
+    if (from.from[toAnsDoc]) {
+      from.mutual[toAnsDoc] = from.from[toAnsDoc];
+      c1 = true;
+    }
+  });
+  toRef.transaction(function(to) {
+    console.log(to);
+    if (to.to[fromAnsDoc]) {
+      to.mutual[fromAnsDoc] = to.to[fromAnsDoc];
+      c2 = true;
+    }
+  });
+  if (c1 && c2) {
+    return true;
+  } else if (c1 || c2) {
+    console.log('おかしい');
+  } else {
+    return false;
+  }
+};
+
+const mutualCheck2 = async (
+  dparam: DetailParams,
+  myansDoc: string,
+  myansPostDoc: string,
+  myansUri: string,
+  myansThm: string,
+  myansBody: string,
+) => {
+  const fromRef = rtdb.ref(myansDoc);
+  const toRef = rtdb.ref(dparam.ansDoc);
+  let c1 = false;
+  let c2 = false;
+  fromRef.transaction(function(frommm) {
+    console.log(frommm.from[dparam.ansDoc]);
+    if (frommm.from[dparam.ansDoc]) {
+      c1 = true;
+    }
+  });
+  toRef.transaction(function(tooo) {
+    console.log(tooo.to[myansDoc]);
+    if (tooo.to[myansDoc]) {
+      c2 = true;
+    }
+  });
+  if (c1 && c2) {
+    console.log('相互');
+    const refFrom = rtdb.ref(myansDoc + '/mutual/' + dparam.ansDoc);
+    refFrom.set({
+      postDoc: dparam.postDoc,
+      uri: dparam.uri,
+      thm: dparam.thm,
+      body: dparam.body,
+    });
+    const refTo = rtdb.ref(dparam.ansDoc + '/mutual/' + myansDoc);
+    refTo.set({
+      postDoc: myansPostDoc,
+      uri: myansUri,
+      thm: myansThm,
+      body: myansBody,
+    });
+
+    return true;
+  } else if (c1 || c2) {
+    console.log('おかしい');
+  } else {
+    return false;
+  }
+};
+
 // plain Actions
 
 export const startFetch = actionCreator<{}>('START_FETCH');
@@ -60,6 +137,11 @@ export const getNice = actionCreator<{ numNice: number; niceByList: string[] }>(
   'GET_NICE',
 );
 
+export const getGotit = actionCreator<{
+  numGotit: number;
+  gotitByList: string[];
+}>('GET_GOTIT');
+
 export const detailInit = actionCreator<DetailParams>('DETAIL_INIT');
 
 export const add2nd = actionCreator<{}>('ADD_2ND');
@@ -75,6 +157,35 @@ export const setImage = actionCreator<{
 }>('SET_IMG');
 
 // Async Actions
+
+// リンクする
+
+export const asyncLink = (
+  dparam: DetailParams,
+  myansDoc: string,
+  myansPostDoc: string,
+  myansUri: string,
+  myansThm: string,
+  myansBody: string,
+) => {
+  return async dispatch => {
+    const toansRef = rtdb.ref(dparam.ansDoc + '/from/' + myansDoc);
+    toansRef.set({
+      postDoc: myansPostDoc,
+      uri: myansUri,
+      thm: myansThm,
+      body: myansBody,
+    });
+    const fromansRef = rtdb.ref(myansDoc + '/to/' + dparam.ansDoc);
+    fromansRef.set({
+      postDoc: dparam.postDoc,
+      uri: dparam.uri,
+      thm: dparam.thm,
+      body: dparam.body,
+    });
+    mutualCheck2(dparam, myansDoc, myansPostDoc, myansUri, myansThm, myansBody);
+  };
+};
 
 // 回答送信
 
@@ -206,6 +317,24 @@ export const asyncChooseImage = () => {
   };
 };
 
+// わかる！のリスン
+
+export const asyncListenGotit = (ansDoc: string) => {
+  return disptch => {
+    console.log('called');
+    rtdb.ref(ansDoc).on('value', snap => {
+      const numGotit = snap.val().gCount;
+      if (snap.val().gs) {
+        console.log(snap.val().gs);
+        const gotitByList = Object.keys(snap.val().gs);
+        disptch(getGotit({ numGotit, gotitByList }));
+      } else {
+        disptch(getGotit({ numGotit: 0, gotitByList: [] }));
+      }
+    });
+  };
+};
+
 // 良いねのリスン
 
 export const asyncListenNice = (postDoc: string) => {
@@ -213,12 +342,52 @@ export const asyncListenNice = (postDoc: string) => {
     rtdb.ref(postDoc).on('value', snap => {
       const numNice = snap.val().nicesCount;
       if (snap.val().nices) {
-        console.log(snap.val().nices);
         const niceByList = Object.keys(snap.val().nices);
         dispatch(getNice({ numNice, niceByList }));
       } else {
-        console.log('snap.val().nices');
         dispatch(getNice({ numNice, niceByList: [] }));
+      }
+    });
+  };
+};
+
+// わかる！を押した時
+
+export const asyncGotit = (dparam: DetailParams, uid: string) => {
+  return dispatch => {
+    const ansRef = rtdb.ref(dparam.ansDoc);
+    const myGotitRef = rtdb.ref(uid + '/gotit');
+    myGotitRef.transaction(function(gotitanss) {
+      if (gotitanss) {
+        if (gotitanss[dparam.ansDoc]) {
+          gotitanss[dparam.ansDoc] = null;
+        } else {
+          gotitanss[dparam.ansDoc] = {
+            postDoc: dparam.postDoc,
+            uri: dparam.uri,
+            thm: dparam.thm,
+            body: dparam.body,
+            ansBy: dparam.ansBy,
+          };
+        }
+      }
+
+      return gotitanss;
+    });
+
+    ansRef.transaction(function(ans) {
+      console.log('ans');
+      console.log(ans);
+      if (ans) {
+        if (ans.gs && ans.gs[uid]) {
+          ans.gCount--;
+          ans.gs[uid] = null;
+        } else {
+          ans.gCount++;
+          ans.gs[uid] = true;
+        }
+
+        return ans;
       }
     });
   };

@@ -14,6 +14,7 @@ import {
   setImage,
   remove2nd,
   remove3rd,
+  getGotit,
 } from './actions';
 
 const initialBehind: Behind = {
@@ -112,6 +113,8 @@ const initialDetail: Detail = {
     postedAt: new Date(),
     ansAt: new Date(),
   },
+  numGotit: 0,
+  gotitByList: [],
 };
 
 export const detailReducer: Reducer<Detail> = reducerWithInitialState(
@@ -125,6 +128,11 @@ export const detailReducer: Reducer<Detail> = reducerWithInitialState(
   .case(detailInit, (state, payload) => ({
     ...state,
     dpram: payload,
+  }))
+  .case(getGotit, (state, payload) => ({
+    ...state,
+    numGotit: payload.numGotit,
+    gotitByList: payload.gotitByList,
   }));
 
 // post screen

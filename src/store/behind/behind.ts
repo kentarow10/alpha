@@ -12,6 +12,8 @@ export type Detail = {
   isFetching: boolean;
   isError: boolean;
   dpram: DetailParams;
+  numGotit: number;
+  gotitByList: string[];
 };
 
 export type PostScreen = {
