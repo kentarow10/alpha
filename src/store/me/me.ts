@@ -1,4 +1,5 @@
 import { Post, Ans, Comb, Nice } from '../types';
+import { SimpleNice, SimplePin } from './actions';
 
 export type Me = {
   isFetching: boolean;
@@ -10,8 +11,8 @@ export type Me = {
   showPostMode: boolean;
   myCombs: Comb[];
   myPosts: Post[];
-  myNicePosts: Nice[];
-  myGotitCombs: Comb[];
+  myNicePosts: SimpleNice[];
+  myGotitPins: SimplePin[];
   myLinkedCombs: Comb[];
 };
 

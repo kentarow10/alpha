@@ -11,7 +11,7 @@ jsonのカタチ
         * $postDoc
             * uri
             * postBy
-    * gotit
+    * gotits
         * $ansDoc
             * postDoc
             * uri
@@ -31,8 +31,8 @@ jsonのカタチ
         * $uid
 
 * $ansDoc
-    * gotitsCount
-    * gotits
+    * gCount
+    * gs
         * $uid
     * mutual
         * $ansDoc---部分的に表示させたいデータはもつ

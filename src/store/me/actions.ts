@@ -57,9 +57,9 @@ export const getMyCombs = actionCreator<Comb[]>('GET_MY_COMB');
 
 export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
-export const getMyNicePosts = actionCreator<Nice[]>('GET_MY_NICE_POST');
+export const getMyNicePosts = actionCreator<SimpleNice[]>('GET_MY_NICE_POST');
 
-export const getMyGotitAnss = actionCreator<Comb[]>('GET_MY_GOTIT_ANS');
+export const getMyGotitPins = actionCreator<SimplePin[]>('GET_MY_GOTIT_ANS');
 
 export const getMyLinkedAnss = actionCreator<Comb[]>('GET_MY_LINKED_ANS');
 
@@ -71,52 +71,56 @@ export const updateSiBody = actionCreator<{ siBody: string }>('UPDATE_SIBODY');
 
 // 自分がいいねした投稿一覧
 
+export type SimpleNice = {
+  postDoc: string;
+  uri: string;
+  postBy: string;
+};
+
 export const asyncGetMyNicePosts = (uid: string) => {
-  return dispatch => {
-    db.collection('users')
-      .doc(uid)
-      .collection('nices')
-      .get()
-      .then(snap => {
-        const mynices: Nice[] = [];
-        snap.forEach(doc => {
-          const nice: Nice = {
-            postDoc: doc.id,
-            uri: doc.data().uri,
-            by: doc.data().owner,
-          };
-          mynices.push(nice);
-        });
-        dispatch(getMyNicePosts(mynices));
-      });
+  return async dispatch => {
+    const nices = await rtdb.ref(uid + '/nices').once('value');
+    console.log('nices');
+    const obj = nices.val();
+    const postDocs = Object.keys(obj);
+    console.log(postDocs);
+    const niceList: SimpleNice[] = postDocs.map(pd => {
+      const uri = obj[pd].uri;
+      const postBy = obj[pd].postBy;
+
+      return { postDoc: pd, uri, postBy };
+    });
+    console.log(niceList);
+    dispatch(getMyNicePosts(niceList));
   };
 };
 
 // 自分が分かる！した回答一覧
 
-export const asyncGetMyGotitAnss = (uid: string) => {
-  // return dispatch => {
-  //   db.collection('users')
-  //     .doc(uid)
-  //     .collection('gotits')
-  //     .get()
-  //     .then(snap => {
-  //       const mygotits: Comb[] = [];
-  //       snap.forEach(doc => {
-  //         const gotit: Comb = {
-  //           ansDoc: doc.id,
-  //           postDoc: doc.data().postDoc,
-  //           uri: doc.data().uri,
-  //           thm: doc.data().thm,
-  //           ans: doc.data().ans,
-  //           postedBy: doc.data().postedBy,
-  //           answeredBy: doc.data().answeredBy,
-  //         };
-  //         mygotits.push(gotit);
-  //       });
-  //       dispatch(getMyGotitAnss(mygotits));
-  //     });
-  // };
+export type SimplePin = {
+  ansDoc: string;
+  postDoc: string;
+  uri: string;
+  thm: string;
+  body: string;
+  ansBy: string;
+};
+
+export const asyncGetMyGotitPins = (uid: string) => {
+  return async dispatch => {
+    const gotits = await rtdb.ref(uid + '/gotits').once('value');
+    const ansDoc = Object.keys(gotits);
+    const gotitsList: SimplePin[] = ansDoc.map(ad => {
+      const postDoc = gotits[ad].postDoc;
+      const uri = gotits[ad].uri;
+      const thm = gotits[ad].thm;
+      const body = gotits[ad].body;
+      const ansBy = gotits[ad].ansBy;
+
+      return { ansDoc: ad, postDoc, uri, thm, body, ansBy };
+    });
+    dispatch(getMyGotitPins(gotitsList));
+  };
 };
 
 // ほかのユーザーからリンクされた自分の回答一覧

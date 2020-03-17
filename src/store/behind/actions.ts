@@ -187,6 +187,58 @@ export const asyncLink = (
   };
 };
 
+// コメントフェッチ（テーマごと）
+
+export const asyncFetchComment = (postDoc: string, ansDoc: string) => {
+  return async dispatch => {
+    db.collection('posts')
+      .doc(postDoc)
+      .collection('answers')
+      .doc(ansDoc)
+      .collection('comments')
+      .get()
+      .then(snap => {
+        const comList = [];
+        snap.forEach(comDoc => {
+          const com = comDoc.data().com;
+          const comBy = comDoc.data().comBy;
+          const comAt = comDoc.data().comAt;
+          comList.push({ comDoc: comDoc.id, com, comBy, comAt });
+        });
+        // todo
+        // dispatch()
+      });
+  };
+};
+
+// コメント送信
+
+export const asyncComment = (
+  dparam: DetailParams,
+  comment: string,
+  uid: string,
+) => {
+  return async dispach => {
+    const commentAt = firebase.firestore.FieldValue.serverTimestamp();
+    db.collection('posts')
+      .doc(dparam.postDoc)
+      .collection('answers')
+      .doc(dparam.ansDoc)
+      .collection('comments')
+      .add({
+        com: comment,
+        comBy: uid,
+        comAt: commentAt,
+      })
+      .then(() => {
+        console.log('コメントした');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+};
+
 // 回答送信
 
 export const asyncAnswer = (
@@ -356,7 +408,7 @@ export const asyncListenNice = (postDoc: string) => {
 export const asyncGotit = (dparam: DetailParams, uid: string) => {
   return dispatch => {
     const ansRef = rtdb.ref(dparam.ansDoc);
-    const myGotitRef = rtdb.ref(uid + '/gotit');
+    const myGotitRef = rtdb.ref(uid + '/gotits');
     myGotitRef.transaction(function(gotitanss) {
       if (gotitanss) {
         if (gotitanss[dparam.ansDoc]) {

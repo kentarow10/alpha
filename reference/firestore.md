@@ -24,9 +24,9 @@
             * postAt
             * subcollection('comments')
                 * $commentDocument
-                    * body
-                    * commentBy
-                    * commentAt
+                    * com
+                    * comBy
+                    * comAt
 
 ## collection('users')
 * $uid

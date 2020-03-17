@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
-import { useTheme, Button } from 'react-native-paper';
+import { useTheme, Button, TextInput } from 'react-native-paper';
 import {
   View,
   Button as Bt,
@@ -44,6 +44,7 @@ const timeLine = () => {
   const detail = useSelector(DetailState);
   const posted = useSelector(PostedState);
   const navigation = useContext(NavigationContext);
+  const [com, setCom] = useState('');
   const route = useRoute<RouteProp<NavigationParamList, 'DETAIL'>>();
   const prm = route.params;
   const proportion = posted.ppram.height / posted.ppram.width;
@@ -138,6 +139,15 @@ const timeLine = () => {
           >
             リンクする
           </Button>
+          <Text>コメント</Text>
+          <TextInput
+            // style={styles.field}
+            mode="flat"
+            multiline={true}
+            value={com}
+            onChangeText={setCom}
+          />
+          <Button onPress={() => {}}>コメント送信！</Button>
         </View>
       </SafeAreaView>
     </React.Fragment>
