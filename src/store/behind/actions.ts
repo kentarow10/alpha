@@ -156,6 +156,8 @@ export const setImage = actionCreator<{
   height: number;
 }>('SET_IMG');
 
+export const getComments = actionCreator<Comment[]>('GET_COMMENTS');
+
 // Async Actions
 
 // リンクする
@@ -206,7 +208,7 @@ export const asyncFetchComment = (postDoc: string, ansDoc: string) => {
           comList.push({ comDoc: comDoc.id, com, comBy, comAt });
         });
         // todo
-        // dispatch()
+        dispatch(getComments(comList));
       });
   };
 };
@@ -232,6 +234,7 @@ export const asyncComment = (
       })
       .then(() => {
         console.log('コメントした');
+        asyncFetchComment(dparam.postDoc, dparam.ansDoc);
       })
       .catch(e => {
         console.log(e);

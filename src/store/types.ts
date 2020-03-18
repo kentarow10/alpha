@@ -120,11 +120,10 @@ export type Ans = {
 // };
 
 export type Comment = {
-  doc?: string;
-  ansDoc: string;
-  userName: string;
-  content: string;
-  numGood: number;
+  comDoc: string;
+  com: string;
+  comBy: string;
+  comAt: Date;
 };
 
 // me

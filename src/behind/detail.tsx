@@ -27,6 +27,8 @@ import {
   detailInit,
   asyncGotit,
   asyncListenGotit,
+  asyncComment,
+  asyncFetchComment,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import { mypinModeOn } from '../store/screenMgr/mgr';
@@ -74,6 +76,7 @@ const timeLine = () => {
   };
 
   useEffect(() => {
+    dispatch(asyncFetchComment(prm.postDoc, prm.ansDoc));
     dispatch(asyncListenGotit(prm.ansDoc));
     dispatch(
       detailInit({
@@ -140,6 +143,10 @@ const timeLine = () => {
             リンクする
           </Button>
           <Text>コメント</Text>
+          <FlatList
+            data={detail.comments}
+            renderItem={item => <Text>{item.item.com}</Text>}
+          />
           <TextInput
             // style={styles.field}
             mode="flat"
@@ -147,7 +154,13 @@ const timeLine = () => {
             value={com}
             onChangeText={setCom}
           />
-          <Button onPress={() => {}}>コメント送信！</Button>
+          <Button
+            onPress={() => {
+              dispatch(asyncComment(prm, com, uid));
+            }}
+          >
+            コメント送信！
+          </Button>
         </View>
       </SafeAreaView>
     </React.Fragment>

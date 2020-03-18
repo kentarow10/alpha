@@ -1,4 +1,10 @@
-import { PostedParams, Ans, NavigationParamList, DetailParams } from '../types';
+import {
+  PostedParams,
+  Ans,
+  NavigationParamList,
+  DetailParams,
+  Comment,
+} from '../types';
 import { RouteProp } from '@react-navigation/native';
 
 export type Posted = {
@@ -14,6 +20,7 @@ export type Detail = {
   dpram: DetailParams;
   numGotit: number;
   gotitByList: string[];
+  comments: Comment[];
 };
 
 export type PostScreen = {

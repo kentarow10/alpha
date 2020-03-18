@@ -15,6 +15,7 @@ import {
   remove2nd,
   remove3rd,
   getGotit,
+  getComments,
 } from './actions';
 
 const initialBehind: Behind = {
@@ -115,6 +116,7 @@ const initialDetail: Detail = {
   },
   numGotit: 0,
   gotitByList: [],
+  comments: [],
 };
 
 export const detailReducer: Reducer<Detail> = reducerWithInitialState(
@@ -133,6 +135,10 @@ export const detailReducer: Reducer<Detail> = reducerWithInitialState(
     ...state,
     numGotit: payload.numGotit,
     gotitByList: payload.gotitByList,
+  }))
+  .case(getComments, (state, payload) => ({
+    ...state,
+    comments: payload,
   }));
 
 // post screen
