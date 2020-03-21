@@ -61,11 +61,11 @@ const posted = () => {
       textAlign: 'right',
     },
   });
-  const getFont = async () => {
-    await Font.loadAsync({
-      MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
-    });
-  };
+  // const getFont = async () => {
+  //   await Font.loadAsync({
+  //     MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
+  //   });
+  // };
 
   useEffect(() => {
     console.log('prm');

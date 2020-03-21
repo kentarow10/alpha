@@ -17,26 +17,6 @@ async function getFromStorage(path: string) {
   return url;
 }
 
-const getComments = (docs: string[]) => {
-  const comments: Comment[] = [];
-  docs.forEach(async d => {
-    const commentData = await db
-      .collection('comments')
-      .doc(d)
-      .get();
-    const comment: Comment = {
-      doc: commentData.id,
-      ansDoc: commentData.data().ansDoc,
-      userName: commentData.data().userName,
-      content: commentData.data().content,
-      numGood: commentData.data().numGood,
-    };
-    comments.push(comment);
-  });
-
-  return comments;
-};
-
 // plain Actions
 
 export const startFetch = actionCreator<{}>('START_FETCH');
@@ -77,21 +57,27 @@ export type SimpleNice = {
   postBy: string;
 };
 
-export const asyncGetMyNicePosts = (uid: string) => {
-  return async dispatch => {
-    const nices = await rtdb.ref(uid + '/nices').once('value');
-    console.log('nices');
-    const obj = nices.val();
-    const postDocs = Object.keys(obj);
-    console.log(postDocs);
-    const niceList: SimpleNice[] = postDocs.map(pd => {
-      const uri = obj[pd].uri;
-      const postBy = obj[pd].postBy;
+// 自分のいいねのリスン
 
-      return { postDoc: pd, uri, postBy };
-    });
-    console.log(niceList);
-    dispatch(getMyNicePosts(niceList));
+export const listenMyNices = (uid: string) => {
+  return async dispatch => {
+    db.collection('users')
+      .doc(uid)
+      .collection('nices')
+      .onSnapshot(snap => {
+        const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
+        console.log('listened change at ' + source);
+        const niceList: SimpleNice[] = [];
+        snap.forEach(post => {
+          if (post.data().flag) {
+            const postDoc = post.id;
+            const uri = post.data().uri;
+            const postBy = post.data().postBy;
+            niceList.push({ postDoc, uri, postBy });
+          }
+        });
+        dispatch(getMyNicePosts(niceList));
+      });
   };
 };
 
@@ -104,6 +90,33 @@ export type SimplePin = {
   thm: string;
   body: string;
   ansBy: string;
+};
+
+// 自分のわかる！のリスン
+
+export const listenMyGotits = (uid: string) => {
+  return async dispatch => {
+    db.collection('users')
+      .doc(uid)
+      .collection('gotits')
+      .onSnapshot(snap => {
+        const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
+        console.log('listened change at ' + source);
+        const gotitList: SimplePin[] = [];
+        snap.forEach(ans => {
+          if (ans.data().flag) {
+            const ansDoc = ans.id;
+            const postDoc = ans.data().postDoc;
+            const uri = ans.data().uri;
+            const thm = ans.data().thm;
+            const body = ans.data().body;
+            const ansBy = ans.data().ansBy;
+            gotitList.push({ ansDoc, postDoc, uri, thm, body, ansBy });
+          }
+        });
+        dispatch(getMyGotitPins(gotitList));
+      });
+  };
 };
 
 export const asyncGetMyGotitPins = (uid: string) => {

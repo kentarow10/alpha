@@ -114,32 +114,18 @@ export const createUser = (mail: string, pass: string, name: string) => {
         const uid = res.user.uid;
 
         const userRef = rtdb.ref(uid);
-        userRef.child('linked').set({
-          sampleAnsDoc: {
-            postDoc: 'postDoc',
-            uri: 'uri',
-            thm: 'thm',
-            body: 'body',
-          },
-        });
-        userRef.child('nices').set({
-          samplePostDoc: {
-            uri: 'uri',
-            postBy: 'postBy',
-          },
-        });
-        userRef.child('gotits').set({
-          sampleAnsDoc: {
-            postDoc: 'postDoc',
-            uri: 'uri',
-            thm: ['thm1', 'thm2', 'thm3'],
-            body: 'body',
-            ansBy: 'ansBy',
-          },
-        });
+        userRef.set({ name });
+        const uref = db.collection('users').doc(uid);
 
-        db.collection('users')
-          .doc(uid)
+        uref
+          .collection('nices')
+          .doc('samplePostDocument')
+          .set({ flag: true });
+        uref
+          .collection('gotits')
+          .doc('sampleAnsDocument')
+          .set({ flag: true });
+        uref
           .set({
             name,
             iconPath: '',

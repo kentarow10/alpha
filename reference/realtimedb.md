@@ -7,23 +7,7 @@
 jsonのカタチ
 
 * uid
-    * nices
-        * $postDoc
-            * uri
-            * postBy
-    * gotits
-        * $ansDoc
-            * postDoc
-            * uri
-            * thm
-            * body
-            * ansBy
-    * linked---部分的に表示させたいデータはもつ
-        * $ansDoc
-            * postDoc
-            * uri
-            * thm
-            * body
+    * username
 
 * $postDoc
     * nicesCount
@@ -34,24 +18,6 @@ jsonのカタチ
     * gCount
     * gs
         * $uid
-    * mutual
-        * $ansDoc---部分的に表示させたいデータはもつ
-            * postDoc
-            * uri
-            * thm
-            * body
-    * from
-        * $ansDoc---部分的に表示させたいデータはもつ
-            * postDoc
-            * uri
-            * thm
-            * body
-    * to
-        * $ansDoc---部分的に表示させたいデータはもつ
-            * postDoc
-            * uri
-            * thm
-            * body
 
 * NoSQL概要
     * RDBでは対処しづらいビッグデータに対応すべく生み出された技術

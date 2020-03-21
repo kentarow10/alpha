@@ -40,81 +40,43 @@ const toggleNice = (postRef, uid) => {
   return post;
 };
 
-const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
-  const fromRef = rtdb.ref(fromAnsDoc);
-  const toRef = rtdb.ref(toAnsDoc);
-  let c1 = false;
-  let c2 = false;
-  fromRef.transaction(function(from) {
-    console.log(from);
-    if (from.from[toAnsDoc]) {
-      from.mutual[toAnsDoc] = from.from[toAnsDoc];
-      c1 = true;
-    }
-  });
-  toRef.transaction(function(to) {
-    console.log(to);
-    if (to.to[fromAnsDoc]) {
-      to.mutual[fromAnsDoc] = to.to[fromAnsDoc];
-      c2 = true;
-    }
-  });
-  if (c1 && c2) {
-    return true;
-  } else if (c1 || c2) {
-    console.log('おかしい');
-  } else {
-    return false;
-  }
-};
+export const mutualCheck = async (myAnsDoc: string, ansDoc: string) => {
+  const myFrom = db
+    .collection('links')
+    .doc(myAnsDoc)
+    .collection('from')
+    .doc(ansDoc);
+  const myTo = db
+    .collection('links')
+    .doc(myAnsDoc)
+    .collection('from')
+    .doc(ansDoc);
+  const myMutual = db
+    .collection('links')
+    .doc(myAnsDoc)
+    .collection('mutual')
+    .doc(ansDoc);
 
-const mutualCheck2 = async (
-  dparam: DetailParams,
-  myansDoc: string,
-  myansPostDoc: string,
-  myansUri: string,
-  myansThm: string,
-  myansBody: string,
-) => {
-  const fromRef = rtdb.ref(myansDoc);
-  const toRef = rtdb.ref(dparam.ansDoc);
-  let c1 = false;
-  let c2 = false;
-  fromRef.transaction(function(frommm) {
-    console.log(frommm.from[dparam.ansDoc]);
-    if (frommm.from[dparam.ansDoc]) {
-      c1 = true;
-    }
-  });
-  toRef.transaction(function(tooo) {
-    console.log(tooo.to[myansDoc]);
-    if (tooo.to[myansDoc]) {
-      c2 = true;
-    }
-  });
-  if (c1 && c2) {
-    console.log('相互');
-    const refFrom = rtdb.ref(myansDoc + '/mutual/' + dparam.ansDoc);
-    refFrom.set({
-      postDoc: dparam.postDoc,
-      uri: dparam.uri,
-      thm: dparam.thm,
-      body: dparam.body,
+  return db.runTransaction(trn => {
+    return trn.get(myTo).then(dt => {
+      if (dt.exists) {
+        trn.get(myFrom).then(df => {
+          if (df.exists) {
+            trn.update(myMutual, {
+              postDoc: df.data().postDoc,
+              uri: df.data().uri,
+              thm: df.data().thm,
+              body: df.data().body,
+            });
+          } else {
+            trn.delete(myMutual);
+          }
+        });
+      } else {
+        trn.delete(myMutual);
+      }
     });
-    const refTo = rtdb.ref(dparam.ansDoc + '/mutual/' + myansDoc);
-    refTo.set({
-      postDoc: myansPostDoc,
-      uri: myansUri,
-      thm: myansThm,
-      body: myansBody,
-    });
-
-    return true;
-  } else if (c1 || c2) {
-    console.log('おかしい');
-  } else {
-    return false;
-  }
+  });
 };
 
 // plain Actions
@@ -160,6 +122,26 @@ export const getComments = actionCreator<Comment[]>('GET_COMMENTS');
 
 // Async Actions
 
+// リンク解除
+
+export const asyncDelink = (myAnsDoc: string, toAnsDoc: string) => {
+  return async dispatch => {
+    const myRef = db
+      .collection('links')
+      .doc(myAnsDoc)
+      .collection('to')
+      .doc(toAnsDoc);
+    const toRef = db
+      .collection('links')
+      .doc(toAnsDoc)
+      .collection('from')
+      .doc(myAnsDoc);
+    await myRef.delete();
+    await toRef.delete();
+    alert('リンク解除しました。');
+  };
+};
+
 // リンクする
 
 export const asyncLink = (
@@ -171,21 +153,28 @@ export const asyncLink = (
   myansBody: string,
 ) => {
   return async dispatch => {
-    const toansRef = rtdb.ref(dparam.ansDoc + '/from/' + myansDoc);
-    toansRef.set({
+    const fromansRef = db
+      .collection('links')
+      .doc(dparam.ansDoc)
+      .collection('from')
+      .doc(myansDoc);
+    fromansRef.set({
       postDoc: myansPostDoc,
       uri: myansUri,
       thm: myansThm,
       body: myansBody,
     });
-    const fromansRef = rtdb.ref(myansDoc + '/to/' + dparam.ansDoc);
-    fromansRef.set({
+    const toansRef = db
+      .collection('links')
+      .doc(myansDoc)
+      .collection('to')
+      .doc(dparam.ansDoc);
+    toansRef.set({
       postDoc: dparam.postDoc,
       uri: dparam.uri,
       thm: dparam.thm,
       body: dparam.body,
     });
-    mutualCheck2(dparam, myansDoc, myansPostDoc, myansUri, myansThm, myansBody);
   };
 };
 
@@ -409,30 +398,9 @@ export const asyncListenNice = (postDoc: string) => {
 // わかる！を押した時
 
 export const asyncGotit = (dparam: DetailParams, uid: string) => {
-  return dispatch => {
+  return async dispatch => {
     const ansRef = rtdb.ref(dparam.ansDoc);
-    const myGotitRef = rtdb.ref(uid + '/gotits');
-    myGotitRef.transaction(function(gotitanss) {
-      if (gotitanss) {
-        if (gotitanss[dparam.ansDoc]) {
-          gotitanss[dparam.ansDoc] = null;
-        } else {
-          gotitanss[dparam.ansDoc] = {
-            postDoc: dparam.postDoc,
-            uri: dparam.uri,
-            thm: dparam.thm,
-            body: dparam.body,
-            ansBy: dparam.ansBy,
-          };
-        }
-      }
-
-      return gotitanss;
-    });
-
     ansRef.transaction(function(ans) {
-      console.log('ans');
-      console.log(ans);
       if (ans) {
         if (ans.gs && ans.gs[uid]) {
           ans.gCount--;
@@ -445,6 +413,44 @@ export const asyncGotit = (dparam: DetailParams, uid: string) => {
         return ans;
       }
     });
+
+    const mygotit = db
+      .collection('users')
+      .doc(uid)
+      .collection('gotits')
+      .doc(dparam.ansDoc);
+
+    return db
+      .runTransaction(trn => {
+        return trn.get(mygotit).then(mygotitDoc => {
+          if (!mygotitDoc.exists) {
+            trn.set(mygotit, {
+              flag: true,
+              postDoc: dparam.postDoc,
+              uri: dparam.uri,
+              thm: dparam.thm,
+              body: dparam.body,
+              ansBy: dparam.ansBy,
+            });
+          } else {
+            if (mygotitDoc.data().flag) {
+              trn.set(mygotit, { flag: false });
+            } else {
+              trn.update(mygotit, {
+                flag: true,
+                postDoc: dparam.postDoc,
+                uri: dparam.uri,
+                thm: dparam.thm,
+                body: dparam.body,
+                ansBy: dparam.ansBy,
+              });
+            }
+          }
+        });
+      })
+      .catch(function(error) {
+        console.log('Gotit Transaction failed: ', error);
+      });
   };
 };
 
@@ -459,22 +465,6 @@ export const asyncNice = (
   return dispatch => {
     if (postDoc === undefined) return;
     const postRef = rtdb.ref(postDoc);
-    const myNicesRef = rtdb.ref(uid + '/nices');
-    myNicesRef.transaction(function(niceposts) {
-      if (niceposts) {
-        if (niceposts[postDoc]) {
-          niceposts[postDoc] = null;
-        } else {
-          niceposts[postDoc] = {
-            uri,
-            postBy,
-          };
-        }
-      }
-
-      return niceposts;
-    });
-
     postRef.transaction(function(post) {
       if (post) {
         if (post.nices && post.nices[uid]) {
@@ -491,6 +481,38 @@ export const asyncNice = (
 
       return post;
     });
+
+    const mynice = db
+      .collection('users')
+      .doc(uid)
+      .collection('nices')
+      .doc(postDoc);
+
+    return db
+      .runTransaction(trn => {
+        return trn.get(mynice).then(myniceDoc => {
+          if (!myniceDoc.exists) {
+            trn.set(mynice, {
+              flag: true,
+              uri,
+              postBy,
+            });
+          } else {
+            if (myniceDoc.data().flag) {
+              trn.set(mynice, { flag: false });
+            } else {
+              trn.update(mynice, {
+                flag: true,
+                uri,
+                postBy,
+              });
+            }
+          }
+        });
+      })
+      .catch(function(error) {
+        console.log('Nice Transaction failed: ', error);
+      });
   };
 };
 

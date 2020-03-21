@@ -1,5 +1,32 @@
 # 中身
 
+## collection('links')
+* :ansDocument
+    * subcollection('from')
+        * :ansDocument
+            * ansDoc(参照用)
+            * postDoc
+            * uri
+            * thm
+            * body
+            * parent(参照用)
+    * subcollection(to')
+        * :ansDocument
+            * ansDoc(参照用)
+            * postDoc
+            * uri
+            * thm
+            * body
+            * parent(参照用)
+    * subcollection('mutual')
+        * :ansDocument
+            * ansDoc(参照用)
+            * postDoc
+            * uri
+            * thm
+            * body
+            * parent(参照用)
+
 ## collection('posts')
 * $postDocument
     * path
@@ -36,17 +63,18 @@
     * subcollection('nices')：一覧表示で必要になる情報
         * $postDocument(自動生成でなく指定する)
             * uri
-            * postedAt
+            * postBy
+            * postDoc(参照用)
+            * parent(参照用)
     * subcollection('gotits')：一覧表示で必要になる情報
         * $ansDocument(自動生成でなく指定する)
             * postDoc
             * uri
             * thm
-            * ans
-            * postedBy
-            * answeredBy
-            * postedAt
-            * answeredBy
+            * body
+            * ansBy
+            * amsDoc(参照用)
+            * parent(参照用)
     
 * onSnapshot()でドキュメントをリスンできる
 

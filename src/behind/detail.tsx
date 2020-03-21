@@ -29,6 +29,7 @@ import {
   asyncListenGotit,
   asyncComment,
   asyncFetchComment,
+  // asyncGotit2,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import { mypinModeOn } from '../store/screenMgr/mgr';
@@ -69,11 +70,11 @@ const timeLine = () => {
       textAlign: 'right',
     },
   });
-  const getFont = async () => {
-    await Font.loadAsync({
-      MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
-    });
-  };
+  // const getFont = async () => {
+  //   await Font.loadAsync({
+  //     MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
+  //   });
+  // };
 
   useEffect(() => {
     dispatch(asyncFetchComment(prm.postDoc, prm.ansDoc));
@@ -128,7 +129,8 @@ const timeLine = () => {
           <Text>{detail.dpram.body}</Text>
           <Button
             onPress={() => {
-              dispatch(asyncGotit(detail.dpram, uid));
+              // dispatch(asyncGotit2(detail.dpram, uid));
+              // dispatch(asyncGotit(detail.dpram, uid));
             }}
           >
             わかる！
