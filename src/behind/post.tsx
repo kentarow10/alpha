@@ -9,6 +9,7 @@ import {
   Paragraph,
   Button,
   TextInput,
+  ToggleButton,
 } from 'react-native-paper';
 import {
   View,
@@ -18,27 +19,23 @@ import {
   Dimensions,
   StyleSheet,
 } from 'react-native';
-import Swiper from 'react-native-swiper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   FlatList,
   TouchableOpacity,
   ScrollView,
 } from 'react-native-gesture-handler';
-import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import {
   asyncGetAnss,
   PostState,
   asyncChooseImage,
-  remove3rd,
-  remove2nd,
-  add2nd,
-  add3rd,
   asyncPost,
   done,
+  postInit,
 } from '../store/behind/behind';
 import { GetUid } from '../store/auth/auth';
 import { NavigationContext } from '@react-navigation/native';
+import { inputThmSwitch as ITS } from '../components/inputThmSwitch';
 
 const W = Dimensions.get('window').width;
 const H = Dimensions.get('window').height;
@@ -86,9 +83,41 @@ const post = () => {
   const [thm1, setThm1] = useState('');
   const [thm2, setThm2] = useState('');
   const [thm3, setThm3] = useState('');
+  const [bbb, setBbb] = useState({ value: '1' });
+  const canSubmit = (): boolean => {
+    if (bbb.value === '3') {
+      const c1 = thm1 === '';
+      const c2 = thm2 === '';
+      const c3 = thm3 === '';
+
+      return !(c1 || c2 || c3);
+    } else if (bbb.value === '2') {
+      const c1 = thm1 === '';
+      const c2 = thm2 === '';
+
+      return !(c1 || c2);
+    } else {
+      const c1 = thm1 === '';
+
+      return !c1;
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setThm1('');
+      setThm2('');
+      setThm3('');
+      setBbb({ value: '1' });
+      dispatch(postInit({}));
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     if (state.isDone) {
+      console.log('done');
       navigation.navigate('PROFILE');
     }
   }, [state.isDone]);
@@ -144,94 +173,26 @@ const post = () => {
         >
           状態
         </Button>
-        {state.addThm3 && state.addThm2 ? (
-          <Swiper style={styles.wrapper} showsButtons={true}>
-            <TextInput
-              label="お題１"
-              mode="outlined"
-              value={thm1}
-              onChangeText={setThm1}
-            />
-            <>
-              <Button
-                onPress={() => {
-                  dispatch(remove2nd({}));
-                }}
-              >
-                お題取り消し
-              </Button>
-              <TextInput
-                label="お題２"
-                mode="outlined"
-                value={thm2}
-                onChangeText={setThm2}
-              />
-            </>
-            <>
-              <Button
-                onPress={() => {
-                  dispatch(remove3rd({}));
-                }}
-              >
-                お題取り消し
-              </Button>
-              <TextInput
-                label="お題３"
-                mode="outlined"
-                value={thm3}
-                onChangeText={setThm3}
-              />
-            </>
-          </Swiper>
-        ) : state.addThm2 ? (
-          <Swiper style={styles.wrapper} showsButtons={true}>
-            <TextInput
-              label="お題１"
-              mode="outlined"
-              value={thm1}
-              onChangeText={setThm1}
-            />
-            <>
-              <Button
-                onPress={() => {
-                  dispatch(remove2nd({}));
-                }}
-              >
-                お題取り消し
-              </Button>
-              <TextInput
-                label="お題２"
-                mode="outlined"
-                value={thm2}
-                onChangeText={setThm2}
-              />
-              <Button
-                onPress={() => {
-                  dispatch(add3rd({}));
-                }}
-              >
-                お題追加
-              </Button>
-            </>
-          </Swiper>
-        ) : (
-          <>
-            <TextInput
-              label="お題１"
-              mode="outlined"
-              value={thm1}
-              onChangeText={setThm1}
-            />
-            <Button
-              onPress={() => {
-                dispatch(add2nd({}));
-              }}
-            >
-              お題追加
-            </Button>
-          </>
-        )}
+        <Text>お題の数</Text>
+        <ToggleButton.Row
+          onValueChange={value => setBbb({ value })}
+          value={bbb.value}
+        >
+          <ToggleButton icon="numeric-1" value="1" />
+          <ToggleButton icon="numeric-2" value="2" />
+          <ToggleButton icon="numeric-3" value="3" />
+        </ToggleButton.Row>
+        <ITS
+          numThm={Number(bbb.value)}
+          thm1={thm1}
+          thm2={thm2}
+          thm3={thm3}
+          setThm1={setThm1}
+          setThm2={setThm2}
+          setThm3={setThm3}
+        />
         <Button
+          disabled={!canSubmit()}
           onPress={() => {
             dispatch(
               asyncPost(
@@ -243,8 +204,7 @@ const post = () => {
                 thm1,
                 thm2,
                 thm3,
-                state.addThm2,
-                state.addThm3,
+                Number(bbb.value),
               ),
             );
           }}

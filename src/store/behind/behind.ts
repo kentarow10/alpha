@@ -38,7 +38,6 @@ export type AnsScreen = {
   isFetching: boolean;
   isError: boolean;
   isDone: boolean;
-  order: number;
 };
 
 export type Behind = {
@@ -50,4 +49,9 @@ export type Behind = {
 
 export * from './actions';
 export * from './selector';
-export { postedReducer, detailReducer, postReducer } from './reducer';
+export {
+  postedReducer,
+  detailReducer,
+  postReducer,
+  ansReducer,
+} from './reducer';

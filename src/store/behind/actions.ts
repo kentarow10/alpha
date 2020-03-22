@@ -85,8 +85,6 @@ export const error = actionCreator<{}>('ERROR');
 
 export const done = actionCreator<{}>('DONE');
 
-export const orderInfo = actionCreator<{ order: number }>('ORDER');
-
 export const startFetch = actionCreator<{}>('START_FETCH');
 
 export const getAnss = actionCreator<Ans[]>('GET_ANS');
@@ -112,10 +110,8 @@ export const getGotit = actionCreator<{
 
 export const detailInit = actionCreator<DetailParams>('DETAIL_INIT');
 
-export const add2nd = actionCreator<{}>('ADD_2ND');
-export const add3rd = actionCreator<{}>('ADD_3RD');
-export const remove2nd = actionCreator<{}>('REMOVE_2ND');
-export const remove3rd = actionCreator<{}>('REMOVE_3RD');
+export const ansInit = actionCreator<{}>('ANS_INIT');
+export const postInit = actionCreator<{}>('POST_INIT');
 
 export const setImage = actionCreator<{
   uri: string;
@@ -246,6 +242,7 @@ export const asyncAnswer = (
   ansBy: string,
 ) => {
   return async dispatch => {
+    dispatch(fetching({}));
     const ansAt = firebase.firestore.FieldValue.serverTimestamp();
     const tate = pparam.height > pparam.width;
 
@@ -270,20 +267,14 @@ export const asyncAnswer = (
         const ansRef = rtdb.ref(res.id);
         ansRef.set({
           gCount: 0,
-          gs: {
-            userid: 'まだいません',
-          },
-          mutual: {
-            ansDoc: 'まだありません',
-          },
-          from: {
-            ansDoc: 'まだありません',
-          },
-          to: {
-            ansDoc: 'まだありません',
-          },
+          gs: { test: null },
         });
         alert('回答しました！');
+        dispatch(done({}));
+      })
+      .catch(e => {
+        console.log(e);
+        dispatch(error({}));
       });
   };
 };
@@ -298,8 +289,7 @@ export const asyncPost = (
   thm1: string,
   thm2: string,
   thm3: string,
-  add2nd: boolean,
-  add3rd: boolean,
+  numThm: number,
 ) => {
   return async dispatch => {
     dispatch(fetching({}));
@@ -309,11 +299,11 @@ export const asyncPost = (
     const dt = d.toString().substr(4, 20);
     const date = firebase.firestore.FieldValue.serverTimestamp();
     const thms = [];
-    if (add2nd && add3rd) {
+    if (numThm === 3) {
       thms.push(thm1);
       thms.push(thm2);
       thms.push(thm3);
-    } else if (add2nd) {
+    } else if (numThm === 2) {
       thms.push(thm1);
       thms.push(thm2);
     } else {

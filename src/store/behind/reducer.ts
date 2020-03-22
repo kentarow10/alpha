@@ -19,7 +19,8 @@ import {
   error,
   done,
   fetching,
-  orderInfo,
+  ansInit,
+  postInit,
 } from './actions';
 
 // posted screen
@@ -128,8 +129,6 @@ const initialPost: PostScreen = {
   isFetching: false,
   isError: false,
   isDone: false,
-  addThm2: false,
-  addThm3: false,
   thm: [],
   url: '',
   width: 200,
@@ -140,6 +139,16 @@ const initialPost: PostScreen = {
 export const postReducer: Reducer<PostScreen> = reducerWithInitialState(
   initialPost,
 )
+  .case(postInit, (state, payload) => ({
+    isFetching: false,
+    isError: false,
+    isDone: false,
+    thm: [],
+    url: '',
+    width: 200,
+    height: 280,
+    imageName: '',
+  }))
   .case(fetching, (state, payload) => ({
     ...state,
     isFetching: true,
@@ -151,32 +160,10 @@ export const postReducer: Reducer<PostScreen> = reducerWithInitialState(
     isError: true,
   }))
   .case(done, (state, payload) => ({
+    ...state,
     isFetching: false,
     isError: false,
     isDone: true,
-    addThm2: false,
-    addThm3: false,
-    thm: [],
-    url: '',
-    width: 200,
-    height: 280,
-    imageName: '',
-  }))
-  .case(add2nd, (state, payload) => ({
-    ...state,
-    addThm2: true,
-  }))
-  .case(add3rd, (state, payload) => ({
-    ...state,
-    addThm3: true,
-  }))
-  .case(remove2nd, (state, payload) => ({
-    ...state,
-    addThm2: false,
-  }))
-  .case(remove3rd, (state, payload) => ({
-    ...state,
-    addThm3: false,
   }))
   .case(setImage, (state, payload) => ({
     ...state,
@@ -192,12 +179,16 @@ const initialAnswer: AnsScreen = {
   isFetching: false,
   isError: false,
   isDone: false,
-  order: 1,
 };
 
 export const ansReducer: Reducer<AnsScreen> = reducerWithInitialState(
   initialAnswer,
 )
+  .case(ansInit, (state, payload) => ({
+    isFetching: false,
+    isError: false,
+    isDone: false,
+  }))
   .case(fetching, (state, payload) => ({
     ...state,
     isFetching: true,
@@ -209,12 +200,8 @@ export const ansReducer: Reducer<AnsScreen> = reducerWithInitialState(
     isError: true,
   }))
   .case(done, (state, payload) => ({
+    ...state,
     isFetching: false,
     isError: false,
     isDone: true,
-    order: 1,
-  }))
-  .case(orderInfo, (state, payload) => ({
-    ...state,
-    order: payload.order,
   }));

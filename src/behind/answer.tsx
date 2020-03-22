@@ -27,6 +27,7 @@ import {
   detailInit,
   asyncAnswer,
   AnsState,
+  ansInit,
 } from '../store/behind/behind';
 import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import { GetUid } from '../store/auth/auth';
@@ -84,8 +85,21 @@ export const answer = () => {
   });
 
   useEffect(() => {
-    return setMyans('');
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      setMyans('');
+      setOrder(1);
+      dispatch(ansInit({}));
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    if (ans.isDone) {
+      console.log('done');
+      navigation.navigate('POSTED');
+    }
+  }, [ans.isDone]);
 
   return (
     <React.Fragment>
@@ -128,7 +142,6 @@ export const answer = () => {
                 setOrder={setOrder}
               />
               <TextInput
-                // label="お題１"
                 mode="outlined"
                 value={myans}
                 onChangeText={setMyans}

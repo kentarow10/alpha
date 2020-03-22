@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
 import { useTheme, Button } from 'react-native-paper';
@@ -30,6 +30,7 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DialogContent from 'react-native-paper/lib/typescript/src/components/Dialog/DialogContent';
 import { GetUid } from '../store/auth/auth';
+import { thmSwitch as ThmSwitch } from '../components/thmSwitch';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -42,6 +43,7 @@ const posted = () => {
   const uid = useSelector(GetUid);
   const route = useRoute<RouteProp<NavigationParamList, 'POSTED'>>();
   const prm = route.params;
+  const [order, setOrder] = useState(1);
 
   const styles = StyleSheet.create({
     headerBar: {
@@ -60,6 +62,11 @@ const posted = () => {
       fontSize: 12,
       textAlign: 'right',
     },
+    actionBar: {
+      flexDirection: 'row',
+      height: 35,
+      backgroundColor: 'gray',
+    },
   });
   // const getFont = async () => {
   //   await Font.loadAsync({
@@ -68,8 +75,14 @@ const posted = () => {
   // };
 
   useEffect(() => {
-    console.log('prm');
-    console.log(prm);
+    const unsubscribe = navigation.addListener('focus', () => {
+      setOrder(1);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     dispatch(asyncListenNice(prm.postDoc));
 
     dispatch(
@@ -106,21 +119,17 @@ const posted = () => {
           </Text>
         </View>
         <View style={styles.content}>
-          <Button
-            style={{ height: 30, width: 30, backgroundColor: 'red' }}
-            onPress={() => {
-              console.log(posted);
-            }}
-          >
-            aaaa
-          </Button>
           <Image
-            // source={{ uri: '' }}
             source={{ uri: posted.ppram.uri }}
             resizeMode="contain"
-            style={{ width: 200, height: 200, backgroundColor: 'black' }}
-            // style={styles.img}
+            style={{ width: WIDTH, height: WIDTH, backgroundColor: 'black' }}
           />
+          <ThmSwitch
+            thm={posted.ppram.thms}
+            order={order}
+            setOrder={setOrder}
+          />
+          <View style={styles.actionBar}></View>
           <Button
             onPress={() => {
               dispatch(

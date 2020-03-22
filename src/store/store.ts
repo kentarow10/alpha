@@ -5,7 +5,12 @@ import thunk from 'redux-thunk';
 import me from './me/me';
 import auth from './auth/auth';
 import timeline from './timeLine/timeLine';
-import { postedReducer, detailReducer, postReducer } from './behind/behind';
+import {
+  postedReducer,
+  detailReducer,
+  postReducer,
+  ansReducer,
+} from './behind/behind';
 import { screenMgr } from './screenMgr/mgr';
 
 const reducers = combineReducers({
@@ -15,6 +20,7 @@ const reducers = combineReducers({
   postedReducer,
   detailReducer,
   postReducer,
+  ansReducer,
   screenMgr,
 });
 
