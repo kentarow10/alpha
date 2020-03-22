@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
-import { Posted, Detail, PostScreen } from './behind';
+import { Posted, Detail, PostScreen, AnsScreen } from './behind';
 import {
   startFetch,
   getAnss,
@@ -16,30 +16,11 @@ import {
   remove3rd,
   getGotit,
   getComments,
+  error,
+  done,
+  fetching,
+  orderInfo,
 } from './actions';
-
-const initialBehind: Behind = {
-  screenName: 'POSTED',
-  // posted
-  ppram: {
-    postDoc: '',
-    uri: '',
-    width: 0,
-    height: 0,
-    thms: [],
-    numNice: 0,
-    niceByList: [],
-    postBy: '',
-    postAt: new Date(),
-  },
-  anss: [],
-  // answer
-  body: '',
-  // detail
-  ansDoc: '',
-  ansBy: '',
-  ansAt: '',
-};
 
 // posted screen
 
@@ -144,6 +125,9 @@ export const detailReducer: Reducer<Detail> = reducerWithInitialState(
 // post screen
 
 const initialPost: PostScreen = {
+  isFetching: false,
+  isError: false,
+  isDone: false,
   addThm2: false,
   addThm3: false,
   thm: [],
@@ -156,6 +140,28 @@ const initialPost: PostScreen = {
 export const postReducer: Reducer<PostScreen> = reducerWithInitialState(
   initialPost,
 )
+  .case(fetching, (state, payload) => ({
+    ...state,
+    isFetching: true,
+    isError: false,
+  }))
+  .case(error, (state, payload) => ({
+    ...state,
+    isFetching: false,
+    isError: true,
+  }))
+  .case(done, (state, payload) => ({
+    isFetching: false,
+    isError: false,
+    isDone: true,
+    addThm2: false,
+    addThm3: false,
+    thm: [],
+    url: '',
+    width: 200,
+    height: 280,
+    imageName: '',
+  }))
   .case(add2nd, (state, payload) => ({
     ...state,
     addThm2: true,
@@ -178,4 +184,37 @@ export const postReducer: Reducer<PostScreen> = reducerWithInitialState(
     imageName: payload.filename,
     width: payload.width,
     height: payload.height,
+  }));
+
+// answer screen
+
+const initialAnswer: AnsScreen = {
+  isFetching: false,
+  isError: false,
+  isDone: false,
+  order: 1,
+};
+
+export const ansReducer: Reducer<AnsScreen> = reducerWithInitialState(
+  initialAnswer,
+)
+  .case(fetching, (state, payload) => ({
+    ...state,
+    isFetching: true,
+    isError: false,
+  }))
+  .case(error, (state, payload) => ({
+    ...state,
+    isFetching: false,
+    isError: true,
+  }))
+  .case(done, (state, payload) => ({
+    isFetching: false,
+    isError: false,
+    isDone: true,
+    order: 1,
+  }))
+  .case(orderInfo, (state, payload) => ({
+    ...state,
+    order: payload.order,
   }));

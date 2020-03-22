@@ -141,7 +141,7 @@ export type Nice = {
   by: string;
 };
 
-export type Comb = {
+export type Pin = {
   ansDoc: string;
   postDoc: string;
   uri: string;

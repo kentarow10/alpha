@@ -24,13 +24,21 @@ export type Detail = {
 };
 
 export type PostScreen = {
-  addThm2: boolean;
-  addThm3: boolean;
+  isFetching: boolean;
+  isError: boolean;
+  isDone: boolean;
   thm: string[];
   url: string;
   width: number;
   height: number;
   imageName: string;
+};
+
+export type AnsScreen = {
+  isFetching: boolean;
+  isError: boolean;
+  isDone: boolean;
+  order: number;
 };
 
 export type Behind = {

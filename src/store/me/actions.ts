@@ -33,7 +33,7 @@ export const getMyInfo = actionCreator<{ userName: string; siBody: string }>(
 
 export const getIconUrl = actionCreator<{ iconUrl: string }>('GET_ICON_URL');
 
-export const getMyCombs = actionCreator<Comb[]>('GET_MY_COMB');
+export const getMyPins = actionCreator<Comb[]>('GET_MY_PINS');
 
 export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
@@ -172,13 +172,13 @@ export const asyncGetMyLinkedAnss = (uid: string) => {
 
 export const asyncGetMyPosts = (uid: string) => {
   return dispatch => {
+    dispatch(startFetch({}));
     db.collection('posts')
       .where('postBy', '==', uid)
       .get()
       .then(snap => {
         const posts: Post[] = [];
         snap.forEach(doc => {
-          console.log(doc.data());
           const thms = doc.data().thms;
           const owner = doc.data().postedBy;
           const width = doc.data().w;
@@ -214,16 +214,11 @@ export const asyncGetMyPosts = (uid: string) => {
 
 // 自分のピン一覧取得
 
-export const asyncGetMyCombs = (uid: string) => {
-  console.log('pinsss');
-
+export const asyncGetMyPins = (uid: string) => {
   return dispatch => {
-    console.log('pinsss2');
+    dispatch(startFetch({}));
     const anss = db.collectionGroup('answers').where('ansBy', '==', uid);
-    // console.log(anss);
     anss.get().then(snap => {
-      console.log(snap);
-      console.log('pins');
       const myanss: Comb[] = [];
       snap.forEach(doc => {
         const ans: Comb = {
@@ -240,7 +235,7 @@ export const asyncGetMyCombs = (uid: string) => {
         };
         myanss.push(ans);
       });
-      dispatch(getMyCombs(myanss));
+      dispatch(getMyPins(myanss));
     });
   };
 };

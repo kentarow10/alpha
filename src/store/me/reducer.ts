@@ -3,12 +3,11 @@ import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
 import { Me } from './me';
-import { Comb, Ans, Post, Comment } from '../types';
+import { Pin, Ans, Post, Comment } from '../types';
 
 import {
   getMyInfo,
   getIconUrl,
-  getMyCombs,
   getMyPosts,
   startFetch,
   endFetch,
@@ -17,6 +16,7 @@ import {
   getMyNicePosts,
   getMyGotitPins,
   getMyLinkedAnss,
+  getMyPins,
 } from './actions';
 
 const initialState: Me = {
@@ -27,11 +27,11 @@ const initialState: Me = {
   userName: '',
   iconPath: '',
   siBody: '',
-  myCombs: [],
+  myPins: [],
   myPosts: [],
   myNicePosts: [],
   myGotitPins: [],
-  myLinkedCombs: [],
+  myLinkedPins: [],
 };
 
 const reducer: Reducer<Me> = reducerWithInitialState(initialState)
@@ -55,6 +55,7 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
   }))
   .case(getMyInfo, (state, payload) => ({
     ...state,
+    isFetching: false,
     userName: payload.userName,
     siBody: payload.siBody,
   }))
@@ -62,25 +63,30 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
     ...state,
     iconPath: payload.iconUrl,
   }))
-  .case(getMyCombs, (state, payload) => ({
+  .case(getMyPins, (state, payload) => ({
     ...state,
-    myCombs: payload,
+    isFetching: false,
+    myPins: payload,
   }))
   .case(getMyPosts, (state, payload) => ({
     ...state,
+    isFetching: false,
     myPosts: payload,
   }))
   .case(getMyNicePosts, (state, payload) => ({
     ...state,
+    isFetching: false,
     myNicePosts: payload,
   }))
   .case(getMyGotitPins, (state, payload) => ({
     ...state,
+    isFetching: false,
     myGotitPins: payload,
   }))
   .case(getMyLinkedAnss, (state, payload) => ({
     ...state,
-    myLinkedCombs: payload,
+    isFetching: false,
+    myLinkedPins: payload,
   }));
 
 export default reducer;

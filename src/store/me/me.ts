@@ -1,4 +1,4 @@
-import { Post, Ans, Comb, Nice } from '../types';
+import { Post, Ans, Pin, Nice } from '../types';
 import { SimpleNice, SimplePin } from './actions';
 
 export type Me = {
@@ -9,11 +9,11 @@ export type Me = {
   iconPath?: string;
   siBody: string;
   showPostMode: boolean;
-  myCombs: Comb[];
+  myPins: Pin[];
   myPosts: Post[];
   myNicePosts: SimpleNice[];
   myGotitPins: SimplePin[];
-  myLinkedCombs: Comb[];
+  myLinkedPins: Pin[];
 };
 
 export * from './actions';

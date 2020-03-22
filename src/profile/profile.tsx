@@ -9,16 +9,15 @@ import {
   Paragraph,
   Button,
 } from 'react-native-paper';
-import { View, Button as Bt, Image, Text } from 'react-native';
+import { View, Button as Bt, Image, Text, FlatList } from 'react-native';
 import {
   GetAllMe,
   asyncGetMyInfo,
-  asyncGetMyCombs,
   asyncGetMyPosts,
+  asyncGetMyPins,
 } from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FlatList } from 'react-native-gesture-handler';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import { asyncGetAnss } from '../store/behind/behind';
 import { NavigationContext } from '@react-navigation/native';
@@ -36,7 +35,7 @@ const profile = () => {
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
     dispatch(asyncGetMyPosts(uid));
-    dispatch(asyncGetMyCombs(uid));
+    dispatch(asyncGetMyPins(uid));
   }, []);
 
   return (
@@ -65,8 +64,11 @@ const profile = () => {
       <Text>自分の投稿</Text>
       <FlatList
         data={me.myPosts}
-        horizontal={true}
-        // data={[1, 2, 3, 4]}
+        // horizontal={true}
+        onRefresh={() => {
+          dispatch(asyncGetMyPosts(uid));
+        }}
+        refreshing={me.isFetching}
         renderItem={item => {
           return (
             <View>
@@ -81,9 +83,12 @@ const profile = () => {
       />
       <Text>自分の回答</Text>
       <FlatList
-        data={me.myCombs}
+        data={me.myPins}
         horizontal={true}
-        // data={[1, 2, 3, 4]}
+        onRefresh={() => {
+          dispatch(asyncGetMyPins(uid));
+        }}
+        refreshing={me.isFetching}
         renderItem={item => {
           return (
             <View>

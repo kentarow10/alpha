@@ -2,7 +2,6 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import * as ImagePicker from 'expo-image-picker';
 import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
 import {
-  Comb,
   Ans,
   Post,
   Comment,
@@ -80,6 +79,13 @@ export const mutualCheck = async (myAnsDoc: string, ansDoc: string) => {
 };
 
 // plain Actions
+export const fetching = actionCreator<{}>('FETCH');
+
+export const error = actionCreator<{}>('ERROR');
+
+export const done = actionCreator<{}>('DONE');
+
+export const orderInfo = actionCreator<{ order: number }>('ORDER');
 
 export const startFetch = actionCreator<{}>('START_FETCH');
 
@@ -283,7 +289,7 @@ export const asyncAnswer = (
 };
 
 // 画像のアップロード
-export const asyncUploadImage = (
+export const asyncPost = (
   uid: string,
   uri: string,
   width: number,
@@ -296,6 +302,7 @@ export const asyncUploadImage = (
   add3rd: boolean,
 ) => {
   return async dispatch => {
+    dispatch(fetching({}));
     const response = await fetch(uri);
     const blob = await response.blob();
     const d = new Date();
@@ -324,18 +331,18 @@ export const asyncUploadImage = (
         postAt: date,
       })
       .then(res => {
-        console.log(res.id);
         const postRef = rtdb.ref(res.id);
-        postRef.set({ nicesCount: 0, nices: { test: true } });
+        postRef.set({ nicesCount: 0, nices: { test: null } });
+        const ref = storage.ref().child(`${uid}/${dt}/${imageName}`);
+        ref.put(blob);
 
         alert('投稿完了しました!');
+        dispatch(done({}));
       })
       .catch(error => {
         console.error('Error writing document: ', error);
+        dispatch(error({}));
       });
-    const ref = storage.ref().child(`${uid}/${dt}/${imageName}`);
-
-    return ref.put(blob);
   };
 };
 

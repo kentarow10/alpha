@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   useTheme,
@@ -19,8 +19,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
-import { GetAllMe, asyncGetMyInfo, asyncGetMyCombs } from '../store/me/me';
-import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   FlatList,
@@ -36,9 +34,11 @@ import {
   remove2nd,
   add2nd,
   add3rd,
-  asyncUploadImage,
+  asyncPost,
+  done,
 } from '../store/behind/behind';
 import { GetUid } from '../store/auth/auth';
+import { NavigationContext } from '@react-navigation/native';
 
 const W = Dimensions.get('window').width;
 const H = Dimensions.get('window').height;
@@ -81,10 +81,17 @@ const post = () => {
   const dispatch = useDispatch();
   const state = useSelector(PostState);
   const uid = useSelector(GetUid);
+  const navigation = useContext(NavigationContext);
 
   const [thm1, setThm1] = useState('');
   const [thm2, setThm2] = useState('');
   const [thm3, setThm3] = useState('');
+
+  useEffect(() => {
+    if (state.isDone) {
+      navigation.navigate('PROFILE');
+    }
+  }, [state.isDone]);
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
@@ -227,7 +234,7 @@ const post = () => {
         <Button
           onPress={() => {
             dispatch(
-              asyncUploadImage(
+              asyncPost(
                 uid,
                 state.url,
                 state.width,

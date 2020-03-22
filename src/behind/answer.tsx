@@ -19,7 +19,6 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import { PostedParams, NavigationParamList } from '../store/types';
 import {
   PostedState,
   getParams,
@@ -27,11 +26,11 @@ import {
   DetailState,
   detailInit,
   asyncAnswer,
+  AnsState,
 } from '../store/behind/behind';
-import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
-import { mypinModeOn } from '../store/screenMgr/mgr';
 import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import { GetUid } from '../store/auth/auth';
+import { thmSwitch as ThmSwitch } from '../components/thmSwitch';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -41,8 +40,10 @@ export const answer = () => {
   const { colors } = useTheme();
   const posted = useSelector(PostedState);
   const uid = useSelector(GetUid);
+  const ans = useSelector(AnsState);
   const navigation = useContext(NavigationContext);
   const [myans, setMyans] = useState('');
+  const [order, setOrder] = useState(1);
   const proportion = posted.ppram.height / posted.ppram.width;
   const imgH = WIDTH * proportion;
 
@@ -120,7 +121,12 @@ export const answer = () => {
                 style={{ width: WIDTH, height: imgH, backgroundColor: 'black' }}
                 // style={styles.img}
               />
-              <Text style={styles.thm}>{posted.ppram.thms[0]}</Text>
+              {/* <Text style={styles.thm}>{posted.ppram.thms[0]}</Text> */}
+              <ThmSwitch
+                thm={posted.ppram.thms}
+                order={order}
+                setOrder={setOrder}
+              />
               <TextInput
                 // label="お題１"
                 mode="outlined"
@@ -130,7 +136,7 @@ export const answer = () => {
               />
               <Button
                 onPress={() => {
-                  dispatch(asyncAnswer(posted.ppram, 1, myans, uid));
+                  dispatch(asyncAnswer(posted.ppram, order, myans, uid));
                 }}
               >
                 回答送信
