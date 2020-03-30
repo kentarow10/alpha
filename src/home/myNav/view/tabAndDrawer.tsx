@@ -38,7 +38,7 @@ import {
   DrawerContentComponentProps,
 } from '../types';
 import DrawerPositionContext from '@react-navigation/drawer/src/utils/DrawerPositionContext';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Divider } from 'react-native-paper';
 
 type Props = DrawerNavigationConfig & {
   state: DrawerNavigationState;
@@ -198,6 +198,10 @@ export default function DrawerView({
   };
 
   const tabList = state.routes.filter(route=>descriptors[route.key].options.inTab === true)
+  console.log(tabList);
+  // const focusColor = (): "#DBDBDB"|"#ABE7FF" => {
+
+  // }
 
   const renderContent = () => {
     return (
@@ -229,7 +233,8 @@ export default function DrawerView({
             >
 
               {descriptor.render()}
-              <View style={[{ flexDirection: 'row' }, styles.tabBarStyle]}>
+
+              <View style={[{ flexDirection: 'row', borderWidth: 0.2, borderColor: "#EEEEEE" }, styles.tabBarStyle]}>
               {tabList.map(route => (
                 <TouchableOpacity
                   key={route.key}
@@ -251,14 +256,14 @@ export default function DrawerView({
                   }}
                   style={{ flex: 1, width: width/tabList.length }}
                 >
-                  <View style={{flexDirection: 'row', justifyContent: "center", marginTop: 9}}>
+                  <View style={{flexDirection: 'row', justifyContent: "center", marginTop: 9, height: 30}}>
                   <MaterialCommunityIcons
                     name={
                       descriptors[route.key].options.icon != undefined
                         ? descriptors[route.key].options.icon.name
                         : 'account-outline'
                     }
-                    color={"white"}
+                    color={"#00A85A"}
                     // color={colors.text}
                     size={
                       descriptors[route.key].options.icon.size != undefined

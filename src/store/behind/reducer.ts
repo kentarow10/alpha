@@ -9,11 +9,7 @@ import {
   getParams,
   getNice,
   detailInit,
-  add2nd,
-  add3rd,
   setImage,
-  remove2nd,
-  remove3rd,
   getGotit,
   getComments,
   error,
@@ -21,6 +17,7 @@ import {
   fetching,
   ansInit,
   postInit,
+  getLinks,
 } from './actions';
 
 // posted screen
@@ -28,6 +25,7 @@ import {
 const initialState: Posted = {
   isFetching: false,
   isError: false,
+  doneNice: false,
   ppram: {
     postDoc: '',
     uri: '',
@@ -70,6 +68,7 @@ export const postedReducer: Reducer<Posted> = reducerWithInitialState(
   }))
   .case(getNice, (state, payload) => ({
     ...state,
+    doneNice: payload.isNiced,
     ppram: {
       ...state.ppram,
       numNice: payload.numNice,
@@ -99,6 +98,11 @@ const initialDetail: Detail = {
   numGotit: 0,
   gotitByList: [],
   comments: [],
+  mLinks: [],
+  fLinks: [],
+  tLinks: [],
+  links: [],
+  doneGotit: false,
 };
 
 export const detailReducer: Reducer<Detail> = reducerWithInitialState(
@@ -117,10 +121,18 @@ export const detailReducer: Reducer<Detail> = reducerWithInitialState(
     ...state,
     numGotit: payload.numGotit,
     gotitByList: payload.gotitByList,
+    doneGotit: payload.isGotit,
   }))
   .case(getComments, (state, payload) => ({
     ...state,
     comments: payload,
+  }))
+  .case(getLinks, (state, payload) => ({
+    ...state,
+    mLinks: payload.mpin,
+    fLinks: payload.fpin,
+    tLinks: payload.tpin,
+    links: payload.links,
   }));
 
 // post screen

@@ -10,6 +10,8 @@ import {
   NavigationParamList,
   DetailParams,
 } from '../types';
+import { database } from 'firebase';
+import { SimplePin } from '../me/me';
 
 // 準備
 
@@ -99,13 +101,16 @@ export const getParams = actionCreator<{
   createdAt: Date;
 }>('GET_PARAMS');
 
-export const getNice = actionCreator<{ numNice: number; niceByList: string[] }>(
-  'GET_NICE',
-);
+export const getNice = actionCreator<{
+  numNice: number;
+  niceByList: string[];
+  isNiced: boolean;
+}>('GET_NICE');
 
 export const getGotit = actionCreator<{
   numGotit: number;
   gotitByList: string[];
+  isGotit: boolean;
 }>('GET_GOTIT');
 
 export const detailInit = actionCreator<DetailParams>('DETAIL_INIT');
@@ -360,17 +365,18 @@ export const asyncChooseImage = () => {
 
 // わかる！のリスン
 
-export const asyncListenGotit = (ansDoc: string) => {
+export const asyncListenGotit = (ansDoc: string, uid: string) => {
   return disptch => {
-    console.log('called');
+    console.log('listener is called');
     rtdb.ref(ansDoc).on('value', snap => {
       const numGotit = snap.val().gCount;
       if (snap.val().gs) {
         console.log(snap.val().gs);
         const gotitByList = Object.keys(snap.val().gs);
-        disptch(getGotit({ numGotit, gotitByList }));
+        const isGotit = gotitByList.includes(uid);
+        disptch(getGotit({ numGotit, gotitByList, isGotit }));
       } else {
-        disptch(getGotit({ numGotit: 0, gotitByList: [] }));
+        disptch(getGotit({ numGotit: 0, gotitByList: [], isGotit: false }));
       }
     });
   };
@@ -378,15 +384,16 @@ export const asyncListenGotit = (ansDoc: string) => {
 
 // 良いねのリスン
 
-export const asyncListenNice = (postDoc: string) => {
+export const asyncListenNice = (postDoc: string, uid: string) => {
   return dispatch => {
     rtdb.ref(postDoc).on('value', snap => {
       const numNice = snap.val().nicesCount;
       if (snap.val().nices) {
         const niceByList = Object.keys(snap.val().nices);
-        dispatch(getNice({ numNice, niceByList }));
+        const isNiced = niceByList.includes(uid);
+        dispatch(getNice({ numNice, niceByList, isNiced }));
       } else {
-        dispatch(getNice({ numNice, niceByList: [] }));
+        dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
       }
     });
   };
@@ -404,6 +411,9 @@ export const asyncGotit = (dparam: DetailParams, uid: string) => {
           ans.gs[uid] = null;
         } else {
           ans.gCount++;
+          if (!ans.gs) {
+            ans.gs = {};
+          }
           ans.gs[uid] = true;
         }
 
@@ -537,5 +547,97 @@ export const asyncGetAnss = (postDoc: string) => {
         });
         dispatch(getAnss(anss));
       });
+  };
+};
+
+// 与えられたansDocから各リンクを取得する
+
+export const getLinks = actionCreator<{
+  mpin: SimplePin[];
+  fpin: SimplePin[];
+  tpin: SimplePin[];
+  links: SimplePin[];
+}>('GET_LINKS');
+
+export const asyncGetLinks = (ansDoc: string) => {
+  return async dispatch => {
+    const mutualList: SimplePin[] = [];
+    const fromList: SimplePin[] = [];
+    const toList: SimplePin[] = [];
+    dispatch(startFetch({}));
+    const base = db.collection('links').doc(ansDoc);
+    const mutual = await base.collection('mutual').get();
+    const from = await base.collection('from').get();
+    const to = await base.collection('to').get();
+
+    mutual.forEach(snap => {
+      mutualList.push({
+        ansDoc: snap.id,
+        postDoc: snap.data().postDoc,
+        uri: snap.data().uri,
+        thm: snap.data().thm,
+        body: snap.data().body,
+        icon: 'arrow-left-right-bold-outline',
+      });
+    });
+    from.forEach(snap => {
+      fromList.push({
+        ansDoc: snap.id,
+        postDoc: snap.data().postDoc,
+        uri: snap.data().uri,
+        thm: snap.data().thm,
+        body: snap.data().body,
+        icon: 'arrow-left-bold-outline',
+      });
+    });
+    to.forEach(snap => {
+      toList.push({
+        ansDoc: snap.id,
+        postDoc: snap.data().postDoc,
+        uri: snap.data().uri,
+        thm: snap.data().thm,
+        body: snap.data().body,
+        icon: 'arrow-right-bold-outline',
+      });
+    });
+    const first: SimplePin[] = [
+      {
+        ansDoc: 'Header1',
+        postDoc: '',
+        uri: '',
+        thm: '',
+        body: '',
+        icon: 'arrow-left-right-bold-outline',
+      },
+    ];
+    const second: SimplePin[] = [
+      {
+        ansDoc: 'Header2',
+        postDoc: '',
+        uri: '',
+        thm: '',
+        body: '',
+        icon: 'arrow-left-bold-outline',
+      },
+    ];
+    const third: SimplePin[] = [
+      {
+        ansDoc: 'Header3',
+        postDoc: '',
+        uri: '',
+        thm: '',
+        body: '',
+        icon: 'arrow-right-bold-outline',
+      },
+    ];
+    const links = first
+      .concat(mutualList)
+      .concat(second)
+      .concat(fromList)
+      .concat(third)
+      .concat(toList);
+    dispatch(
+      getLinks({ mpin: mutualList, fpin: fromList, tpin: toList, links }),
+    );
   };
 };

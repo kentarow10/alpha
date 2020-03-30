@@ -32,6 +32,7 @@ import {
 import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import { GetUid } from '../store/auth/auth';
 import { thmSwitch as ThmSwitch } from '../components/thmSwitch';
+import { postedImage as PostedImage } from '../components/postedImage';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -128,18 +129,14 @@ export const answer = () => {
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <ScrollView>
             <View style={styles.content}>
-              <Image
-                // source={{ uri: '' }}
-                source={{ uri: posted.ppram.uri }}
-                resizeMode="contain"
-                style={{ width: WIDTH, height: imgH, backgroundColor: 'black' }}
-                // style={styles.img}
-              />
+              <PostedImage uri={posted.ppram.uri} />
               {/* <Text style={styles.thm}>{posted.ppram.thms[0]}</Text> */}
               <ThmSwitch
                 thm={posted.ppram.thms}
                 order={order}
                 setOrder={setOrder}
+                numNice={posted.ppram.numNice}
+                postAt={posted.ppram.createdAt}
               />
               <TextInput
                 mode="outlined"

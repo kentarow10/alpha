@@ -6,10 +6,12 @@ import {
   Comment,
 } from '../types';
 import { RouteProp } from '@react-navigation/native';
+import { SimplePin } from '../me/me';
 
 export type Posted = {
   isFetching: boolean;
   isError: boolean;
+  doneNice: boolean;
   ppram: PostedParams;
   anss: Ans[];
 };
@@ -21,6 +23,11 @@ export type Detail = {
   numGotit: number;
   gotitByList: string[];
   comments: Comment[];
+  mLinks: SimplePin[];
+  tLinks: SimplePin[];
+  fLinks: SimplePin[];
+  links: SimplePin[];
+  doneGotit: boolean;
 };
 
 export type PostScreen = {

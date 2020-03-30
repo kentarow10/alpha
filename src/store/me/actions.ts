@@ -89,7 +89,8 @@ export type SimplePin = {
   uri: string;
   thm: string;
   body: string;
-  ansBy: string;
+  ansBy?: string;
+  icon?: string;
 };
 
 // 自分のわかる！のリスン

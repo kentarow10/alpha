@@ -29,6 +29,22 @@ import Auth from './auth/nav';
 #00cffa
 #ff0038
 #ffce38
+
+  #FF7D7D あか
+■ #FFD580オレンジ
+■ #B3E2B4緑
+■ #ABE7FF水色
+■ #B8B2EA紫
+■ #DBDBDBグレイ
+
+白ベース
+■ #00A85A green
+■ #F98A8A soft red
+■ BLACK
+エメラルドグリーンベース
+■ #5DA797
+□ WHITE
+■ BLACK
 </resources> */
 }
 
@@ -59,10 +75,10 @@ export const Main = () => {
                 ...DefaultTheme,
                 colors: {
                   ...DefaultTheme.colors,
-                  primary: 'black',
-                  background: '#00cffa',
-                  surface: '#ffffff',
-                  accent: '#ff1744',
+                  // primary: 'black',
+                  // background: '#00cffa',
+                  // surface: '#ffffff',
+                  // accent: '#ff1744',
                 },
               }
             : {
@@ -77,11 +93,11 @@ export const Main = () => {
               ? {
                   ...DefaultTheme,
                   colors: {
-                    primary: 'white',
-                    background: '#00cffa',
+                    // primary: 'black',
+                    background: 'white',
                     text: 'black',
-                    card: '#9ea7aa',
-                    border: '#ff1744',
+                    // card: '#9ea7aa',
+                    // border: '#ff1744',
                   },
                 }
               : {

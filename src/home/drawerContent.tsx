@@ -153,7 +153,7 @@ export function DrawerContent(props: Props) {
         style={[
           styles.drawerContent,
           {
-            backgroundColor: paperTheme.colors.surface,
+            backgroundColor: 'white',
             transform: [{ translateX }],
           },
         ]}
@@ -178,7 +178,7 @@ export function DrawerContent(props: Props) {
             </View>
             <View style={styles.drawerSection}>
               <FlatList
-                data={mypins.myCombs}
+                data={mypins.myPins}
                 renderItem={item => {
                   return (
                     <TouchableOpacity

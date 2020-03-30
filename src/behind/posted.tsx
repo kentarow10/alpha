@@ -2,7 +2,16 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
-import { useTheme, Button } from 'react-native-paper';
+import {
+  useTheme,
+  Button,
+  Avatar,
+  FAB,
+  Portal,
+  Provider,
+  Divider,
+  Modal,
+} from 'react-native-paper';
 import {
   View,
   Button as Bt,
@@ -11,6 +20,7 @@ import {
   Image,
   SafeAreaView,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import {
@@ -31,6 +41,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import DialogContent from 'react-native-paper/lib/typescript/src/components/Dialog/DialogContent';
 import { GetUid } from '../store/auth/auth';
 import { thmSwitch as ThmSwitch } from '../components/thmSwitch';
+import { postedImage as PostedImage } from '../components/postedImage';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -44,16 +56,43 @@ const posted = () => {
   const route = useRoute<RouteProp<NavigationParamList, 'POSTED'>>();
   const prm = route.params;
   const [order, setOrder] = useState(1);
+  const [showAns, setAnss] = useState(false);
+  const [showModal, setModal] = useState(false);
+  const doneNiceColor = (niced: boolean): '#00A85A' | 'white' => {
+    if (niced) {
+      return '#00A85A';
+    } else {
+      return 'white';
+    }
+  };
+  const doneNiceIcon = (niced: boolean): 'thumb-up' | 'thumb-up-outline' => {
+    if (niced) {
+      return 'thumb-up';
+    } else {
+      return 'thumb-up-outline';
+    }
+  };
 
   const styles = StyleSheet.create({
     headerBar: {
-      backgroundColor: colors.background,
-      width: WIDTH,
-      height: 50,
+      backgroundColor: 'white',
+      height: 40,
     },
     content: {
       backgroundColor: 'white',
-      flex: 1,
+      flex: 12,
+    },
+    avatar: {
+      marginHorizontal: 10,
+      alignSelf: 'center',
+    },
+    owner: {
+      flex: 0.7,
+      flexDirection: 'row',
+      height: 75,
+    },
+    names: {
+      padding: 16,
     },
     text: {
       marginTop: 4,
@@ -62,10 +101,54 @@ const posted = () => {
       fontSize: 12,
       textAlign: 'right',
     },
-    actionBar: {
+    middle: {
       flexDirection: 'row',
-      height: 35,
-      backgroundColor: 'gray',
+      justifyContent: 'flex-end',
+      height: 45,
+      paddingBottom: 9,
+      backgroundColor: 'white',
+    },
+    actionBox: {
+      flex: 2.5,
+    },
+    ansBtn: {
+      // flex: 1,
+      width: WIDTH / 4,
+      height: WIDTH / 10,
+      // marginBottom: 8,
+      // marginRight: 16,
+      marginLeft: 16,
+      // marginHorizontal: 20,
+      backgroundColor: '#00A85A',
+      // alignContent: 'center',
+    },
+    niceBtn: {
+      // backgroundColor: '#00A85A',
+      width: WIDTH / 4,
+      height: WIDTH / 10,
+      alignContent: 'center',
+      marginRight: 44,
+      marginLeft: 16,
+      marginBottom: 8,
+      borderColor: doneNiceColor(posted.doneNice),
+      borderWidth: 3,
+      borderRadius: 8,
+      // color: 'red',
+    },
+    upRow: {
+      flexDirection: 'row',
+      flex: 2,
+    },
+    niceBox: {
+      // flex: 1,
+      width: WIDTH / 2,
+      flexDirection: 'column',
+    },
+    downRow: {
+      flex: 1,
+    },
+    tabMock: {
+      height: 36,
     },
   });
   // const getFont = async () => {
@@ -77,13 +160,14 @@ const posted = () => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setOrder(1);
+      setAnss(false);
     });
 
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    dispatch(asyncListenNice(prm.postDoc));
+    dispatch(asyncListenNice(prm.postDoc, uid));
 
     dispatch(
       getParams({
@@ -107,45 +191,186 @@ const posted = () => {
         <View style={styles.headerBar}>
           <Text
             style={{
-              height: 40,
-              marginTop: 10,
-              color: 'white',
-              fontSize: 28,
+              // height: 40,
+              marginTop: 3,
+              color: '#00A85A',
+              fontSize: 20,
               textAlign: 'center',
+              fontWeight: 'bold',
               // fontFamily: 'MyFont',
             }}
           >
             シェアピ
           </Text>
         </View>
-        <View style={styles.content}>
-          <Image
-            source={{ uri: posted.ppram.uri }}
-            resizeMode="contain"
-            style={{ width: WIDTH, height: WIDTH, backgroundColor: 'black' }}
-          />
-          <ThmSwitch
-            thm={posted.ppram.thms}
-            order={order}
-            setOrder={setOrder}
-          />
-          <View style={styles.actionBar}></View>
-          <Button
-            onPress={() => {
-              dispatch(
-                asyncNice(
-                  posted.ppram.postDoc,
-                  uid,
-                  posted.ppram.uri,
-                  posted.ppram.owner,
-                ),
-              );
-            }}
-          >
-            良いね
-          </Button>
-          <Text>良いね数{posted.ppram.numNice}</Text>
-          <FlatList
+        <Divider />
+        <ScrollView>
+          <View style={styles.content}>
+            <PostedImage uri={posted.ppram.uri} />
+            <View>
+              <ThmSwitch
+                thm={posted.ppram.thms}
+                order={order}
+                setOrder={setOrder}
+                setModal={setModal}
+                postAt={posted.ppram.createdAt}
+                numNice={posted.ppram.numNice}
+              />
+            </View>
+            <View style={styles.middle}>
+              <View
+                style={{
+                  marginRight: 10,
+                  borderWidth: 4,
+                  borderRadius: 100,
+                  borderColor: doneNiceColor(posted.doneNice),
+                  shadowColor: 'gray',
+                  shadowRadius: 4,
+                  shadowOpacity: 0.4,
+                  shadowOffset: {
+                    height: 1,
+                  },
+                }}
+              >
+                <MaterialCommunityIcons.Button
+                  name={doneNiceIcon(posted.doneNice)}
+                  color="#00A85A"
+                  size={14}
+                  borderRadius={100}
+                  backgroundColor="white"
+                  iconStyle={{
+                    marginRight: 0,
+                  }}
+                  onPress={() => {
+                    dispatch(
+                      asyncNice(
+                        posted.ppram.postDoc,
+                        uid,
+                        posted.ppram.uri,
+                        posted.ppram.owner,
+                      ),
+                    );
+                  }}
+                ></MaterialCommunityIcons.Button>
+              </View>
+              <Button
+                mode="contained"
+                icon="hand"
+                style={{
+                  marginRight: 10,
+                  backgroundColor: '#00A85A',
+                  borderRadius: 30,
+                  shadowRadius: 4,
+                  shadowOpacity: 0.4,
+                  shadowOffset: {
+                    height: 1,
+                  },
+                }}
+                labelStyle={{ fontWeight: 'bold' }}
+                onPress={() => {
+                  navigation.navigate('ANSWER');
+                }}
+              >
+                答える
+              </Button>
+            </View>
+            <View style={styles.actionBox}>
+              <View style={styles.downRow}>
+                <Button
+                  mode="outlined"
+                  style={{
+                    height: 24,
+                    margin: 0,
+                    padding: 0,
+                    backgroundColor: '#F98A8A',
+                    borderRadius: 0,
+                  }}
+                  labelStyle={{
+                    color: 'white',
+                    margin: 0,
+                    marginVertical: 5,
+                    padding: 0,
+                    fontSize: 12,
+                  }}
+                  onPress={() => {
+                    if (showAns) {
+                      setAnss(false);
+                    } else {
+                      setAnss(true);
+                    }
+                  }}
+                >
+                  みんなの回答をみる
+                </Button>
+              </View>
+              {showAns ? (
+                <>
+                  <View style={{ backgroundColor: 'white' }}>
+                    <FlatList
+                      // style={{ height: 60 }}
+                      data={posted.anss}
+                      keyExtractor={(item, index) => index.toString()}
+                      renderItem={item => {
+                        return (
+                          <TouchableOpacity
+                            onPress={() => {
+                              navigation.navigate('DETAIL', {
+                                postDoc: posted.ppram.postDoc,
+                                ansDoc: item.item.ansDoc,
+                                uri: posted.ppram.uri,
+                                width: posted.ppram.width,
+                                height: posted.ppram.height,
+                                thm: posted.ppram.thms[item.item.orderThm - 1],
+                                body: item.item.body,
+                                numNice: posted.ppram.numNice,
+                                postedBy: posted.ppram.owner,
+                                ansBy: item.item.ansBy,
+                                postedAt: posted.ppram.createdAt,
+                                ansAt: item.item.ansAt,
+                              });
+                            }}
+                          >
+                            <View
+                              style={{
+                                flex: 1,
+                                paddingVertical: 15,
+                                paddingHorizontal: 35,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontWeight: '500',
+                                  marginTop: 2,
+                                }}
+                              >
+                                {item.item.body}
+                              </Text>
+                              <Text
+                                style={{
+                                  marginTop: 5,
+                                  textAlign: 'right',
+                                  fontSize: 11,
+                                  color: 'gray',
+                                }}
+                              >
+                                {item.item.ansBy}
+                              </Text>
+                            </View>
+                            <Divider />
+                          </TouchableOpacity>
+                        );
+                      }}
+                    />
+                  </View>
+                  <View style={styles.tabMock}></View>
+                </>
+              ) : (
+                <View style={styles.tabMock}></View>
+              )}
+            </View>
+
+            {/* <FlatList
             style={{ height: 60 }}
             data={posted.ppram.niceByList}
             keyExtractor={(item, index) => index.toString()}
@@ -156,51 +381,26 @@ const posted = () => {
                 </View>
               );
             }}
-          />
-          <Button
-            onPress={() => {
-              navigation.navigate('ANSWER');
-            }}
-          >
-            回答する
-          </Button>
-          <Text>{posted.ppram.thms[0]}</Text>
-          <Text>{posted.ppram.thms[0]}の回答</Text>
-          <FlatList
-            style={{ height: 60 }}
-            data={posted.anss}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={item => {
-              return (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('DETAIL', {
-                      postDoc: posted.ppram.postDoc,
-                      ansDoc: item.item.ansDoc,
-                      uri: posted.ppram.uri,
-                      width: posted.ppram.width,
-                      height: posted.ppram.height,
-                      thm: posted.ppram.thms[item.item.orderThm - 1],
-                      body: item.item.body,
-                      numNice: posted.ppram.numNice,
-                      postedBy: posted.ppram.owner,
-                      ansBy: item.item.ansBy,
-                      postedAt: posted.ppram.createdAt,
-                      ansAt: item.item.ansAt,
-                    });
-                  }}
+          /> */}
+            {/*  */}
+          </View>
+          <Provider>
+            <Portal>
+              <Modal
+                visible={showModal}
+                onDismiss={() => {
+                  setModal(false);
+                }}
+              >
+                <View
+                  style={{ height: 300, width: 300, backgroundColor: 'red' }}
                 >
-                  <View style={{ flex: 1, backgroundColor: 'red' }}>
-                    <Text>{item.item.body}</Text>
-                    <Text>{item.item.ansBy}</Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-          />
-          <Text>{posted.ppram.thms[1]}</Text>
-          {/* react-native-swiper */}
-        </View>
+                  <Text>Example Modal</Text>
+                </View>
+              </Modal>
+            </Portal>
+          </Provider>
+        </ScrollView>
       </SafeAreaView>
     </React.Fragment>
   );
