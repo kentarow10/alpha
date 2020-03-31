@@ -200,7 +200,7 @@ export const asyncFetchComment = (postDoc: string, ansDoc: string) => {
         snap.forEach(comDoc => {
           const com = comDoc.data().com;
           const comBy = comDoc.data().comBy;
-          const comAt = comDoc.data().comAt;
+          const comAt = comDoc.data().comAt.toDate();
           comList.push({ comDoc: comDoc.id, com, comBy, comAt });
         });
         // todo
@@ -587,7 +587,7 @@ export const asyncGetLinks = (ansDoc: string) => {
         uri: snap.data().uri,
         thm: snap.data().thm,
         body: snap.data().body,
-        icon: 'arrow-left-bold-outline',
+        icon: 'arrow-right-bold-outline',
       });
     });
     to.forEach(snap => {
@@ -597,7 +597,7 @@ export const asyncGetLinks = (ansDoc: string) => {
         uri: snap.data().uri,
         thm: snap.data().thm,
         body: snap.data().body,
-        icon: 'arrow-right-bold-outline',
+        icon: 'arrow-left-bold-outline',
       });
     });
     const first: SimplePin[] = [
@@ -617,7 +617,7 @@ export const asyncGetLinks = (ansDoc: string) => {
         uri: '',
         thm: '',
         body: '',
-        icon: 'arrow-left-bold-outline',
+        icon: 'arrow-right-bold-outline',
       },
     ];
     const third: SimplePin[] = [
@@ -627,7 +627,7 @@ export const asyncGetLinks = (ansDoc: string) => {
         uri: '',
         thm: '',
         body: '',
-        icon: 'arrow-right-bold-outline',
+        icon: 'arrow-left-bold-outline',
       },
     ];
     const links = first
