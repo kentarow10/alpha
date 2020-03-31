@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTheme, Button, TextInput, Avatar } from 'react-native-paper';
 import { View, Text, Dimensions, StyleSheet, Image } from 'react-native';
+import posted from '../behind/posted';
+import { NavigationContext } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -35,6 +37,16 @@ export const postedImage = (props: Props) => {
       textAlign: 'right',
     },
   });
+  const navigation = useContext(NavigationContext);
+  const [uri, setUri] = useState('');
+
+  useEffect(() => {
+    setUri(props.uri);
+
+    return () => {
+      setUri('');
+    };
+  }, [props.uri]);
 
   return (
     <>
@@ -66,7 +78,7 @@ export const postedImage = (props: Props) => {
       </View>
       <View style={{ height: WIDTH, width: WIDTH }}>
         <Image
-          source={{ uri: props.uri }}
+          source={{ uri: uri }}
           resizeMode="contain"
           style={{ flex: 1, backgroundColor: 'black' }}
         />

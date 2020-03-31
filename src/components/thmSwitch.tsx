@@ -86,21 +86,6 @@ export const thmSwitch = (props: Props) => {
     },
   });
   const num = props.thm.length;
-  const increment = () => {
-    if (props.order === 3) {
-      props.setOrder(1);
-    } else {
-      const next = props.order + 1;
-      props.setOrder(next);
-    }
-  };
-  const toggle = () => {
-    if (props.order === 2) {
-      props.setOrder(1);
-    } else {
-      props.setOrder(2);
-    }
-  };
 
   if (num === 3) {
     return (
@@ -127,7 +112,13 @@ export const thmSwitch = (props: Props) => {
             </Text>
             <ToggleButton.Row
               style={styles.btns}
-              onValueChange={value => props.setOrder(Number(value))}
+              onValueChange={value => {
+                if (value === null) {
+                  console.log(value);
+                } else {
+                  props.setOrder(Number(value));
+                }
+              }}
               value={props.order.toString()}
             >
               <ToggleButton
@@ -200,39 +191,168 @@ export const thmSwitch = (props: Props) => {
     );
   } else if (num === 2) {
     return (
-      <View style={styles.area}>
-        <View style={styles.btn_}>
-          <View style={styles.btn}>
-            <Button
-              title={props.order.toString()}
-              onPress={() => {
-                toggle();
+      <>
+        <View style={styles.upper}>
+          <Text style={{ color: 'gray', textAlign: 'right', fontSize: 12 }}>
+            2020-03-03 18:08
+          </Text>
+          {/* <Text>{props.numNice}人の良いね</Text> */}
+        </View>
+        <Divider />
+        <View style={styles.secondRow}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text
+              style={{
+                fontWeight: '500',
+                // color: 'gray',
+                marginLeft: 10,
+                marginRight: 10,
+                marginTop: 8,
               }}
-              // color={chgColor(props.order)}
-            />
+            >
+              お題
+            </Text>
+            <ToggleButton.Row
+              style={styles.btns}
+              onValueChange={value => {
+                if (value === null) {
+                  console.log(value);
+                } else {
+                  props.setOrder(Number(value));
+                }
+              }}
+              value={props.order.toString()}
+            >
+              <ToggleButton
+                icon="numeric-1"
+                value="1"
+                size={22}
+                color={chgColor(1, props.order)}
+                style={{
+                  height: 28,
+                  width: 28,
+                  backgroundColor: 'white',
+                  marginHorizontal: 7,
+                  borderWidth: 0,
+                }}
+              />
+              <ToggleButton
+                icon="numeric-2"
+                value="2"
+                size={22}
+                color={chgColor(2, props.order)}
+                style={{
+                  height: 28,
+                  width: 28,
+                  marginHorizontal: 7,
+                  backgroundColor: 'white',
+                  borderWidth: 0,
+                }}
+              />
+            </ToggleButton.Row>
           </View>
+          <TouchableOpacity
+            onPress={() => {
+              props.setModal(true);
+            }}
+          >
+            <Text
+              style={{
+                textAlign: 'right',
+                fontWeight: '600',
+                fontSize: 12,
+                color: 'gray',
+                marginTop: 6,
+                marginRight: 12,
+              }}
+            >
+              {props.numNice}人がいいねと言っています
+            </Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.thm_}>
-          <Text style={styles.thm}>{props.thm[props.order - 1]}</Text>
+        <Divider />
+        <View style={styles.area}>
+          <Text style={{ fontSize: 16, fontWeight: '600' }}>
+            {props.thm[props.order - 1]}
+          </Text>
         </View>
-      </View>
+      </>
     );
   } else {
     return (
-      <View style={styles.area}>
-        <View style={styles.btn_}>
-          <View style={styles.btn1}>
-            <Button
-              title={props.order.toString()}
-              onPress={() => {}}
-              color="blue"
-            />
+      <>
+        <View style={styles.upper}>
+          <Text style={{ color: 'gray', textAlign: 'right', fontSize: 12 }}>
+            2020-03-03 18:08
+          </Text>
+          {/* <Text>{props.numNice}人の良いね</Text> */}
+        </View>
+        <Divider />
+        <View style={styles.secondRow}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text
+              style={{
+                fontWeight: '500',
+                // color: 'gray',
+                marginLeft: 10,
+                marginRight: 10,
+                marginTop: 8,
+              }}
+            >
+              お題
+            </Text>
+            <ToggleButton.Row
+              style={styles.btns}
+              onValueChange={value => {
+                if (value === null) {
+                  console.log(value);
+                } else {
+                  props.setOrder(Number(value));
+                }
+              }}
+              value={props.order.toString()}
+            >
+              <ToggleButton
+                icon="numeric-1"
+                value="1"
+                size={22}
+                color={chgColor(1, props.order)}
+                style={{
+                  height: 28,
+                  width: 28,
+                  backgroundColor: 'white',
+                  marginHorizontal: 7,
+                  borderWidth: 0,
+                }}
+              />
+            </ToggleButton.Row>
           </View>
+          <TouchableOpacity
+            onPress={() => {
+              props.setModal(true);
+            }}
+          >
+            <Text
+              style={{
+                textAlign: 'right',
+                fontWeight: '600',
+                fontSize: 12,
+                color: 'gray',
+                marginTop: 6,
+                marginRight: 12,
+              }}
+            >
+              {props.numNice}人がいいねと言っています
+            </Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.thm_}>
-          <Text style={styles.thm}>{props.thm[props.order - 1]}</Text>
+        <Divider />
+        <View style={styles.area}>
+          <Text style={{ fontSize: 16, fontWeight: '600' }}>
+            {props.thm[props.order - 1]}
+          </Text>
         </View>
-      </View>
+      </>
     );
   }
 };

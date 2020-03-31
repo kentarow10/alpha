@@ -181,6 +181,7 @@ const posted = () => {
       }),
     );
   }, [route.params]);
+
   useEffect(() => {
     dispatch(asyncGetAnss(prm.postDoc));
   }, [posted.ppram.postDoc]);

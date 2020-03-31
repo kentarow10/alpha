@@ -39,6 +39,8 @@ import {
 } from '../types';
 import DrawerPositionContext from '@react-navigation/drawer/src/utils/DrawerPositionContext';
 import { Appbar, Divider } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+import { mypinModeOff } from '../../../store/screenMgr/mgr';
 
 type Props = DrawerNavigationConfig & {
   state: DrawerNavigationState;
@@ -127,7 +129,8 @@ export default function DrawerView({
   // findで先頭取得している？先頭が現在の状態で、それのタイプがdrawerなら開いている、ということ
   const isDrawerOpen = Boolean(state.history.find(it => it.type === 'drawer'));
 
-  //
+  const dispatch = useDispatch();
+
   const handleDrawerOpen = React.useCallback(() => {
     navigation.dispatch({
       ...DrawerActions.openDrawer(),
@@ -147,6 +150,7 @@ export default function DrawerView({
     if (isDrawerOpen) {
       navigation.emit({ type: 'drawerOpen' });
     } else {
+      dispatch(mypinModeOff({}));
       navigation.emit({ type: 'drawerClose' });
     }
   }, [isDrawerOpen, navigation]);
@@ -167,6 +171,16 @@ export default function DrawerView({
 
     return () => subscription?.remove();
   }, [handleDrawerClose, isDrawerOpen, navigation, state.key]);
+
+  const prevCountRef = React.useRef(null);
+  React.useEffect(()=>{
+    console.log("後から走る")
+    console.log(state.index)
+    prevCountRef.current = state.index;
+  }, [state.routes[state.index].key])
+  const prevStateKey = prevCountRef.current;
+  console.log("先に走る")
+  console.log(prevStateKey)
 
   React.useEffect(() => {
     const updateWidth = ({ window }: { window: ScaledSize }) => {
@@ -198,7 +212,7 @@ export default function DrawerView({
   };
 
   const tabList = state.routes.filter(route=>descriptors[route.key].options.inTab === true)
-  console.log(tabList);
+  // console.log(tabList);
   // const focusColor = (): "#DBDBDB"|"#ABE7FF" => {
 
   // }
@@ -208,22 +222,31 @@ export default function DrawerView({
       <ScreenContainer style={styles.content}>
 
         {state.routes.map((route, index) => {
-          const descriptor = descriptors[route.key];
-          const { unmountOnBlur } = descriptor.options;
-          const isFocused = state.index === index;
-          console.log(index);
-          console.log('isFocused:'+isFocused);
 
-          if (unmountOnBlur && !isFocused) {
+          // console.log(index);
+          // console.log("route.key");
+          // console.log(route.key);
+          const descriptor = descriptors[route.key];
+          // console.log("descriptor");
+          // console.log(descriptor)
+          const { unmountOnBlur } = descriptor.options;
+          // console.log("unmountOnBlur")
+          // console.log(unmountOnBlur)
+          const isFocused = state.index === index;
+          // console.log('isFocused:'+isFocused);
+          if (unmountOnBlur && !isFocused &&!(state.index === 6) && !(state.index === 8)) {
             console.log("return 1")
+
             return null;
           }
 
           if (lazy && !loaded.includes(index) && !isFocused) {
             // Don't render a screen if we've never navigated to it
             console.log("return 2")
+
             return null;
           }
+
 
           return (
             <ResourceSavingScene
