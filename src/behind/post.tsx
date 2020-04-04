@@ -187,7 +187,7 @@ const post = () => {
               onPress={() => {
                 increment();
               }}
-              color="green"
+              color={cls.grn}
             />
           </View>
           {order === 1 ? (
@@ -264,7 +264,7 @@ const post = () => {
               onPress={() => {
                 toggle();
               }}
-              color="green"
+              color={cls.grn}
             />
           </View>
           {order === 1 ? (
@@ -320,7 +320,7 @@ const post = () => {
           }}
         >
           <View style={styles.bt1}>
-            <Bt title="1" onPress={() => {}} color="green" />
+            <Bt title="1" onPress={() => {}} color={cls.grn} />
           </View>
           <View>
             <TextInput
