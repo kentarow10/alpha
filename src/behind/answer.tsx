@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
-import { useTheme, Button, TextInput } from 'react-native-paper';
+import { useTheme, Button, TextInput, DefaultTheme } from 'react-native-paper';
 import {
   View,
   Button as Bt,
@@ -12,6 +12,8 @@ import {
   SafeAreaView,
   StyleSheet,
   KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import {
@@ -52,9 +54,8 @@ export const answer = () => {
   const styles = StyleSheet.create({
     headerBar: {
       flexDirection: 'row',
-      backgroundColor: colors.background,
-      width: WIDTH,
-      height: 50,
+      backgroundColor: 'white',
+      height: 40,
     },
     content: {
       backgroundColor: 'white',
@@ -83,7 +84,16 @@ export const answer = () => {
       //   borderRadius: 15,
       //   backgroundColor: 'gray',
     },
+    tabMock: {
+      height: 36,
+    },
   });
+  const scrl = useRef(null);
+
+  const _keyboardDidShow = () => {
+    // alert('Keyboard Shown');
+    scrl.current.scrollToEnd();
+  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -102,6 +112,17 @@ export const answer = () => {
     }
   }, [ans.isDone]);
 
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+    // Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+      // Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+    };
+  }, []);
+
   return (
     <React.Fragment>
       <SafeAreaView style={{ height: HEIGHT }}>
@@ -115,19 +136,23 @@ export const answer = () => {
           </Button>
           <Text
             style={{
-              height: 40,
-              marginTop: 10,
-              color: 'white',
-              fontSize: 28,
+              // height: 40,
+              marginTop: 3,
+              color: '#00A85A',
+              fontSize: 20,
               textAlign: 'center',
+              fontWeight: 'bold',
               // fontFamily: 'MyFont',
             }}
           >
             シェアピ
           </Text>
         </View>
-        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-          <ScrollView>
+        <KeyboardAvoidingView
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <ScrollView ref={scrl}>
             <View style={styles.content}>
               <PostedImage uri={posted.ppram.uri} />
               {/* <Text style={styles.thm}>{posted.ppram.thms[0]}</Text> */}
@@ -137,20 +162,59 @@ export const answer = () => {
                 setOrder={setOrder}
                 numNice={posted.ppram.numNice}
                 postAt={posted.ppram.createdAt}
+                inAns={true}
               />
-              <TextInput
-                mode="outlined"
-                value={myans}
-                onChangeText={setMyans}
-                multiline={true}
-              />
-              <Button
-                onPress={() => {
-                  dispatch(asyncAnswer(posted.ppram, order, myans, uid));
-                }}
-              >
-                回答送信
-              </Button>
+              <View style={{ flex: 1 }}>
+                <TextInput
+                  theme={{
+                    ...DefaultTheme,
+                    colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+                  }}
+                  selectionColor="#00A85A"
+                  dense={true}
+                  onContentSizeChange={e => {
+                    if (e.nativeEvent.contentSize.height > 80) {
+                      console.log(e.nativeEvent.contentSize);
+                      scrl.current.scrollToEnd();
+                    }
+                  }}
+                  // underlineColor="#00A85A"
+                  style={{
+                    borderColor: '#00A85A',
+                    margin: 18,
+                    marginBottom: 9,
+                    paddingVertical: 4,
+                    lineHeight: 3,
+                    paddingHorizontal: 16,
+                  }}
+                  mode="flat"
+                  multiline={true}
+                  value={myans}
+                  onChangeText={setMyans}
+                />
+                <Button
+                  style={{
+                    // justifyContent: 'flex-end',
+                    alignSelf: 'flex-end',
+                    marginRight: 18,
+                    marginBottom: 9,
+                    height: 30,
+                    width: 64,
+                    backgroundColor: '#00A85A',
+                  }}
+                  labelStyle={{
+                    fontSize: 12,
+                    color: 'white',
+                    marginHorizontal: 9,
+                  }}
+                  onPress={() => {
+                    dispatch(asyncAnswer(posted.ppram, order, myans, uid));
+                  }}
+                >
+                  送信！
+                </Button>
+              </View>
+              <View style={styles.tabMock}></View>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
