@@ -60,9 +60,11 @@ const timeLine = () => {
       height: imgH,
     },
     headerBar: {
-      backgroundColor: colors.background,
-      width: WIDTH,
-      height: 50,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'white',
+      height: 40,
     },
     content: {
       backgroundColor: 'white',
@@ -91,12 +93,12 @@ const timeLine = () => {
         <View style={styles.headerBar}>
           <Text
             style={{
-              height: 40,
-              marginTop: 10,
-              color: 'white',
-              fontSize: 28,
+              // height: 40,
+              marginTop: 3,
+              color: '#00A85A',
+              fontSize: 20,
               textAlign: 'center',
-              //   fontWeight: '900',
+              fontWeight: 'bold',
               // fontFamily: 'MyFont',
             }}
           >

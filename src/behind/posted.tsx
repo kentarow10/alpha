@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
 import {
@@ -109,7 +109,7 @@ const posted = () => {
       backgroundColor: 'white',
     },
     actionBox: {
-      flex: 2.5,
+      flex: 27,
     },
     ansBtn: {
       // flex: 1,
@@ -145,7 +145,7 @@ const posted = () => {
       flexDirection: 'column',
     },
     downRow: {
-      flex: 1,
+      height: 27,
     },
     tabMock: {
       height: 36,
@@ -186,6 +186,113 @@ const posted = () => {
     dispatch(asyncGetAnss(prm.postDoc));
   }, [posted.ppram.postDoc]);
 
+  const scrl = useRef(null);
+
+  const renderHeader = () => {
+    return (
+      <>
+        <PostedImage uri={posted.ppram.uri} />
+        <View>
+          <ThmSwitch
+            thm={posted.ppram.thms}
+            order={order}
+            setOrder={setOrder}
+            setModal={setModal}
+            postAt={posted.ppram.createdAt}
+            numNice={posted.ppram.numNice}
+          />
+        </View>
+        <View style={styles.middle}>
+          <View
+            style={{
+              marginRight: 10,
+              borderWidth: 4,
+              borderRadius: 100,
+              borderColor: doneNiceColor(posted.doneNice),
+              shadowColor: 'gray',
+              shadowRadius: 4,
+              shadowOpacity: 0.4,
+              shadowOffset: {
+                height: 1,
+              },
+            }}
+          >
+            <MaterialCommunityIcons.Button
+              name={doneNiceIcon(posted.doneNice)}
+              color="#00A85A"
+              size={14}
+              borderRadius={100}
+              backgroundColor="white"
+              iconStyle={{
+                marginRight: 0,
+              }}
+              onPress={() => {
+                dispatch(
+                  asyncNice(
+                    posted.ppram.postDoc,
+                    uid,
+                    posted.ppram.uri,
+                    posted.ppram.owner,
+                  ),
+                );
+              }}
+            ></MaterialCommunityIcons.Button>
+          </View>
+          <Button
+            mode="contained"
+            icon="hand"
+            style={{
+              marginRight: 10,
+              backgroundColor: '#00A85A',
+              borderRadius: 30,
+              shadowRadius: 4,
+              shadowOpacity: 0.4,
+              shadowOffset: {
+                height: 1,
+              },
+            }}
+            labelStyle={{ fontWeight: 'bold' }}
+            onPress={() => {
+              navigation.navigate('ANSWER');
+            }}
+          >
+            答える
+          </Button>
+        </View>
+        <View style={styles.actionBox}>
+          <View style={styles.downRow}>
+            <Button
+              mode="outlined"
+              style={{
+                height: 24,
+                margin: 0,
+                padding: 0,
+                backgroundColor: '#F98A8A',
+                borderRadius: 0,
+              }}
+              labelStyle={{
+                color: 'white',
+                margin: 0,
+                marginVertical: 5,
+                padding: 0,
+                fontSize: 12,
+              }}
+              onPress={() => {
+                if (showAns) {
+                  setAnss(false);
+                } else {
+                  setAnss(true);
+                }
+              }}
+            >
+              みんなの回答をみる
+            </Button>
+          </View>
+        </View>
+      </>
+    );
+  };
+
   return (
     <React.Fragment>
       <SafeAreaView style={{ height: HEIGHT }}>
@@ -205,185 +312,199 @@ const posted = () => {
           </Text>
         </View>
         <Divider />
-        <ScrollView>
+        <ScrollView
+          scrollEnabled={false}
+          ref={s => {
+            scrl.current = s;
+          }}
+        >
           <View style={styles.content}>
-            <PostedImage uri={posted.ppram.uri} />
-            <View>
-              <ThmSwitch
-                thm={posted.ppram.thms}
-                order={order}
-                setOrder={setOrder}
-                setModal={setModal}
-                postAt={posted.ppram.createdAt}
-                numNice={posted.ppram.numNice}
-              />
-            </View>
-            <View style={styles.middle}>
-              <View
-                style={{
-                  marginRight: 10,
-                  borderWidth: 4,
-                  borderRadius: 100,
-                  borderColor: doneNiceColor(posted.doneNice),
-                  shadowColor: 'gray',
-                  shadowRadius: 4,
-                  shadowOpacity: 0.4,
-                  shadowOffset: {
-                    height: 1,
-                  },
-                }}
-              >
-                <MaterialCommunityIcons.Button
-                  name={doneNiceIcon(posted.doneNice)}
-                  color="#00A85A"
-                  size={14}
-                  borderRadius={100}
-                  backgroundColor="white"
-                  iconStyle={{
-                    marginRight: 0,
-                  }}
-                  onPress={() => {
-                    dispatch(
-                      asyncNice(
-                        posted.ppram.postDoc,
-                        uid,
-                        posted.ppram.uri,
-                        posted.ppram.owner,
-                      ),
-                    );
-                  }}
-                ></MaterialCommunityIcons.Button>
+            <ScrollView>
+              <PostedImage uri={posted.ppram.uri} />
+              <View>
+                <ThmSwitch
+                  thm={posted.ppram.thms}
+                  order={order}
+                  setOrder={setOrder}
+                  setModal={setModal}
+                  postAt={posted.ppram.createdAt}
+                  numNice={posted.ppram.numNice}
+                />
               </View>
-              <Button
-                mode="contained"
-                icon="hand"
-                style={{
-                  marginRight: 10,
-                  backgroundColor: '#00A85A',
-                  borderRadius: 30,
-                  shadowRadius: 4,
-                  shadowOpacity: 0.4,
-                  shadowOffset: {
-                    height: 1,
-                  },
-                }}
-                labelStyle={{ fontWeight: 'bold' }}
-                onPress={() => {
-                  navigation.navigate('ANSWER');
-                }}
-              >
-                答える
-              </Button>
-            </View>
-            <View style={styles.actionBox}>
-              <View style={styles.downRow}>
-                <Button
-                  mode="outlined"
+              <View style={styles.middle}>
+                <View
                   style={{
-                    height: 24,
-                    margin: 0,
-                    padding: 0,
-                    backgroundColor: '#F98A8A',
-                    borderRadius: 0,
-                  }}
-                  labelStyle={{
-                    color: 'white',
-                    margin: 0,
-                    marginVertical: 5,
-                    padding: 0,
-                    fontSize: 12,
-                  }}
-                  onPress={() => {
-                    if (showAns) {
-                      setAnss(false);
-                    } else {
-                      setAnss(true);
-                    }
+                    marginRight: 10,
+                    borderWidth: 4,
+                    borderRadius: 100,
+                    borderColor: doneNiceColor(posted.doneNice),
+                    shadowColor: 'gray',
+                    shadowRadius: 4,
+                    shadowOpacity: 0.4,
+                    shadowOffset: {
+                      height: 1,
+                    },
                   }}
                 >
-                  みんなの回答をみる
+                  <MaterialCommunityIcons.Button
+                    name={doneNiceIcon(posted.doneNice)}
+                    color="#00A85A"
+                    size={14}
+                    borderRadius={100}
+                    backgroundColor="white"
+                    iconStyle={{
+                      marginRight: 0,
+                    }}
+                    onPress={() => {
+                      dispatch(
+                        asyncNice(
+                          posted.ppram.postDoc,
+                          uid,
+                          posted.ppram.uri,
+                          posted.ppram.owner,
+                        ),
+                      );
+                    }}
+                  ></MaterialCommunityIcons.Button>
+                </View>
+                <Button
+                  mode="contained"
+                  icon="hand"
+                  style={{
+                    marginRight: 10,
+                    backgroundColor: '#00A85A',
+                    borderRadius: 30,
+                    shadowRadius: 4,
+                    shadowOpacity: 0.4,
+                    shadowOffset: {
+                      height: 1,
+                    },
+                  }}
+                  labelStyle={{ fontWeight: 'bold' }}
+                  onPress={() => {
+                    navigation.navigate('ANSWER');
+                  }}
+                >
+                  答える
                 </Button>
               </View>
-              {showAns ? (
-                <>
-                  <View style={{ backgroundColor: 'white' }}>
-                    <FlatList
-                      // style={{ height: 60 }}
-                      data={posted.anss}
-                      keyExtractor={(item, index) => index.toString()}
-                      renderItem={item => {
-                        return (
-                          <TouchableOpacity
-                            onPress={() => {
-                              navigation.navigate('DETAIL', {
-                                postDoc: posted.ppram.postDoc,
-                                ansDoc: item.item.ansDoc,
-                                uri: posted.ppram.uri,
-                                width: posted.ppram.width,
-                                height: posted.ppram.height,
-                                thm: posted.ppram.thms[item.item.orderThm - 1],
-                                body: item.item.body,
-                                numNice: posted.ppram.numNice,
-                                postedBy: posted.ppram.owner,
-                                ansBy: item.item.ansBy,
-                                postedAt: posted.ppram.createdAt,
-                                ansAt: item.item.ansAt,
-                              });
-                            }}
-                          >
-                            <View
-                              style={{
-                                flex: 1,
-                                paddingVertical: 15,
-                                paddingHorizontal: 35,
-                              }}
-                            >
-                              <Text
-                                style={{
-                                  fontSize: 14,
-                                  fontWeight: '500',
-                                  marginTop: 2,
-                                }}
-                              >
-                                {item.item.body}
-                              </Text>
-                              <Text
-                                style={{
-                                  marginTop: 5,
-                                  textAlign: 'right',
-                                  fontSize: 11,
-                                  color: 'gray',
-                                }}
-                              >
-                                {item.item.ansBy}
-                              </Text>
-                            </View>
-                            <Divider />
-                          </TouchableOpacity>
-                        );
-                      }}
-                    />
-                  </View>
-                  <View style={styles.tabMock}></View>
-                </>
-              ) : (
-                <View style={styles.tabMock}></View>
-              )}
-            </View>
-
-            {/* <FlatList
-            style={{ height: 60 }}
-            data={posted.ppram.niceByList}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={item => {
-              return (
-                <View style={{ flex: 1, backgroundColor: 'red' }}>
-                  <Text>{item.item}</Text>
+              <View style={styles.actionBox}>
+                <View style={styles.downRow}>
+                  <Button
+                    mode="outlined"
+                    style={{
+                      height: 24,
+                      margin: 0,
+                      padding: 0,
+                      backgroundColor: '#F98A8A',
+                      borderRadius: 0,
+                    }}
+                    labelStyle={{
+                      color: 'white',
+                      margin: 0,
+                      marginVertical: 5,
+                      padding: 0,
+                      fontSize: 12,
+                    }}
+                    onPress={() => {
+                      scrl.current.scrollTo(200);
+                      if (showAns) {
+                        setAnss(false);
+                      } else {
+                        setAnss(true);
+                      }
+                    }}
+                  >
+                    みんなの回答をみる
+                  </Button>
                 </View>
-              );
-            }}
-          /> */}
-            {/*  */}
+              </View>
+            </ScrollView>
+            <View style={{ backgroundColor: 'white' }}>
+              <FlatList
+                // style={{ height: 60 }}
+                // stickyHeaderIndices={[0]}
+                // ListHeaderComponent={renderHeader}
+                data={posted.anss}
+                // onRefresh={() => {
+                //   dispatch(asyncGetAnss(prm.postDoc));
+                // }}
+                // refreshing={posted.isFetching}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={item => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate('DETAIL', {
+                          postDoc: posted.ppram.postDoc,
+                          ansDoc: item.item.ansDoc,
+                          uri: posted.ppram.uri,
+                          width: posted.ppram.width,
+                          height: posted.ppram.height,
+                          thm: posted.ppram.thms[item.item.orderThm - 1],
+                          body: item.item.body,
+                          numNice: posted.ppram.numNice,
+                          postedBy: posted.ppram.owner,
+                          ansBy: item.item.ansBy,
+                          postedAt: posted.ppram.createdAt,
+                          ansAt: item.item.ansAt,
+                        });
+                      }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          paddingVertical: 15,
+                          paddingHorizontal: 35,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: '500',
+                            marginTop: 2,
+                          }}
+                        >
+                          {item.item.body}
+                        </Text>
+                        <Text
+                          style={{
+                            marginTop: 5,
+                            textAlign: 'right',
+                            fontSize: 11,
+                            color: 'gray',
+                          }}
+                        >
+                          {item.item.ansBy}
+                        </Text>
+                      </View>
+                      <Divider />
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+            <View style={styles.tabMock}></View>
+            {/* <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View>
+            <View style={styles.tabMock}></View> */}
           </View>
           <Provider>
             <Portal>

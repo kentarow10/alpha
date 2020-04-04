@@ -16,6 +16,7 @@ type Props = {
   numNice: number;
   setOrder: (num: number) => void;
   setModal?: (show: boolean) => void;
+  inAns?: boolean;
 };
 
 const chgColor = (n: number, order: number): '#00A85A' | 'gray' => {
@@ -162,24 +163,28 @@ export const thmSwitch = (props: Props) => {
               />
             </ToggleButton.Row>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              props.setModal(true);
-            }}
-          >
-            <Text
-              style={{
-                textAlign: 'right',
-                fontWeight: '600',
-                fontSize: 12,
-                color: 'gray',
-                marginTop: 6,
-                marginRight: 12,
+          {props.inAns ? (
+            <></>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                props.setModal(true);
               }}
             >
-              {props.numNice}人がいいねと言っています
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  textAlign: 'right',
+                  fontWeight: '600',
+                  fontSize: 12,
+                  color: 'gray',
+                  marginTop: 6,
+                  marginRight: 12,
+                }}
+              >
+                {props.numNice}人がいいねと言っています
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Divider />
         <View style={styles.area}>
@@ -251,24 +256,28 @@ export const thmSwitch = (props: Props) => {
               />
             </ToggleButton.Row>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              props.setModal(true);
-            }}
-          >
-            <Text
-              style={{
-                textAlign: 'right',
-                fontWeight: '600',
-                fontSize: 12,
-                color: 'gray',
-                marginTop: 6,
-                marginRight: 12,
+          {props.inAns ? (
+            <></>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                props.setModal(true);
               }}
             >
-              {props.numNice}人がいいねと言っています
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  textAlign: 'right',
+                  fontWeight: '600',
+                  fontSize: 12,
+                  color: 'gray',
+                  marginTop: 6,
+                  marginRight: 12,
+                }}
+              >
+                {props.numNice}人がいいねと言っています
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Divider />
         <View style={styles.area}>
@@ -327,24 +336,28 @@ export const thmSwitch = (props: Props) => {
               />
             </ToggleButton.Row>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              props.setModal(true);
-            }}
-          >
-            <Text
-              style={{
-                textAlign: 'right',
-                fontWeight: '600',
-                fontSize: 12,
-                color: 'gray',
-                marginTop: 6,
-                marginRight: 12,
+          {props.inAns ? (
+            <></>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                props.setModal(true);
               }}
             >
-              {props.numNice}人がいいねと言っています
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  textAlign: 'right',
+                  fontWeight: '600',
+                  fontSize: 12,
+                  color: 'gray',
+                  marginTop: 6,
+                  marginRight: 12,
+                }}
+              >
+                {props.numNice}人がいいねと言っています
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Divider />
         <View style={styles.area}>

@@ -50,6 +50,7 @@ export const postedReducer: Reducer<Posted> = reducerWithInitialState(
   }))
   .case(getAnss, (state, payload) => ({
     ...state,
+    isFetching: false,
     anss: payload,
   }))
   .case(getParams, (state, payload) => ({

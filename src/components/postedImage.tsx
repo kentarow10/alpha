@@ -22,7 +22,7 @@ export const postedImage = (props: Props) => {
       alignSelf: 'center',
     },
     owner: {
-      flex: 0.7,
+      // flex: 0.7,
       flexDirection: 'row',
       height: 75,
     },

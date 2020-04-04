@@ -34,7 +34,7 @@ const profile = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
-    dispatch(asyncGetMyPosts(uid));
+    // dispatch(asyncGetMyPosts(uid));
     dispatch(asyncGetMyPins(uid));
   }, []);
 

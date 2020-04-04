@@ -10,6 +10,7 @@ import {
   Button,
   TextInput,
   ToggleButton,
+  DefaultTheme,
 } from 'react-native-paper';
 import {
   View,
@@ -18,6 +19,7 @@ import {
   Text,
   Dimensions,
   StyleSheet,
+  Picker,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -36,6 +38,7 @@ import {
 import { GetUid } from '../store/auth/auth';
 import { NavigationContext } from '@react-navigation/native';
 import { inputThmSwitch as ITS } from '../components/inputThmSwitch';
+import { cls } from '../store/screenMgr/mgr';
 
 const W = Dimensions.get('window').width;
 const H = Dimensions.get('window').height;
@@ -44,12 +47,52 @@ const post = () => {
   const { colors } = useTheme();
   const styles = StyleSheet.create({
     headerBar: {
-      backgroundColor: colors.background,
-      width: W,
-      height: 50,
+      flexDirection: 'row',
+      backgroundColor: 'white',
+      height: 40,
     },
     wrapper: {
       height: 100,
+    },
+    btns: {
+      height: 20,
+      marginLeft: 18,
+    },
+    bt: {
+      height: 40,
+      width: 40,
+      justifyContent: 'center',
+      margin: 6,
+      marginTop: 12,
+      marginRight: 25,
+      color: cls.grn,
+      backgroundColor: 'white',
+      shadowColor: 'green',
+      shadowOpacity: 0.4,
+      shadowRadius: 4,
+      borderColor: 'white',
+      borderRadius: 100,
+      shadowOffset: {
+        height: 2,
+      },
+    },
+    bt1: {
+      height: 40,
+      marginTop: 12,
+      width: 40,
+      justifyContent: 'center',
+      margin: 6,
+      marginRight: 25,
+      color: cls.grn,
+      backgroundColor: 'white',
+      borderColor: 'white',
+      borderRadius: 100,
+      shadowColor: 'gray',
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+      shadowOffset: {
+        height: 2,
+      },
     },
     slide1: {
       flex: 1,
@@ -85,6 +128,9 @@ const post = () => {
   const [thm3, setThm3] = useState('');
   const [bbb, setBbb] = useState({ value: '1' });
   const canSubmit = (): boolean => {
+    if (state.url === '') {
+      return false;
+    }
     if (bbb.value === '3') {
       const c1 = thm1 === '';
       const c2 = thm2 === '';
@@ -100,6 +146,203 @@ const post = () => {
       const c1 = thm1 === '';
 
       return !c1;
+    }
+  };
+
+  const chgColor = (n: number, order: number): '#00A85A' | 'gray' => {
+    if (n === order) {
+      return '#00A85A';
+    } else {
+      return 'gray';
+    }
+  };
+
+  const [order, setOrder] = useState(1);
+
+  const increment = () => {
+    if (order === 3) {
+      setOrder(1);
+    } else {
+      const next = order + 1;
+      setOrder(next);
+    }
+  };
+  const toggle = () => {
+    if (order === 1) {
+      setOrder(2);
+    } else {
+      setOrder(1);
+    }
+  };
+
+  const renderInputField = () => {
+    if (Number(bbb.value) === 3) {
+      return (
+        <View
+          style={{ flexDirection: 'row', marginTop: 18, paddingHorizontal: 18 }}
+        >
+          <View style={styles.bt}>
+            <Bt
+              title={order.toString()}
+              onPress={() => {
+                increment();
+              }}
+              color="green"
+            />
+          </View>
+          {order === 1 ? (
+            <View>
+              <TextInput
+                label="お題１"
+                theme={{
+                  ...DefaultTheme,
+                  colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+                }}
+                selectionColor="#00A85A"
+                mode="flat"
+                multiline={true}
+                value={thm1}
+                onChangeText={setThm1}
+                style={{
+                  width: 260,
+                  borderColor: '#00A85A',
+                  paddingHorizontal: 16,
+                }}
+              />
+            </View>
+          ) : order === 2 ? (
+            <View>
+              <TextInput
+                label="お題２"
+                theme={{
+                  ...DefaultTheme,
+                  colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+                }}
+                selectionColor="#00A85A"
+                mode="flat"
+                multiline={true}
+                value={thm2}
+                onChangeText={setThm2}
+                style={{
+                  width: 260,
+                  borderColor: '#00A85A',
+                  paddingHorizontal: 16,
+                }}
+              />
+            </View>
+          ) : (
+            <View>
+              <TextInput
+                theme={{
+                  ...DefaultTheme,
+                  colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+                }}
+                selectionColor="#00A85A"
+                label="お題３"
+                mode="flat"
+                multiline={true}
+                value={thm3}
+                onChangeText={setThm3}
+                style={{
+                  width: 260,
+                  borderColor: '#00A85A',
+                  paddingHorizontal: 16,
+                }}
+              />
+            </View>
+          )}
+        </View>
+      );
+    } else if (Number(bbb.value) === 2) {
+      return (
+        <View
+          style={{ flexDirection: 'row', marginTop: 18, paddingHorizontal: 18 }}
+        >
+          <View style={styles.bt}>
+            <Bt
+              title={order === 3 ? '2' : order.toString()}
+              onPress={() => {
+                toggle();
+              }}
+              color="green"
+            />
+          </View>
+          {order === 1 ? (
+            <View>
+              <TextInput
+                label="お題１"
+                theme={{
+                  ...DefaultTheme,
+                  colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+                }}
+                selectionColor="#00A85A"
+                mode="flat"
+                multiline={true}
+                value={thm1}
+                onChangeText={setThm1}
+                style={{
+                  width: 260,
+                  borderColor: '#00A85A',
+                  paddingHorizontal: 16,
+                }}
+              />
+            </View>
+          ) : (
+            <View>
+              <TextInput
+                label="お題２"
+                theme={{
+                  ...DefaultTheme,
+                  colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+                }}
+                selectionColor="#00A85A"
+                mode="flat"
+                multiline={true}
+                value={thm2}
+                onChangeText={setThm2}
+                style={{
+                  width: 260,
+                  borderColor: '#00A85A',
+                  paddingHorizontal: 16,
+                }}
+              />
+            </View>
+          )}
+        </View>
+      );
+    } else {
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+            marginTop: 18,
+            paddingHorizontal: 18,
+          }}
+        >
+          <View style={styles.bt1}>
+            <Bt title="1" onPress={() => {}} color="green" />
+          </View>
+          <View>
+            <TextInput
+              label="お題１"
+              theme={{
+                ...DefaultTheme,
+                colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+              }}
+              selectionColor="#00A85A"
+              mode="flat"
+              multiline={true}
+              value={thm1}
+              onChangeText={setThm1}
+              style={{
+                width: 260,
+                borderColor: '#00A85A',
+                paddingHorizontal: 16,
+              }}
+            />
+          </View>
+        </View>
+      );
     }
   };
 
@@ -124,31 +367,44 @@ const post = () => {
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+      <View style={styles.headerBar}>
+        <Text
+          style={{
+            // height: 40,
+            marginTop: 3,
+            color: '#00A85A',
+            fontSize: 20,
+            textAlign: 'center',
+            fontWeight: 'bold',
+            // fontFamily: 'MyFont',
+          }}
+        >
+          シェアピ
+        </Text>
+      </View>
       <ScrollView>
-        <View style={styles.headerBar}>
-          <Text
-            style={{
-              height: 40,
-              marginTop: 10,
-              color: 'white',
-              fontSize: 28,
-              textAlign: 'center',
-              // fontFamily: 'MyFont',
-            }}
-          >
-            シェアピ
-          </Text>
-        </View>
         <Card>
           {state.url === '' ? (
             <>
-              <Button
-                onPress={() => {
-                  dispatch(asyncChooseImage());
+              <View
+                style={{
+                  width: W,
+                  height: W,
+                  backgroundColor: '#e5e5e5',
+                  padding: 100,
+                  justifyContent: 'center',
                 }}
               >
-                画像を選択
-              </Button>
+                <Button
+                  mode="contained"
+                  style={{ backgroundColor: '#00A85A' }}
+                  onPress={() => {
+                    dispatch(asyncChooseImage());
+                  }}
+                >
+                  画像を選択
+                </Button>
+              </View>
             </>
           ) : (
             <>
@@ -160,38 +416,79 @@ const post = () => {
                 <Image
                   source={{ uri: state.url }}
                   resizeMode="contain"
-                  style={{ width: W, height: 400, backgroundColor: 'black' }}
+                  style={{ width: W, height: W, backgroundColor: 'black' }}
                 />
               </TouchableOpacity>
             </>
           )}
         </Card>
+        <View
+          style={{ flexDirection: 'row', marginTop: 9, paddingHorizontal: 18 }}
+        >
+          <Text
+            style={{
+              paddingTop: 8,
+              fontSize: 14,
+              fontWeight: '400',
+              textAlignVertical: 'bottom',
+            }}
+          >
+            お題の数を選んでください
+          </Text>
+          <ToggleButton.Row
+            style={styles.btns}
+            onValueChange={value => setBbb({ value })}
+            value={bbb.value}
+          >
+            <ToggleButton
+              icon="numeric-1"
+              value="1"
+              size={28}
+              color={chgColor(1, Number(bbb.value))}
+              style={{
+                height: 28,
+                width: 28,
+                marginHorizontal: 7,
+                backgroundColor: 'white',
+                borderWidth: 0,
+              }}
+            />
+            <ToggleButton
+              icon="numeric-2"
+              value="2"
+              size={28}
+              color={chgColor(2, Number(bbb.value))}
+              style={{
+                height: 28,
+                width: 28,
+                marginHorizontal: 7,
+                backgroundColor: 'white',
+                borderWidth: 0,
+              }}
+            />
+            <ToggleButton
+              icon="numeric-3"
+              value="3"
+              size={28}
+              color={chgColor(3, Number(bbb.value))}
+              style={{
+                height: 28,
+                width: 28,
+                marginHorizontal: 7,
+                backgroundColor: 'white',
+                borderWidth: 0,
+              }}
+            />
+          </ToggleButton.Row>
+        </View>
+        {renderInputField()}
         <Button
-          onPress={() => {
-            console.log(state);
+          style={{
+            marginTop: 18,
           }}
-        >
-          状態
-        </Button>
-        <Text>お題の数</Text>
-        <ToggleButton.Row
-          onValueChange={value => setBbb({ value })}
-          value={bbb.value}
-        >
-          <ToggleButton icon="numeric-1" value="1" />
-          <ToggleButton icon="numeric-2" value="2" />
-          <ToggleButton icon="numeric-3" value="3" />
-        </ToggleButton.Row>
-        <ITS
-          numThm={Number(bbb.value)}
-          thm1={thm1}
-          thm2={thm2}
-          thm3={thm3}
-          setThm1={setThm1}
-          setThm2={setThm2}
-          setThm3={setThm3}
-        />
-        <Button
+          labelStyle={{
+            color: canSubmit() ? cls.grn : 'gray',
+          }}
           disabled={!canSubmit()}
           onPress={() => {
             dispatch(
@@ -211,6 +508,7 @@ const post = () => {
         >
           投稿！
         </Button>
+        <View style={{ height: 36, backgroundColor: 'white' }}></View>
       </ScrollView>
     </SafeAreaView>
   );

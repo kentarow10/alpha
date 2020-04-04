@@ -174,12 +174,11 @@ export default function DrawerView({
 
   const prevCountRef = React.useRef(null);
   React.useEffect(()=>{
-    console.log("後から走る")
-    console.log(state.index)
+    console.log("DOMが更新され,depsの変更を検知したら")
     prevCountRef.current = state.index;
-  }, [state.routes[state.index].key])
+  }, [state.index])
+  console.log("ここは当然renderの最中")
   const prevStateKey = prevCountRef.current;
-  console.log("先に走る")
   console.log(prevStateKey)
 
   React.useEffect(() => {
