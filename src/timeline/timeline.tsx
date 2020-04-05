@@ -30,6 +30,7 @@ import { GetPosts } from '../store/timeLine/selector';
 import { asyncGetPosts } from '../store/timeLine/actions';
 import { NavigationContext } from '@react-navigation/native';
 import { TimeLime } from '../store/timeLine/timeLine';
+import { Header } from '../components/header';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -42,12 +43,6 @@ const timeLine = () => {
   const navigation = useContext(NavigationContext);
   const posts: TimeLime = useSelector(GetPosts);
   const { colors } = useTheme();
-
-  // const getFont = async () => {
-  //   await Font.loadAsync({
-  //     MyFont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
-  //   });
-  // };
 
   useEffect(() => {
     // getFont();
@@ -90,21 +85,7 @@ const timeLine = () => {
   return (
     <React.Fragment>
       <SafeAreaView style={{ height: HEIGHT }}>
-        <View style={styles.headerBar}>
-          <Text
-            style={{
-              // height: 40,
-              marginTop: 3,
-              color: '#00A85A',
-              fontSize: 20,
-              textAlign: 'center',
-              fontWeight: 'bold',
-              // fontFamily: 'MyFont',
-            }}
-          >
-            シェアピ
-          </Text>
-        </View>
+        <Header mode="me" />
         <View style={styles.content}>
           <FlatList
             data={posts.posts}

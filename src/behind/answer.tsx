@@ -51,6 +51,14 @@ export const answer = () => {
   const proportion = posted.ppram.height / posted.ppram.width;
   const imgH = WIDTH * proportion;
 
+  const canSubmit = (): boolean => {
+    if (myans === '') {
+      return false;
+    }
+
+    return true;
+  };
+
   const styles = StyleSheet.create({
     headerBar: {
       flexDirection: 'row',
@@ -193,6 +201,7 @@ export const answer = () => {
                   onChangeText={setMyans}
                 />
                 <Button
+                  disabled={!canSubmit()}
                   style={{
                     // justifyContent: 'flex-end',
                     alignSelf: 'flex-end',
@@ -200,7 +209,7 @@ export const answer = () => {
                     marginBottom: 9,
                     height: 30,
                     width: 64,
-                    backgroundColor: '#00A85A',
+                    backgroundColor: canSubmit() ? '#00A85A' : 'gray',
                   }}
                   labelStyle={{
                     fontSize: 12,

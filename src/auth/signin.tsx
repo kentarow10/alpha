@@ -15,7 +15,7 @@ const signin = () => {
   const navigation = useContext(NavigationContext);
   //   const state = useSelector(GetAuth);
   const [signup, setSignup] = useState({
-    email: 'test@test.com',
+    email: 'test@test2.com',
     pass: 'password',
   });
   const setEmail = (v: string) => {

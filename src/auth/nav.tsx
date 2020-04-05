@@ -11,6 +11,7 @@ import SignInScreen from './signin';
 import SignUpScreen from './signup';
 // import ResetPassword from './resetpass';
 import { RootNavigator } from '../home/home';
+import Sample from '../../training/Sample';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -32,6 +33,7 @@ const authNav = () => {
         <Stack.Screen name="Splash" component={SplashScreen} />
       ) : state.uid === '' ? (
         <>
+          {/* <Stack.Screen name="sample" component={Sample} /> */}
           <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           {/* <Stack.Screen name="ResetPassword" component={ResetPassword} /> */}

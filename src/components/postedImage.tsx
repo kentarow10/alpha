@@ -1,12 +1,40 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { useTheme, Button, TextInput, Avatar } from 'react-native-paper';
 import { View, Text, Dimensions, StyleSheet, Image } from 'react-native';
 import posted from '../behind/posted';
 import { NavigationContext } from '@react-navigation/native';
+// import shallowCompare from 'react-addons-shallow-compare';
+import { Img } from '../components/Img';
+import { Example2 } from '../../training/Sample.jsx';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
+
+type SampleProps = {
+  uri: string;
+};
+
+class SampleImg extends React.Component<SampleProps> {
+  shouldComponentUpdate(nextProps: SampleProps) {
+    if (this.props.uri === nextProps.uri) {
+      return true;
+    } else {
+      return true;
+    }
+  }
+  render() {
+    console.log('rerender');
+
+    return (
+      <Image
+        source={{ uri: this.props.uri }}
+        resizeMode="contain"
+        style={{ flex: 1, backgroundColor: 'black' }}
+      />
+    );
+  }
+}
 
 type Props = {
   iconPath?: string;
@@ -14,6 +42,28 @@ type Props = {
   accountName?: string;
   uri: string;
 };
+
+const PostedImage = React.memo<{ uri: string }>(
+  ({ uri }) => {
+    console.log('running!');
+
+    return (
+      <Image
+        source={{ uri: uri }}
+        resizeMode="contain"
+        style={{ flex: 1, backgroundColor: 'black' }}
+      />
+    );
+  },
+  (prevProps, nextProps) => {
+    console.log('prevProps.uri');
+    console.log(prevProps.uri);
+    console.log('nextProps.uri');
+    console.log(nextProps.uri);
+
+    return false;
+  },
+);
 
 export const postedImage = (props: Props) => {
   const styles = StyleSheet.create({
@@ -38,14 +88,9 @@ export const postedImage = (props: Props) => {
     },
   });
   const navigation = useContext(NavigationContext);
-  const [uri, setUri] = useState('');
 
-  useEffect(() => {
-    setUri(props.uri);
-
-    return () => {
-      setUri('');
-    };
+  const URL = useMemo(() => {
+    return props.uri;
   }, [props.uri]);
 
   return (
@@ -77,11 +122,7 @@ export const postedImage = (props: Props) => {
         </View>
       </View>
       <View style={{ height: WIDTH, width: WIDTH }}>
-        <Image
-          source={{ uri: uri }}
-          resizeMode="contain"
-          style={{ flex: 1, backgroundColor: 'black' }}
-        />
+        <Example2 uri={URL} />
       </View>
     </>
   );
