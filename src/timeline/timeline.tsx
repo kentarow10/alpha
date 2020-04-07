@@ -98,7 +98,7 @@ const timeLine = () => {
                   {/* <View style={{ height: 57, width: imgW }}></View> */}
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.navigate('POSTED', {
+                      navigation.navigate('FLAME', {
                         postDoc: item.item.postDoc,
                         uri: item.item.uri,
                         width: item.item.width,

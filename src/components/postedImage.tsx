@@ -122,7 +122,7 @@ export const postedImage = (props: Props) => {
         </View>
       </View>
       <View style={{ height: WIDTH, width: WIDTH }}>
-        <Example2 uri={URL} />
+        <Img uri={URL} />
       </View>
     </>
   );

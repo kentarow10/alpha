@@ -26,7 +26,7 @@ type FireStorePost = {
 };
 
 export type NavigationParamList = {
-  POSTED: {
+  FLAME: {
     postDoc: string;
     uri: string;
     width: number;

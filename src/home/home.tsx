@@ -15,6 +15,7 @@ import Posted from '../behind/posted';
 import Detail from '../behind/detail';
 import Post from '../behind/post';
 import { answer } from '../behind/answer';
+import flame from '../core/flame';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -90,6 +91,13 @@ export const RootNavigator = () => {
             color: 'green',
             size: 20,
           },
+        }}
+      />
+      <Drawer.Screen
+        name="FLAME"
+        component={flame}
+        options={{
+          unmountOnBlur: true,
         }}
       />
       <Drawer.Screen
