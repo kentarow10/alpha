@@ -56,6 +56,7 @@ export const Answer = (props: Props) => {
   const [order, setOrder] = useState(1);
   const proportion = posted.ppram.height / posted.ppram.width;
   const imgH = WIDTH * proportion;
+  const [mock, setMock] = useState(false);
 
   const canSubmit = (): boolean => {
     if (myans === '') {
@@ -75,6 +76,7 @@ export const Answer = (props: Props) => {
       backgroundColor: 'white',
       //   height: HEIGHT - 50,
       flex: 1,
+      paddingBottom: mock ? 280 : 0,
     },
     text: {
       marginTop: 4,
@@ -104,20 +106,22 @@ export const Answer = (props: Props) => {
     },
   });
 
-  const _keyboardDidShow = () => {
-    props.scrlRef.current.scrollTo({ x: 0, y: 280, animation: true });
-    // props.scrlRef.current.scrollToEnd();
+  const _keyboardWillShow = () => {
+    setMock(true);
   };
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      setMyans('');
-      setOrder(1);
-      dispatch(ansInit({}));
-    });
+  const _keyboardDidShow = () => {
+    if (props.scrlRef) {
+      props.scrlRef.current.scrollTo({ x: 0, y: 280, animation: true });
+    }
+  };
 
-    return unsubscribe;
-  }, [navigation]);
+  const _keyboardDidHide = () => {
+    props.scrlRef.current.scrollTo({ x: 0, y: 140, animation: true });
+    setTimeout(() => {
+      setMock(false);
+    }, 0);
+  };
 
   useEffect(() => {
     if (ans.isDone) {
@@ -130,85 +134,92 @@ export const Answer = (props: Props) => {
   }, [ans.isDone]);
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setMyans('');
+      setOrder(1);
+      dispatch(ansInit({}));
+    });
+    Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
+    // willHideでバグる
+    // Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-    // Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
     // cleanup function
     return () => {
+      unsubscribe;
+      Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
+      //   Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
       Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
-      //   Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
     };
   }, []);
 
   return (
     <React.Fragment>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <View style={styles.content}>
-          <ThmSwitch
-            thm={posted.ppram.thms}
-            order={order}
-            setOrder={setOrder}
-            numNice={posted.ppram.numNice}
-            postAt={posted.ppram.createdAt}
-            inAns={true}
-          />
-          {/* <View style={{ flex: 1 }}> */}
-          <TextInput
-            theme={{
-              ...DefaultTheme,
-              colors: { ...DefaultTheme.colors, primary: '#00A85A' },
-            }}
-            selectionColor="#00A85A"
-            dense={true}
-            onContentSizeChange={e => {
-              if (e.nativeEvent.contentSize.height > 80) {
-                console.log(e.nativeEvent.contentSize);
-                props.scrlRef.current.scrollToEnd();
-              }
-            }}
-            // underlineColor="#00A85A"
-            style={{
-              borderColor: '#00A85A',
-              margin: 18,
-              marginBottom: 9,
-              paddingVertical: 4,
-              lineHeight: 3,
-              paddingHorizontal: 16,
-            }}
-            mode="flat"
-            multiline={true}
-            value={myans}
-            onChangeText={setMyans}
-          />
-          <Button
-            disabled={!canSubmit()}
-            style={{
-              // justifyContent: 'flex-end',
-              alignSelf: 'flex-end',
-              marginRight: 18,
-              marginBottom: 9,
-              height: 30,
-              width: 64,
-              backgroundColor: canSubmit() ? '#00A85A' : 'gray',
-            }}
-            labelStyle={{
-              fontSize: 12,
-              color: 'white',
-              marginHorizontal: 9,
-            }}
-            onPress={() => {
-              dispatch(asyncAnswer(posted.ppram, order, myans, uid));
-            }}
-          >
-            送信！
-          </Button>
-        </View>
-        <View style={styles.tabMock}></View>
-        {/* </View> */}
-      </KeyboardAvoidingView>
+      <View style={styles.content}>
+        <ThmSwitch
+          thm={posted.ppram.thms}
+          order={order}
+          setOrder={setOrder}
+          numNice={posted.ppram.numNice}
+          postAt={posted.ppram.createdAt}
+          inAns={true}
+        />
+        {/* <View style={{ flex: 1 }}> */}
+        <TextInput
+          theme={{
+            ...DefaultTheme,
+            colors: { ...DefaultTheme.colors, primary: '#00A85A' },
+          }}
+          selectionColor="#00A85A"
+          dense={true}
+          onContentSizeChange={e => {
+            if (e.nativeEvent.contentSize.height > 80) {
+              console.log(e.nativeEvent.contentSize);
+              props.scrlRef.current.scrollToEnd();
+            }
+          }}
+          // underlineColor="#00A85A"
+          style={{
+            borderColor: '#00A85A',
+            margin: 18,
+            marginBottom: 9,
+            paddingVertical: 4,
+            lineHeight: 3,
+            paddingHorizontal: 16,
+          }}
+          mode="flat"
+          multiline={true}
+          value={myans}
+          onChangeText={setMyans}
+        />
+        <Button
+          disabled={!canSubmit()}
+          style={{
+            // justifyContent: 'flex-end',
+            alignSelf: 'flex-end',
+            marginRight: 18,
+            marginBottom: 9,
+            height: 30,
+            width: 64,
+            backgroundColor: canSubmit() ? '#00A85A' : 'gray',
+          }}
+          labelStyle={{
+            fontSize: 12,
+            color: 'white',
+            marginHorizontal: 9,
+          }}
+          onPress={() => {
+            dispatch(asyncAnswer(posted.ppram, order, myans, uid));
+          }}
+        >
+          送信！
+        </Button>
+      </View>
+      {/* {mock ? <View style={{ height: 280 }}></View> : <></>} */}
+      <View style={styles.tabMock}></View>
+      {/* </View> */}
     </React.Fragment>
   );
 };

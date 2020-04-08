@@ -113,7 +113,7 @@ export const postedImage = (props: Props) => {
               fontWeight: '300',
               fontSize: 12,
               marginTop: 5,
-              margintLeft: 15,
+              marginLeft: 15,
               color: 'gray',
             }}
           >

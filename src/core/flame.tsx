@@ -35,6 +35,7 @@ import { postedImage as PostedImage } from '../components/postedImage';
 import { Header } from '../components/header';
 import Posted from './posted';
 import { Answer } from './answer';
+import { Detail } from './detail';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -80,6 +81,11 @@ const flame = () => {
       <SafeAreaView style={{ height: HEIGHT }}>
         <Header mode="back" />
         <Divider />
+        {/* <KeyboardAvoidingView
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+          style={{ flex: 0.5 }}
+          keyboardVerticalOffset={800}
+        > */}
         <ScrollView ref={scrl}>
           <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: 'white' }}>
@@ -100,7 +106,7 @@ const flame = () => {
               ) : navState === 'ANSWER' ? (
                 <Answer scrlRef={scrl} goPosted={goPosted} />
               ) : (
-                <></>
+                <Detail scrlRef={scrl} goPosted={goPosted} />
               )}
             </View>
             <View style={{ height: 37 }}></View>
@@ -123,6 +129,7 @@ const flame = () => {
             </Portal>
           </Provider>
         </ScrollView>
+        {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
       {/* </KeyboardAvoidingView> */}
     </React.Fragment>

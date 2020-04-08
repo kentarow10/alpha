@@ -36,6 +36,7 @@ import {
   getAnss,
   asyncNice,
   asyncListenNice,
+  detailInit,
 } from '../store/behind/behind';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DialogContent from 'react-native-paper/lib/typescript/src/components/Dialog/DialogContent';
@@ -280,20 +281,23 @@ const Posted = (props: Props) => {
           return (
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('DETAIL', {
-                  postDoc: posted.ppram.postDoc,
-                  ansDoc: item.item.ansDoc,
-                  uri: posted.ppram.uri,
-                  width: posted.ppram.width,
-                  height: posted.ppram.height,
-                  thm: posted.ppram.thms[item.item.orderThm - 1],
-                  body: item.item.body,
-                  numNice: posted.ppram.numNice,
-                  postedBy: posted.ppram.owner,
-                  ansBy: item.item.ansBy,
-                  postedAt: posted.ppram.createdAt,
-                  ansAt: item.item.ansAt,
-                });
+                dispatch(
+                  detailInit({
+                    postDoc: posted.ppram.postDoc,
+                    ansDoc: item.item.ansDoc,
+                    uri: posted.ppram.uri,
+                    width: posted.ppram.width,
+                    height: posted.ppram.height,
+                    thm: posted.ppram.thms[item.item.orderThm - 1],
+                    body: item.item.body,
+                    numNice: posted.ppram.numNice,
+                    postedBy: posted.ppram.owner,
+                    ansBy: item.item.ansBy,
+                    postedAt: posted.ppram.createdAt,
+                    ansAt: item.item.ansAt,
+                  }),
+                );
+                props.goDetail();
               }}
             >
               <View

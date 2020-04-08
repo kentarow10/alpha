@@ -100,16 +100,6 @@ export const RootNavigator = () => {
           unmountOnBlur: true,
         }}
       />
-      <Drawer.Screen
-        name="POSTED"
-        component={Posted}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Drawer.Screen name="DETAIL" component={Detail} />
-      <Drawer.Screen name="POST" component={Post} />
-      <Drawer.Screen name="ANSWER" component={answer} />
     </Drawer.Navigator>
   );
 };
