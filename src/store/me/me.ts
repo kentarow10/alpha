@@ -1,5 +1,5 @@
 import { Post, Ans, Pin, Nice } from '../types';
-import { SimpleNice, SimplePin } from './actions';
+import { SimpleNice } from './actions';
 
 export type Me = {
   isFetching: boolean;
@@ -12,7 +12,7 @@ export type Me = {
   myPins: Pin[];
   myPosts: Post[];
   myNicePosts: SimpleNice[];
-  myGotitPins: SimplePin[];
+  myGotitPins: Pin[];
   myLinkedPins: Pin[];
 };
 

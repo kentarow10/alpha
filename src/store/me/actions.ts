@@ -2,7 +2,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Me } from './me';
-import { Comb, Ans, Post, Comment, Nice } from '../types';
+import { Comb, Ans, Post, Comment, Nice, Pin } from '../types';
 import { MyName } from './selector';
 
 // 準備
@@ -39,7 +39,7 @@ export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
 export const getMyNicePosts = actionCreator<SimpleNice[]>('GET_MY_NICE_POST');
 
-export const getMyGotitPins = actionCreator<SimplePin[]>('GET_MY_GOTIT_ANS');
+export const getMyGotitPins = actionCreator<Pin[]>('GET_MY_GOTIT_ANS');
 
 export const getMyLinkedAnss = actionCreator<Comb[]>('GET_MY_LINKED_ANS');
 
@@ -83,15 +83,16 @@ export const listenMyNices = (uid: string) => {
 
 // 自分が分かる！した回答一覧
 
-export type SimplePin = {
-  ansDoc: string;
-  postDoc: string;
-  uri: string;
-  thm: string;
-  body: string;
-  ansBy?: string;
-  icon?: string;
-};
+// export type SimplePin = {
+//   ansDoc: string;
+//   postDoc: string;
+//   uri: string;
+//   thms: string[];
+//   order: number;
+//   body: string;
+//   ansBy?: string;
+//   icon?: string;
+// };
 
 // 自分のわかる！のリスン
 
@@ -103,7 +104,7 @@ export const listenMyGotits = (uid: string) => {
       .onSnapshot(snap => {
         const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
         console.log('listened change at ' + source);
-        const gotitList: SimplePin[] = [];
+        const gotitList: Pin[] = [];
         snap.forEach(ans => {
           if (ans.data().flag) {
             const ansDoc = ans.id;
@@ -124,7 +125,7 @@ export const asyncGetMyGotitPins = (uid: string) => {
   return async dispatch => {
     const gotits = await rtdb.ref(uid + '/gotits').once('value');
     const ansDoc = Object.keys(gotits);
-    const gotitsList: SimplePin[] = ansDoc.map(ad => {
+    const gotitsList: Pin[] = ansDoc.map(ad => {
       const postDoc = gotits[ad].postDoc;
       const uri = gotits[ad].uri;
       const thm = gotits[ad].thm;

@@ -131,7 +131,7 @@ const flame = () => {
               ) : navState === 'ANSWER' ? (
                 <Answer scrlRef={scrl} goPosted={goPosted} />
               ) : (
-                <Detail scrlRef={scrl} goPosted={goPosted} />
+                <Detail scrlRef={scrl} goPosted={goPosted} close={close} />
               )}
             </View>
             <View style={{ height: 37 }}></View>

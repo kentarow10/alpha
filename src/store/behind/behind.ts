@@ -4,9 +4,9 @@ import {
   NavigationParamList,
   DetailParams,
   Comment,
+  Pin,
 } from '../types';
 import { RouteProp } from '@react-navigation/native';
-import { SimplePin } from '../me/me';
 
 export type Posted = {
   isFetching: boolean;
@@ -25,10 +25,10 @@ export type Detail = {
   numGotit: number;
   gotitByList: string[];
   comments: Comment[];
-  mLinks: SimplePin[];
-  tLinks: SimplePin[];
-  fLinks: SimplePin[];
-  links: SimplePin[];
+  mLinks: Pin[];
+  tLinks: Pin[];
+  fLinks: Pin[];
+  links: Pin[];
   doneGotit: boolean;
 };
 

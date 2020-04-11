@@ -11,7 +11,7 @@ import {
   DetailParams,
 } from '../types';
 import { database } from 'firebase';
-import { SimplePin } from '../me/me';
+import { Pin } from '../me/me';
 
 // 準備
 
@@ -164,7 +164,8 @@ export const asyncLink = (
   myansDoc: string,
   myansPostDoc: string,
   myansUri: string,
-  myansThm: string,
+  myansThms: string[],
+  myansThmOrder: number,
   myansBody: string,
 ) => {
   return async dispatch => {
@@ -176,7 +177,8 @@ export const asyncLink = (
     fromansRef.set({
       postDoc: myansPostDoc,
       uri: myansUri,
-      thm: myansThm,
+      thms: myansThms,
+      order: myansThmOrder,
       body: myansBody,
     });
     const toansRef = db
@@ -187,7 +189,8 @@ export const asyncLink = (
     toansRef.set({
       postDoc: dparam.postDoc,
       uri: dparam.uri,
-      thm: dparam.thm,
+      thms: dparam.thms,
+      order: dparam.order,
       body: dparam.body,
     });
   };
@@ -577,69 +580,86 @@ export const asyncGetMoreAnss = (
 // 与えられたpostDocからanssを取得する
 
 export const asyncGetAnss = (postDoc: string) => {
-  return dispatch => {
+  return async dispatch => {
     if (postDoc === undefined) return;
     dispatch(startFetch({}));
-    db.collection('posts')
+    const ans1 = await db
+      .collection('posts')
       .doc(postDoc)
       .collection('answers')
       .where('orderThm', '==', 1)
       .orderBy('ansAt')
-      .limit(5)
-      .get()
-      .then(snap => {
-        const anss1: Ans[] = [];
-        const anss2: Ans[] = [];
-        const anss3: Ans[] = [];
-        snap.forEach(doc => {
-          if (doc.data().orderThm === 1) {
-            const ans: Ans = {
-              ansDoc: doc.id,
-              body: doc.data().body,
-              ansBy: doc.data().ansBy,
-              ansAt: doc.data().ansAt,
-              orderThm: doc.data().orderThm,
-            };
-            anss1.push(ans);
-          } else if (doc.data().orderThm === 2) {
-            const ans: Ans = {
-              ansDoc: doc.id,
-              body: doc.data().body,
-              ansBy: doc.data().ansBy,
-              ansAt: doc.data().ansAt,
-              orderThm: doc.data().orderThm,
-            };
-            anss2.push(ans);
-          } else {
-            const ans: Ans = {
-              ansDoc: doc.id,
-              body: doc.data().body,
-              ansBy: doc.data().ansBy,
-              ansAt: doc.data().ansAt,
-              orderThm: doc.data().orderThm,
-            };
-            anss3.push(ans);
-          }
-        });
-        dispatch(getAnss({ anss1, anss2, anss3 }));
-      });
+      .limit(10)
+      .get();
+    const ans2 = await db
+      .collection('posts')
+      .doc(postDoc)
+      .collection('answers')
+      .where('orderThm', '==', 2)
+      .orderBy('ansAt')
+      .limit(10)
+      .get();
+    const ans3 = await db
+      .collection('posts')
+      .doc(postDoc)
+      .collection('answers')
+      .where('orderThm', '==', 3)
+      .orderBy('ansAt')
+      .limit(10)
+      .get();
+    const anss1: Ans[] = [];
+    const anss2: Ans[] = [];
+    const anss3: Ans[] = [];
+    ans1.forEach(doc => {
+      const ans: Ans = {
+        ansDoc: doc.id,
+        body: doc.data().body,
+        ansBy: doc.data().ansBy,
+        ansAt: doc.data().ansAt,
+        orderThm: doc.data().orderThm,
+      };
+      anss1.push(ans);
+    });
+    ans2.forEach(doc => {
+      const ans: Ans = {
+        ansDoc: doc.id,
+        body: doc.data().body,
+        ansBy: doc.data().ansBy,
+        ansAt: doc.data().ansAt,
+        orderThm: doc.data().orderThm,
+      };
+      anss2.push(ans);
+    });
+    ans3.forEach(doc => {
+      const ans: Ans = {
+        ansDoc: doc.id,
+        body: doc.data().body,
+        ansBy: doc.data().ansBy,
+        ansAt: doc.data().ansAt,
+        orderThm: doc.data().orderThm,
+      };
+      anss3.push(ans);
+    });
+    dispatch(getAnss({ anss1, anss2, anss3 }));
   };
 };
 
 // 与えられたansDocから各リンクを取得する
 
 export const getLinks = actionCreator<{
-  mpin: SimplePin[];
-  fpin: SimplePin[];
-  tpin: SimplePin[];
-  links: SimplePin[];
+  mpin: Pin[];
+  fpin: Pin[];
+  tpin: Pin[];
+  links: Pin[];
 }>('GET_LINKS');
+
+export const asyncGetMoreLinks = (ansDoc: string, lastPinAt)
 
 export const asyncGetLinks = (ansDoc: string) => {
   return async dispatch => {
-    const mutualList: SimplePin[] = [];
-    const fromList: SimplePin[] = [];
-    const toList: SimplePin[] = [];
+    const mutualList: Pin[] = [];
+    const fromList: Pin[] = [];
+    const toList: Pin[] = [];
     dispatch(startFetch({}));
     const base = db.collection('links').doc(ansDoc);
     const mutual = await base.collection('mutual').get();
@@ -651,7 +671,8 @@ export const asyncGetLinks = (ansDoc: string) => {
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
-        thm: snap.data().thm,
+        thms: snap.data().thms,
+        order: snap.data().order,
         body: snap.data().body,
         icon: 'arrow-left-right-bold-outline',
       });
@@ -661,7 +682,8 @@ export const asyncGetLinks = (ansDoc: string) => {
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
-        thm: snap.data().thm,
+        thms: snap.data().thms,
+        order: snap.data().order,
         body: snap.data().body,
         icon: 'arrow-right-bold-outline',
       });
@@ -671,47 +693,13 @@ export const asyncGetLinks = (ansDoc: string) => {
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
-        thm: snap.data().thm,
+        thms: snap.data().thms,
+        order: snap.data().order,
         body: snap.data().body,
         icon: 'arrow-left-bold-outline',
       });
     });
-    const first: SimplePin[] = [
-      {
-        ansDoc: 'Header1',
-        postDoc: '',
-        uri: '',
-        thm: '',
-        body: '',
-        icon: 'arrow-left-right-bold-outline',
-      },
-    ];
-    const second: SimplePin[] = [
-      {
-        ansDoc: 'Header2',
-        postDoc: '',
-        uri: '',
-        thm: '',
-        body: '',
-        icon: 'arrow-right-bold-outline',
-      },
-    ];
-    const third: SimplePin[] = [
-      {
-        ansDoc: 'Header3',
-        postDoc: '',
-        uri: '',
-        thm: '',
-        body: '',
-        icon: 'arrow-left-bold-outline',
-      },
-    ];
-    const links = first
-      .concat(mutualList)
-      .concat(second)
-      .concat(fromList)
-      .concat(third)
-      .concat(toList);
+    const links = mutualList.concat(fromList).concat(toList);
     dispatch(
       getLinks({ mpin: mutualList, fpin: fromList, tpin: toList, links }),
     );

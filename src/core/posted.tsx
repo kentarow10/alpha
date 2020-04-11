@@ -153,35 +153,37 @@ const Posted = (props: Props) => {
     if (props.close) {
       console.log('|||||||||||||||||||||||||||||||||||||||');
       if (order === 1) {
-        dispatch(
-          asyncGetMoreAnss(
-            posted.ppram.postDoc,
-            1,
-            posted.anss1[posted.anss1.length - 1].ansAt,
-          ),
-        );
+        posted.anss1.length &&
+          dispatch(
+            asyncGetMoreAnss(
+              posted.ppram.postDoc,
+              1,
+              posted.anss1[posted.anss1.length - 1].ansAt,
+            ),
+          );
       } else if (order === 2) {
-        dispatch(
-          asyncGetMoreAnss(
-            posted.ppram.postDoc,
-            2,
-            posted.anss2[posted.anss2.length - 1].ansAt,
-          ),
-        );
+        posted.anss2.length &&
+          dispatch(
+            asyncGetMoreAnss(
+              posted.ppram.postDoc,
+              2,
+              posted.anss2[posted.anss2.length - 1].ansAt,
+            ),
+          );
       } else {
-        dispatch(
-          asyncGetMoreAnss(
-            posted.ppram.postDoc,
-            3,
-            posted.anss3[posted.anss3.length - 1].ansAt,
-          ),
-        );
+        posted.anss3.length &&
+          dispatch(
+            asyncGetMoreAnss(
+              posted.ppram.postDoc,
+              3,
+              posted.anss3[posted.anss3.length - 1].ansAt,
+            ),
+          );
       }
     } else {
-      console.log('props.close');
-      console.log(props.close);
+      console.log('not called more fetch');
     }
-  }, [props]);
+  }, [props.close]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -338,7 +340,8 @@ const Posted = (props: Props) => {
                     uri: posted.ppram.uri,
                     width: posted.ppram.width,
                     height: posted.ppram.height,
-                    thm: posted.ppram.thms[item.item.orderThm - 1],
+                    thms: posted.ppram.thms,
+                    order: item.item.orderThm,
                     body: item.item.body,
                     numNice: posted.ppram.numNice,
                     postedBy: posted.ppram.owner,

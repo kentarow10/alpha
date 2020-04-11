@@ -8,9 +8,10 @@ const formatDate = (date: Date, format: string): string => {
   return format;
 };
 
-export const timeExpress = (time: Date): string => {
+export const timeExpress = (time: firebase.firestore.Timestamp): string => {
+  const date = time.toDate();
   const format = 'YYYY-MM-DD HH:NN';
-  const ex = formatDate(time, format);
+  const ex = formatDate(date, format);
 
   return ex;
 };

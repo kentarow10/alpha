@@ -105,7 +105,8 @@ export function DrawerContent(props: Props) {
     ansDoc: '',
     postDoc: '',
     uri: '',
-    thm: '',
+    thms: [],
+    orderThm: 1,
     body: '',
   });
 
@@ -188,7 +189,8 @@ export function DrawerContent(props: Props) {
                           ansDoc: item.item.ansDoc,
                           postDoc: item.item.postDoc,
                           uri: item.item.uri,
-                          thm: item.item.thms[item.item.orderThm - 1],
+                          thms: item.item.thms,
+                          orderThm: item.item.orderThm,
                           body: item.item.body,
                         });
                         setModal(true);
@@ -231,7 +233,8 @@ export function DrawerContent(props: Props) {
                         selectedItem.ansDoc,
                         selectedItem.postDoc,
                         selectedItem.uri,
-                        selectedItem.thm,
+                        selectedItem.thms,
+                        selectedItem.orderThm,
                         selectedItem.body,
                       ),
                     );

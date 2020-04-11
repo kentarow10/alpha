@@ -1,30 +1,3 @@
-type FireStoreUser = {
-  userColl: 'users';
-  uid: string;
-  iconPath: string;
-  siBody: string;
-};
-
-type FireStorePost = {
-  postColl: 'posts';
-  postDoc: string;
-  path: string;
-  owner: string;
-  thms: string[];
-  createdAt: firebase.firestore.Timestamp;
-  ansColl: 'answers';
-  ansDoc: string;
-  uri: string;
-  body: string;
-  ansBy: string;
-  ansAt: firebase.firestore.Timestamp;
-  orderThm: number;
-  comColl: 'comments';
-  comDoc: string;
-  comBody: string;
-  commentedAt: firebase.firestore.Timestamp;
-};
-
 export type NavigationParamList = {
   FLAME: {
     postDoc: string;
@@ -41,7 +14,8 @@ export type NavigationParamList = {
     uri: string;
     width: number;
     height: number;
-    thm: string;
+    thms: string[];
+    order: number;
     body: string;
     numNice: number;
     postedBy: string;
@@ -66,7 +40,8 @@ export type DetailParams = {
   uri: string;
   width: number;
   height: number;
-  thm: string;
+  thms: string[];
+  order: number;
   body: string;
   numNice: number;
   postedBy: string;
@@ -109,21 +84,11 @@ export type Ans = {
   orderThm: number;
 };
 
-// export type Comb = {
-//   doc?: string;
-//   postDoc: string;
-//   ansDoc: string;
-//   path: string;
-//   thm: string;
-//   body: string;
-//   ans: Ans;
-// };
-
 export type Comment = {
   comDoc: string;
   com: string;
   comBy: string;
-  comAt: Date;
+  comAt: firebase.firestore.Timestamp;
 };
 
 // me
@@ -146,29 +111,10 @@ export type Pin = {
   postDoc: string;
   uri: string;
   thms: string[];
-  orderThm: number;
+  order: number;
   body: string;
   postedBy?: string;
   ansBy?: string;
   postedAt: firebase.firestore.Timestamp;
   ansAt: firebase.firestore.Timestamp;
 };
-
-// export type Gotit = {
-//   ansDoc: string;
-//   postDoc: string;
-//   uri: string;
-//   thm: string;
-//   ans: string;
-//   postedBy: string;
-//   answeredBy: string;
-// };
-
-// export type Linked = {
-//   ansDoc: string;
-//   postDoc: string;
-//   uri: string;
-//   thm: string;
-//   ans: string;
-
-// }

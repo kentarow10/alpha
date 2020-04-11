@@ -7,24 +7,30 @@
             * ansDoc(参照用)
             * postDoc
             * uri
-            * thm
+            * thms
+            * order
             * body
+            * ansAt
             * parent(参照用)
     * subcollection(to')
         * :ansDocument
             * ansDoc(参照用)
             * postDoc
             * uri
-            * thm
+            * thms
+            * order
             * body
+            * ansAt
             * parent(参照用)
     * subcollection('mutual')
         * :ansDocument
             * ansDoc(参照用)
             * postDoc
             * uri
-            * thm
+            * thms
+            * order
             * body
+            * ansAt
             * parent(参照用)
 
 ## collection('posts')
@@ -42,7 +48,7 @@
             * body
             * ansBy
             * ansAt
-            * orderThm
+            * order
             * w
             * h
             * tate
@@ -64,16 +70,19 @@
         * $postDocument(自動生成でなく指定する)
             * uri
             * postBy
+            * postAt
             * postDoc(参照用)
             * parent(参照用)
     * subcollection('gotits')：一覧表示で必要になる情報
         * $ansDocument(自動生成でなく指定する)
             * postDoc
             * uri
-            * thm
+            * thms
+            * order
             * body
             * ansBy
-            * amsDoc(参照用)
+            * ansAt
+            * ansDoc(参照用)
             * parent(参照用)
     
 * onSnapshot()でドキュメントをリスンできる

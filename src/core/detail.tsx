@@ -21,6 +21,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  SectionList,
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import {
@@ -49,6 +50,7 @@ import { GetUid } from '../store/auth/auth';
 import { postedImage as PostedImage } from '../components/postedImage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { timeExpress } from '../helper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -57,6 +59,7 @@ const HEIGHT = Dimensions.get('window').height;
 
 type Props = {
   scrlRef: React.MutableRefObject<any>;
+  close: boolean;
   goPosted: () => void;
 };
 
@@ -145,6 +148,14 @@ export const Detail = (props: Props) => {
   });
 
   useEffect(() => {
+    if (props.close) {
+      console.log('|||||||||||||||||||||||||||||||||||||||');
+    } else {
+      console.log('not called more fetch');
+    }
+  }, [props.close]);
+
+  useEffect(() => {
     dispatch(asyncFetchComment(detail.dpram.postDoc, detail.dpram.ansDoc));
     dispatch(asyncGetLinks(detail.dpram.ansDoc));
     dispatch(asyncListenGotit(detail.dpram.ansDoc, uid));
@@ -169,19 +180,34 @@ export const Detail = (props: Props) => {
 
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
-    // willHideでバグる
-    // Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
     Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
     // cleanup function
     return () => {
-      Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
-      //   Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
+      Keyboard.removeListener('keyboardWillShow', _keyboardWillShow);
       Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
       Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
     };
   }, []);
+
+  const DATA = [
+    {
+      title: '相互にリンクしています',
+      icon: 'arrow-left-right-bold-outline',
+      data: detail.mLinks,
+    },
+    {
+      title: 'リンクされています',
+      icon: 'arrow-right-bold-outline',
+      data: detail.fLinks,
+    },
+    {
+      title: 'リンクしています',
+      icon: 'arrow-left-bold-outline',
+      data: detail.tLinks,
+    },
+  ];
 
   return (
     <React.Fragment>
@@ -190,17 +216,24 @@ export const Detail = (props: Props) => {
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
           style={{ flex: 1, zIndex: -100 }}
         >
-          <Text
-            style={{
-              paddingHorizontal: 18,
-              paddingVertical: 18,
-              paddingBottom: 9,
-              fontSize: 12,
-              fontWeight: '500',
+          <TouchableOpacity
+            onPress={() => {
+              props.goPosted();
             }}
           >
-            {detail.dpram.thm}
-          </Text>
+            <Text
+              style={{
+                paddingHorizontal: 18,
+                paddingVertical: 18,
+                paddingBottom: 9,
+                fontSize: 12,
+                fontWeight: '500',
+              }}
+            >
+              {detail.dpram.thms[detail.dpram.order - 1]}
+            </Text>
+          </TouchableOpacity>
+
           <Divider />
           <View style={styles.answer}>
             <Text
@@ -368,168 +401,83 @@ export const Detail = (props: Props) => {
           <View style={{ height: 2, backgroundColor: '#00A85A' }}></View>
           {focus === 'link' ? (
             <>
-              <FlatList
-                data={detail.links}
+              <SectionList
+                sections={DATA}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={item => {
-                  if (item.item.ansDoc === 'Header1') {
-                    return (
-                      <>
-                        <View
+                renderItem={item => (
+                  <>
+                    <View style={styles.link}>
+                      <View style={styles.itemHeader}>
+                        <Image
+                          source={{ uri: item.item.uri }}
+                          resizeMode="cover"
                           style={{
-                            flexDirection: 'row',
-                            height: 30,
-                            padding: 6,
-                            paddingHorizontal: 18,
-                            marginBottom: 4,
+                            width: 70,
+                            height: 70,
+                            borderRadius: 10,
                           }}
-                        >
-                          <View
-                            style={{
-                              width: 24,
-                              height: 24,
-                              paddingTop: 2,
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <MaterialCommunityIcons
-                              name={item.item.icon}
-                              size={20}
-                              color="#F98A8A"
-                            />
+                        />
+                        <View style={styles.itemBody}>
+                          <View>
+                            <Text style={{ fontWeight: '500' }}>
+                              {item.item.thms[item.item.order - 1]}
+                            </Text>
                           </View>
-                          <Text
-                            style={{
-                              marginLeft: 6,
-                              paddingTop: 6,
-                              fontWeight: '500',
-                              color: 'gray',
-                            }}
-                          >
-                            相互にリンクしています
-                          </Text>
-                        </View>
-                        <Divider />
-                      </>
-                    );
-                  } else if (item.item.ansDoc === 'Header2') {
-                    return (
-                      <>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            height: 30,
-                            padding: 6,
-                            paddingHorizontal: 18,
-                            marginBottom: 4,
-                          }}
-                        >
-                          <View
-                            style={{
-                              paddingTop: 2,
-                              width: 24,
-                              height: 24,
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <MaterialCommunityIcons
-                              name={item.item.icon}
-                              size={20}
-                              color="#F98A8A"
-                            />
-                          </View>
-                          <Text
-                            style={{
-                              marginLeft: 6,
-                              paddingTop: 6,
-                              fontWeight: '500',
-                              color: 'gray',
-                            }}
-                          >
-                            リンクされています
-                          </Text>
-                        </View>
-                        <Divider />
-                      </>
-                    );
-                  } else if (item.item.ansDoc === 'Header3') {
-                    return (
-                      <>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            height: 30,
-                            padding: 6,
-                            paddingHorizontal: 18,
-                            marginBottom: 4,
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: 24,
-                              paddingTop: 2,
-                              height: 24,
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <MaterialCommunityIcons
-                              name={item.item.icon}
-                              size={20}
-                              color="#F98A8A"
-                            />
-                          </View>
-                          <Text
-                            style={{
-                              marginLeft: 6,
-                              paddingTop: 6,
-                              fontWeight: '500',
-                              color: 'gray',
-                            }}
-                          >
-                            リンクしています
-                          </Text>
-                        </View>
-                        <Divider />
-                      </>
-                    );
-                  } else {
-                    return (
-                      <>
-                        <View style={styles.link}>
-                          <View style={styles.itemHeader}>
-                            <Image
-                              source={{ uri: item.item.uri }}
-                              resizeMode="cover"
+                          <View>
+                            <Text
                               style={{
-                                width: 70,
-                                height: 70,
-                                borderRadius: 10,
+                                marginTop: 9,
+                                fontWeight: '500',
                               }}
-                            />
-                            <View style={styles.itemBody}>
-                              <View>
-                                <Text style={{ fontWeight: '500' }}>
-                                  {item.item.thm}
-                                </Text>
-                              </View>
-                              <View>
-                                <Text
-                                  style={{
-                                    marginTop: 9,
-                                    fontWeight: '500',
-                                  }}
-                                >
-                                  {item.item.body}
-                                </Text>
-                              </View>
-                            </View>
+                            >
+                              {item.item.body}
+                            </Text>
                           </View>
                         </View>
-                        <Divider />
-                      </>
-                    );
-                  }
-                }}
+                      </View>
+                    </View>
+                    <Divider />
+                  </>
+                )}
+                renderSectionHeader={({ section: { title, icon } }) => (
+                  <>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        height: 30,
+                        padding: 6,
+                        paddingHorizontal: 18,
+                        marginBottom: 4,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 24,
+                          height: 24,
+                          paddingTop: 2,
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name={icon}
+                          size={20}
+                          color="#F98A8A"
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          marginLeft: 6,
+                          paddingTop: 6,
+                          fontWeight: '500',
+                          color: 'gray',
+                        }}
+                      >
+                        {title}
+                      </Text>
+                    </View>
+                    <Divider />
+                  </>
+                )}
               />
               <View style={styles.tabMock}></View>
             </>
