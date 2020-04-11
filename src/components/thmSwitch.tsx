@@ -12,7 +12,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 type Props = {
   thm: string[];
   order: number;
-  postAt: Date;
+  postAt: firebase.firestore.Timestamp;
   numNice: number;
   setOrder: (num: number) => void;
   setModal?: (show: boolean) => void;

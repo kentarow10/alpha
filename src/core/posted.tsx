@@ -37,6 +37,7 @@ import {
   asyncNice,
   asyncListenNice,
   detailInit,
+  asyncGetMoreAnss,
 } from '../store/behind/behind';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DialogContent from 'react-native-paper/lib/typescript/src/components/Dialog/DialogContent';
@@ -57,8 +58,9 @@ type Props = {
   height: number;
   owner: string;
   thms: string[];
-  createdAt: Date;
+  createdAt: firebase.firestore.Timestamp;
   setModal: (b: boolean) => void;
+  close: boolean;
   goAnswer: () => void;
   goDetail: () => void;
 };
@@ -83,6 +85,15 @@ const Posted = (props: Props) => {
       return 'thumb-up';
     } else {
       return 'thumb-up-outline';
+    }
+  };
+  const anss = () => {
+    if (order === 1) {
+      return posted.anss1;
+    } else if (order === 2) {
+      return posted.anss2;
+    } else {
+      return posted.anss3;
     }
   };
 
@@ -139,6 +150,40 @@ const Posted = (props: Props) => {
   });
 
   useEffect(() => {
+    if (props.close) {
+      console.log('|||||||||||||||||||||||||||||||||||||||');
+      if (order === 1) {
+        dispatch(
+          asyncGetMoreAnss(
+            posted.ppram.postDoc,
+            1,
+            posted.anss1[posted.anss1.length - 1].ansAt,
+          ),
+        );
+      } else if (order === 2) {
+        dispatch(
+          asyncGetMoreAnss(
+            posted.ppram.postDoc,
+            2,
+            posted.anss2[posted.anss2.length - 1].ansAt,
+          ),
+        );
+      } else {
+        dispatch(
+          asyncGetMoreAnss(
+            posted.ppram.postDoc,
+            3,
+            posted.anss3[posted.anss3.length - 1].ansAt,
+          ),
+        );
+      }
+    } else {
+      console.log('props.close');
+      console.log(props.close);
+    }
+  }, [props]);
+
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setOrder(1);
       setAnss(false);
@@ -166,6 +211,9 @@ const Posted = (props: Props) => {
   useEffect(() => {
     dispatch(asyncGetAnss(props.postDoc));
   }, [posted.ppram.postDoc]);
+
+  console.log('posted render...');
+  console.log('答えのフェッチ');
 
   return (
     <React.Fragment>
@@ -275,7 +323,9 @@ const Posted = (props: Props) => {
         </Button>
       </View>
       <FlatList
-        data={posted.anss}
+        data={anss()}
+        // onEndReachedThreshold={0}
+        // onEndReached={onEndReached}
         keyExtractor={(item, index) => index.toString()}
         renderItem={item => {
           return (

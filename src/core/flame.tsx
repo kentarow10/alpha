@@ -61,6 +61,7 @@ const flame = () => {
   const prm = route.params;
   const [showModal, setModal] = useState(false);
   const scrl = useRef(null);
+  const [close, setClose] = useState(false);
   const [navState, setNavState] = useState('POSTED');
   const goAnswer = (): void => {
     setNavState('ANSWER');
@@ -70,6 +71,18 @@ const flame = () => {
   };
   const goPosted = (): void => {
     setNavState('POSTED');
+  };
+  const isCloseToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }) => {
+    const paddingToBottom = 20;
+
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
   };
 
   return (
@@ -86,7 +99,18 @@ const flame = () => {
           style={{ flex: 0.5 }}
           keyboardVerticalOffset={800}
         > */}
-        <ScrollView ref={scrl}>
+        <ScrollView
+          ref={scrl}
+          onScroll={({ nativeEvent }) => {
+            if (isCloseToBottom(nativeEvent)) {
+              console.log('closing...');
+              setClose(true);
+            } else {
+              setClose(false);
+            }
+          }}
+          scrollEventThrottle={400}
+        >
           <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: 'white' }}>
               <PostedImage uri={prm.uri} />
@@ -99,6 +123,7 @@ const flame = () => {
                   owner={prm.owner}
                   thms={prm.thms}
                   createdAt={prm.postedAt}
+                  close={close}
                   setModal={setModal}
                   goAnswer={goAnswer}
                   goDetail={goDetail}

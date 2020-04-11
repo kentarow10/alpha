@@ -13,7 +13,9 @@ export type Posted = {
   isError: boolean;
   doneNice: boolean;
   ppram: PostedParams;
-  anss: Ans[];
+  anss1: Ans[];
+  anss2: Ans[];
+  anss3: Ans[];
 };
 
 export type Detail = {

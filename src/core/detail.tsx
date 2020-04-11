@@ -161,20 +161,25 @@ export const Detail = (props: Props) => {
   };
 
   const _keyboardDidHide = () => {
-    props.scrlRef.current.scrollTo({ x: 0, y: 140, animation: true });
+    // props.scrlRef.current.scrollTo({ x: 0, y: 140, animation: true });
     setTimeout(() => {
       setMock(false);
     }, 0);
   };
 
   useEffect(() => {
+    Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
+    // willHideでバグる
+    // Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-    // Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
     // cleanup function
     return () => {
+      Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
+      //   Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
       Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
-      // Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
     };
   }, []);
 

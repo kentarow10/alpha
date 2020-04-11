@@ -1,6 +1,7 @@
 import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
+import firebase from '../../../firebase/firebase';
 
 import { Posted, Detail, PostScreen, AnsScreen } from './behind';
 import {
@@ -18,6 +19,7 @@ import {
   ansInit,
   postInit,
   getLinks,
+  getMoreAnss1,
 } from './actions';
 
 // posted screen
@@ -35,9 +37,11 @@ const initialState: Posted = {
     numNice: 0,
     niceByList: [],
     thms: [],
-    createdAt: new Date(),
+    createdAt: new firebase.firestore.Timestamp(0, 0),
   },
-  anss: [],
+  anss1: [],
+  anss2: [],
+  anss3: [],
 };
 
 export const postedReducer: Reducer<Posted> = reducerWithInitialState(
@@ -51,8 +55,19 @@ export const postedReducer: Reducer<Posted> = reducerWithInitialState(
   .case(getAnss, (state, payload) => ({
     ...state,
     isFetching: false,
-    anss: payload,
+    anss1: payload.anss1,
+    anss2: payload.anss2,
+    anss3: payload.anss3,
   }))
+  .case(getMoreAnss1, (state, payload) => {
+    const updated = state.anss1.concat(payload);
+
+    return {
+      ...state,
+      isFetching: false,
+      anss1: updated,
+    };
+  })
   .case(getParams, (state, payload) => ({
     ...state,
     ppram: {
@@ -93,8 +108,8 @@ const initialDetail: Detail = {
     numNice: 0,
     postedBy: '',
     ansBy: '',
-    postedAt: new Date(),
-    ansAt: new Date(),
+    postedAt: new firebase.firestore.Timestamp(0, 0),
+    ansAt: new firebase.firestore.Timestamp(0, 0),
   },
   numGotit: 0,
   gotitByList: [],

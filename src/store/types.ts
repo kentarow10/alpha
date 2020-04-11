@@ -11,18 +11,18 @@ type FireStorePost = {
   path: string;
   owner: string;
   thms: string[];
-  createdAt: Date;
+  createdAt: firebase.firestore.Timestamp;
   ansColl: 'answers';
   ansDoc: string;
   uri: string;
   body: string;
   ansBy: string;
-  ansAt: Date;
+  ansAt: firebase.firestore.Timestamp;
   orderThm: number;
   comColl: 'comments';
   comDoc: string;
   comBody: string;
-  commentedAt: Date;
+  commentedAt: firebase.firestore.Timestamp;
 };
 
 export type NavigationParamList = {
@@ -33,7 +33,7 @@ export type NavigationParamList = {
     height: number;
     owner: string;
     thms: string[];
-    postedAt: Date;
+    postedAt: firebase.firestore.Timestamp;
   };
   DETAIL: {
     postDoc: string;
@@ -46,13 +46,13 @@ export type NavigationParamList = {
     numNice: number;
     postedBy: string;
     ansBy: string;
-    postedAt: Date;
-    ansAt: Date;
+    postedAt: firebase.firestore.Timestamp;
+    ansAt: firebase.firestore.Timestamp;
   };
   // ANSWER: {
   //   postDoc: string;
   //   postBy: string;
-  //   postAt: Date;
+  //   postAt: firebase.firestore.Timestamp;
   //   uri: string;
   //   width: number;
   //   height: number;
@@ -71,8 +71,8 @@ export type DetailParams = {
   numNice: number;
   postedBy: string;
   ansBy: string;
-  postedAt: Date;
-  ansAt: Date;
+  postedAt: firebase.firestore.Timestamp;
+  ansAt: firebase.firestore.Timestamp;
 };
 
 export type PostedParams = {
@@ -84,7 +84,7 @@ export type PostedParams = {
   numNice: number;
   niceByList: string[];
   thms: string[];
-  createdAt: Date;
+  createdAt: firebase.firestore.Timestamp;
 };
 
 export type Post = {
@@ -105,7 +105,7 @@ export type Ans = {
   uri?: string;
   body: string;
   ansBy: string;
-  ansAt: Date;
+  ansAt: firebase.firestore.Timestamp;
   orderThm: number;
 };
 
@@ -150,8 +150,8 @@ export type Pin = {
   body: string;
   postedBy?: string;
   ansBy?: string;
-  postedAt: Date;
-  ansAt: Date;
+  postedAt: firebase.firestore.Timestamp;
+  ansAt: firebase.firestore.Timestamp;
 };
 
 // export type Gotit = {

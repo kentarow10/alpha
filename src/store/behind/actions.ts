@@ -89,7 +89,15 @@ export const done = actionCreator<{}>('DONE');
 
 export const startFetch = actionCreator<{}>('START_FETCH');
 
-export const getAnss = actionCreator<Ans[]>('GET_ANS');
+export const getAnss = actionCreator<{
+  anss1: Ans[];
+  anss2: Ans[];
+  anss3: Ans[];
+}>('GET_ANS');
+
+export const getMoreAnss1 = actionCreator<Ans[]>('GET_MORE_ANS1');
+export const getMoreAnss2 = actionCreator<Ans[]>('GET_MORE_ANS2');
+export const getMoreAnss3 = actionCreator<Ans[]>('GET_MORE_ANS3');
 
 export const getParams = actionCreator<{
   postDoc: string;
@@ -98,7 +106,7 @@ export const getParams = actionCreator<{
   height: number;
   owner: string;
   thms: string[];
-  createdAt: Date;
+  createdAt: firebase.firestore.Timestamp;
 }>('GET_PARAMS');
 
 export const getNice = actionCreator<{
@@ -200,7 +208,7 @@ export const asyncFetchComment = (postDoc: string, ansDoc: string) => {
         snap.forEach(comDoc => {
           const com = comDoc.data().com;
           const comBy = comDoc.data().comBy;
-          const comAt = comDoc.data().comAt.toDate();
+          const comAt = comDoc.data().comAt;
           comList.push({ comDoc: comDoc.id, com, comBy, comAt });
         });
         // todo
@@ -523,6 +531,49 @@ export const asyncNice = (
   };
 };
 
+// 答えの追加フェッチ
+
+export const asyncGetMoreAnss = (
+  postDoc: string,
+  orderThm: number,
+  lastAnsAt: firebase.firestore.Timestamp,
+) => {
+  return dispatch => {
+    dispatch(startFetch({}));
+    db.collection('posts')
+      .doc(postDoc)
+      .collection('answers')
+      .where('orderThm', '==', orderThm)
+      .orderBy('ansAt')
+      .limit(5)
+      .startAfter(lastAnsAt)
+      .get()
+      .then(snap => {
+        const additional = [];
+        snap.forEach(doc => {
+          const ans: Ans = {
+            ansDoc: doc.id,
+            body: doc.data().body,
+            ansBy: doc.data().ansBy,
+            ansAt: doc.data().ansAt,
+            orderThm: doc.data().orderThm,
+          };
+          additional.push(ans);
+        });
+        if (orderThm === 1) {
+          dispatch(getMoreAnss1(additional));
+        } else if (orderThm === 2) {
+          dispatch(getMoreAnss2(additional));
+        } else {
+          dispatch(getMoreAnss3(additional));
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+};
+
 // 与えられたpostDocからanssを取得する
 
 export const asyncGetAnss = (postDoc: string) => {
@@ -532,20 +583,45 @@ export const asyncGetAnss = (postDoc: string) => {
     db.collection('posts')
       .doc(postDoc)
       .collection('answers')
+      .where('orderThm', '==', 1)
+      .orderBy('ansAt')
+      .limit(5)
       .get()
       .then(snap => {
-        const anss: Ans[] = [];
+        const anss1: Ans[] = [];
+        const anss2: Ans[] = [];
+        const anss3: Ans[] = [];
         snap.forEach(doc => {
-          const ans: Ans = {
-            ansDoc: doc.id,
-            body: doc.data().body,
-            ansBy: doc.data().ansBy,
-            ansAt: doc.data().ansAt.toDate(),
-            orderThm: doc.data().orderThm,
-          };
-          anss.push(ans);
+          if (doc.data().orderThm === 1) {
+            const ans: Ans = {
+              ansDoc: doc.id,
+              body: doc.data().body,
+              ansBy: doc.data().ansBy,
+              ansAt: doc.data().ansAt,
+              orderThm: doc.data().orderThm,
+            };
+            anss1.push(ans);
+          } else if (doc.data().orderThm === 2) {
+            const ans: Ans = {
+              ansDoc: doc.id,
+              body: doc.data().body,
+              ansBy: doc.data().ansBy,
+              ansAt: doc.data().ansAt,
+              orderThm: doc.data().orderThm,
+            };
+            anss2.push(ans);
+          } else {
+            const ans: Ans = {
+              ansDoc: doc.id,
+              body: doc.data().body,
+              ansBy: doc.data().ansBy,
+              ansAt: doc.data().ansAt,
+              orderThm: doc.data().orderThm,
+            };
+            anss3.push(ans);
+          }
         });
-        dispatch(getAnss(anss));
+        dispatch(getAnss({ anss1, anss2, anss3 }));
       });
   };
 };
