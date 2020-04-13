@@ -2,15 +2,15 @@ import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import { startFetch, fetchError, getPosts } from './actions';
-import { TimeLime } from './timeLine';
+import { TimeLimeScreen } from '../screenTypes';
 
-const initialState: TimeLime = {
+const initialState: TimeLimeScreen = {
   isFetching: false,
   isError: false,
   posts: [],
 };
 
-const reducer: Reducer<TimeLime> = reducerWithInitialState(initialState)
+const reducer: Reducer<TimeLimeScreen> = reducerWithInitialState(initialState)
   .case(startFetch, (state, payload) => ({
     ...state,
     isFetching: true,

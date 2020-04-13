@@ -1,8 +1,7 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
-import { TimeLime } from './timeLine';
-import { Comb, Post, Comment, Nice } from '../types';
+import { Post, Comment } from '../types';
 
 // 準備
 
@@ -15,44 +14,6 @@ async function getFromStorage(path: string) {
 
   return url;
 }
-
-// const getAns = async (ansDoc: string) => {
-//   const ansData = await db
-//     .collection('anss')
-//     .doc(ansDoc)
-//     .get();
-//   const ans: Ans = {
-//     doc: ansData.id,
-//     postDoc: ansData.data().postDoc,
-//     orderThm: ansData.data().orderThm,
-//     ownerId: ansData.data().ownerId,
-//     fromLinks: ansData.data().fromLinks,
-//     toLinks: ansData.data().toLinks,
-//     comments: ansData.data().comments,
-//   };
-
-//   return ans;
-// };
-
-const getComments = (docs: string[]) => {
-  const comments: Comment[] = [];
-  docs.forEach(async d => {
-    const commentData = await db
-      .collection('comments')
-      .doc(d)
-      .get();
-    const comment: Comment = {
-      doc: commentData.id,
-      ansDoc: commentData.data().ansDoc,
-      userName: commentData.data().userName,
-      content: commentData.data().content,
-      numGood: commentData.data().numGood,
-    };
-    comments.push(comment);
-  });
-
-  return comments;
-};
 
 // plain Actions
 
@@ -74,13 +35,11 @@ export const asyncGetPosts = () => {
       .then(snap => {
         const posts: Post[] = [];
         snap.forEach(doc => {
-          console.log('doc.data()');
-          console.log(doc.data());
           const thms = doc.data().thms;
-          const owner = doc.data().postBy;
+          const postBy = doc.data().postBy;
           const width = doc.data().w;
           const height = doc.data().h;
-          const createdAt = doc.data().postAt.toDate();
+          const postAt = doc.data().postAt.toDate();
           storage
             .ref(doc.data().path)
             .getDownloadURL()
@@ -90,10 +49,10 @@ export const asyncGetPosts = () => {
                 uri,
                 path: doc.data().path,
                 thms,
-                owner,
+                postBy,
                 width,
                 height,
-                postedAt: createdAt,
+                postAt,
               });
             })
             .catch(e => {

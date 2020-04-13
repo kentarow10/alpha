@@ -1,16 +1,21 @@
 import { createSelector } from 'reselect';
 import { State } from '../store';
 
-import { Posted, Detail, PostScreen, AnsScreen } from './behind';
+import {
+  PostedScreen,
+  DetailScreen,
+  PostScreen,
+  AnsScreen,
+} from '../screenTypes';
 
-export const PostedState = createSelector<State, Posted, Posted>(
+export const PostedState = createSelector<State, PostedScreen, PostedScreen>(
   (state: State) => state.postedReducer,
-  (posted: Posted) => posted, // 最終的にここが返される
+  (posted: PostedScreen) => posted, // 最終的にここが返される
 );
 
-export const DetailState = createSelector<State, Detail, Detail>(
+export const DetailState = createSelector<State, DetailScreen, DetailScreen>(
   (state: State) => state.detailReducer,
-  (detail: Detail) => detail, // 最終的にここが返される
+  (detail: DetailScreen) => detail, // 最終的にここが返される
 );
 
 export const PostState = createSelector<State, PostScreen, PostScreen>(
