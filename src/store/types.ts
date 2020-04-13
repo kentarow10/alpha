@@ -35,11 +35,13 @@ export type Comment = Pin & {
 };
 
 export type NicePost = Post & {
+  flag?: boolean;
   niceBy: string;
   niceAt: firebase.firestore.Timestamp;
 };
 
 export type GotitPin = Pin & {
+  flag?: boolean;
   gotitBy: string;
   gotitAt: firebase.firestore.Timestamp;
 };

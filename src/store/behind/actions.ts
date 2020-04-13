@@ -1,7 +1,15 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import * as ImagePicker from 'expo-image-picker';
 import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
-import { Post, Comment, NavigationParamList, Pin, LinkPin } from '../types';
+import {
+  Post,
+  Comment,
+  NavigationParamList,
+  Pin,
+  LinkPin,
+  GotitPin,
+  NicePost,
+} from '../types';
 import { database } from 'firebase';
 
 // 準備
@@ -229,13 +237,25 @@ export const asyncComment = (dparam: Pin, comment: string, uid: string) => {
       .doc(dparam.ansDoc)
       .collection('comments')
       .add({
+        postDoc: dparam.postDoc,
+        ansDoc: dparam.ansDoc,
+        uri: dparam.uri,
+        width: dparam.width,
+        height: dparam.height,
+        thms: dparam.thms,
+        order: dparam.order,
+        body: dparam.body,
+        postBy: dparam.postBy,
+        postAt: dparam.postAt,
+        ansBy: dparam.ansBy,
+        ansAt: dparam.ansAt,
         com: comment,
         comBy: uid,
         comAt: commentAt,
       })
       .then(() => {
         console.log('コメントした');
-        asyncFetchComment(dparam.postDoc, dparam.ansDoc);
+        // asyncFetchComment(dparam.postDoc, dparam.ansDoc);
       })
       .catch(e => {
         console.log(e);
@@ -247,14 +267,13 @@ export const asyncComment = (dparam: Pin, comment: string, uid: string) => {
 
 export const asyncAnswer = (
   pparam: Post,
-  orderThm: number,
+  order: number,
   body: string,
   ansBy: string,
 ) => {
   return async dispatch => {
     dispatch(fetching({}));
     const ansAt = firebase.firestore.FieldValue.serverTimestamp();
-    const tate = pparam.height > pparam.width;
 
     db.collection('posts')
       .doc(pparam.postDoc)
@@ -265,10 +284,9 @@ export const asyncAnswer = (
         body,
         ansBy,
         ansAt,
-        order: orderThm,
-        w: pparam.width,
-        h: pparam.height,
-        tate,
+        order,
+        width: pparam.width,
+        height: pparam.height,
         thms: pparam.thms,
         postBy: pparam.postBy,
         postAt: pparam.postAt,
@@ -319,15 +337,13 @@ export const asyncPost = (
     } else {
       thms.push(thm1);
     }
-    const isTate = height > width;
     db.collection('posts')
       .add({
         path: `${uid}/${dt}/${imageName}`,
-        w: width,
-        h: height,
-        tate: isTate,
+        width,
+        height,
         postBy: uid,
-        thms: thms,
+        thms,
         postAt: date,
       })
       .then(res => {
@@ -432,35 +448,34 @@ export const asyncGotit = (dparam: Pin, uid: string) => {
       .doc(uid)
       .collection('gotits')
       .doc(dparam.ansDoc);
+    const obj = {
+      postDoc: dparam.postDoc,
+      ansDoc: dparam.ansDoc,
+      uri: dparam.uri,
+      width: dparam.width,
+      height: dparam.height,
+      thms: dparam.thms,
+      order: dparam.order,
+      body: dparam.body,
+      postBy: dparam.postBy,
+      postAt: dparam.postAt,
+      ansBy: dparam.ansBy,
+      ansAt: dparam.ansAt,
+      flag: true,
+      gotitBy: uid,
+      gotitAt,
+    };
 
     return db
       .runTransaction(trn => {
         return trn.get(mygotit).then(mygotitDoc => {
           if (!mygotitDoc.exists) {
-            trn.set(mygotit, {
-              flag: true,
-              postDoc: dparam.postDoc,
-              uri: dparam.uri,
-              thm: dparam.thms,
-              order: dparam.order,
-              body: dparam.body,
-              ansBy: dparam.ansBy,
-              gotitAt,
-            });
+            trn.set(mygotit, obj);
           } else {
             if (mygotitDoc.data().flag) {
               trn.set(mygotit, { flag: false });
             } else {
-              trn.update(mygotit, {
-                flag: true,
-                postDoc: dparam.postDoc,
-                uri: dparam.uri,
-                thm: dparam.thms,
-                order: dparam.order,
-                body: dparam.body,
-                ansBy: dparam.ansBy,
-                gotitAt,
-              });
+              trn.update(mygotit, obj);
             }
           }
         });
@@ -477,7 +492,11 @@ export const asyncNice = (
   postDoc: string,
   uid: string,
   uri: string,
+  width: number,
+  height: number,
+  thms: string[],
   postBy: string,
+  postAt: firebase.firestore.Timestamp,
 ) => {
   return dispatch => {
     if (postDoc === undefined) return;
@@ -505,27 +524,29 @@ export const asyncNice = (
       .doc(uid)
       .collection('nices')
       .doc(postDoc);
+    const obj = {
+      flag: true,
+      postDoc,
+      uri,
+      width,
+      height,
+      thms,
+      postBy,
+      postAt,
+      niceBy: uid,
+      niceAt,
+    };
 
     return db
       .runTransaction(trn => {
         return trn.get(mynice).then(myniceDoc => {
           if (!myniceDoc.exists) {
-            trn.set(mynice, {
-              flag: true,
-              uri,
-              postBy,
-              niceAt,
-            });
+            trn.set(mynice, obj);
           } else {
             if (myniceDoc.data().flag) {
               trn.set(mynice, { flag: false });
             } else {
-              trn.update(mynice, {
-                flag: true,
-                uri,
-                postBy,
-                niceAt,
-              });
+              trn.update(mynice, obj);
             }
           }
         });
