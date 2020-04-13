@@ -3,7 +3,12 @@ import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import firebase from '../../../firebase/firebase';
 
-import { Posted, Detail, PostScreen, AnsScreen } from './behind';
+import {
+  PostedScreen,
+  DetailScreen,
+  PostScreen,
+  AnsScreen,
+} from '../screenTypes';
 import {
   startFetch,
   getAnss,
@@ -24,7 +29,7 @@ import {
 
 // posted screen
 
-const initialState: Posted = {
+const initialState: PostedScreen = {
   isFetching: false,
   isError: false,
   doneNice: false,
@@ -33,18 +38,18 @@ const initialState: Posted = {
     uri: '',
     width: 0,
     height: 0,
-    owner: '',
+    postBy: '',
     numNice: 0,
     niceByList: [],
     thms: [],
-    createdAt: new firebase.firestore.Timestamp(0, 0),
+    postAt: new firebase.firestore.Timestamp(0, 0),
   },
   anss1: [],
   anss2: [],
   anss3: [],
 };
 
-export const postedReducer: Reducer<Posted> = reducerWithInitialState(
+export const postedReducer: Reducer<PostedScreen> = reducerWithInitialState(
   initialState,
 )
   .case(startFetch, (state, payload) => ({
@@ -75,11 +80,11 @@ export const postedReducer: Reducer<Posted> = reducerWithInitialState(
       uri: payload.uri,
       width: payload.width,
       height: payload.height,
-      owner: payload.owner,
+      postBy: payload.postBy,
       numNice: state.ppram.numNice,
       niceByList: state.ppram.niceByList,
       thms: payload.thms,
-      createdAt: payload.createdAt,
+      postAt: payload.postAt,
     },
   }))
   .case(getNice, (state, payload) => ({
@@ -94,7 +99,7 @@ export const postedReducer: Reducer<Posted> = reducerWithInitialState(
 
 // detail screen
 
-const initialDetail: Detail = {
+const initialDetail: DetailScreen = {
   isFetching: false,
   isError: false,
   dpram: {
@@ -107,9 +112,9 @@ const initialDetail: Detail = {
     order: 1,
     body: '',
     numNice: 0,
-    postedBy: '',
+    postBy: '',
     ansBy: '',
-    postedAt: new firebase.firestore.Timestamp(0, 0),
+    postAt: new firebase.firestore.Timestamp(0, 0),
     ansAt: new firebase.firestore.Timestamp(0, 0),
   },
   numGotit: 0,
@@ -122,7 +127,7 @@ const initialDetail: Detail = {
   doneGotit: false,
 };
 
-export const detailReducer: Reducer<Detail> = reducerWithInitialState(
+export const detailReducer: Reducer<DetailScreen> = reducerWithInitialState(
   initialDetail,
 )
   .case(startFetch, (state, payload) => ({

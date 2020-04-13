@@ -1,5 +1,3 @@
-import { Post, Ans, Comb } from '../types';
-
 export type Auth = {
   isFetching: boolean;
   isError: boolean;

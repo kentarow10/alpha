@@ -4,8 +4,6 @@ import { Asset } from 'expo-asset';
 import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
-import { Auth } from './auth';
-import { Comb, Ans, Post, Comment } from '../types';
 
 // preparation
 

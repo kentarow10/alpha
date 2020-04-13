@@ -1,16 +1,7 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import * as ImagePicker from 'expo-image-picker';
 import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
-import {
-  Ans,
-  Post,
-  Comment,
-  Nice,
-  PostedParams,
-  NavigationParamList,
-  DetailParams,
-  Pin,
-} from '../types';
+import { Post, Comment, NavigationParamList, Pin, LinkPin } from '../types';
 import { database } from 'firebase';
 
 // 準備
@@ -90,23 +81,23 @@ export const done = actionCreator<{}>('DONE');
 export const startFetch = actionCreator<{}>('START_FETCH');
 
 export const getAnss = actionCreator<{
-  anss1: Ans[];
-  anss2: Ans[];
-  anss3: Ans[];
+  anss1: Pin[];
+  anss2: Pin[];
+  anss3: Pin[];
 }>('GET_ANS');
 
-export const getMoreAnss1 = actionCreator<Ans[]>('GET_MORE_ANS1');
-export const getMoreAnss2 = actionCreator<Ans[]>('GET_MORE_ANS2');
-export const getMoreAnss3 = actionCreator<Ans[]>('GET_MORE_ANS3');
+export const getMoreAnss1 = actionCreator<Pin[]>('GET_MORE_ANS1');
+export const getMoreAnss2 = actionCreator<Pin[]>('GET_MORE_ANS2');
+export const getMoreAnss3 = actionCreator<Pin[]>('GET_MORE_ANS3');
 
 export const getParams = actionCreator<{
   postDoc: string;
   uri: string;
   width: number;
   height: number;
-  owner: string;
+  postBy: string;
   thms: string[];
-  createdAt: firebase.firestore.Timestamp;
+  postAt: firebase.firestore.Timestamp;
 }>('GET_PARAMS');
 
 export const getNice = actionCreator<{
@@ -121,7 +112,7 @@ export const getGotit = actionCreator<{
   isGotit: boolean;
 }>('GET_GOTIT');
 
-export const detailInit = actionCreator<DetailParams>('DETAIL_INIT');
+export const detailInit = actionCreator<Pin>('DETAIL_INIT');
 
 export const ansInit = actionCreator<{}>('ANS_INIT');
 export const postInit = actionCreator<{}>('POST_INIT');
@@ -160,7 +151,7 @@ export const asyncDelink = (myAnsDoc: string, toAnsDoc: string) => {
 // リンクする
 
 export const asyncLink = (
-  dparam: DetailParams,
+  dparam: Pin,
   myansDoc: string,
   myansPostDoc: string,
   myansUri: string,
@@ -229,11 +220,7 @@ export const asyncFetchComment = (postDoc: string, ansDoc: string) => {
 
 // コメント送信
 
-export const asyncComment = (
-  dparam: DetailParams,
-  comment: string,
-  uid: string,
-) => {
+export const asyncComment = (dparam: Pin, comment: string, uid: string) => {
   return async dispach => {
     const commentAt = firebase.firestore.FieldValue.serverTimestamp();
     db.collection('posts')
@@ -259,7 +246,7 @@ export const asyncComment = (
 // 回答送信
 
 export const asyncAnswer = (
-  pparam: PostedParams,
+  pparam: Post,
   orderThm: number,
   body: string,
   ansBy: string,
@@ -283,8 +270,8 @@ export const asyncAnswer = (
         h: pparam.height,
         tate,
         thms: pparam.thms,
-        postBy: pparam.owner,
-        postAt: pparam.createdAt,
+        postBy: pparam.postBy,
+        postAt: pparam.postAt,
       })
       .then(res => {
         const ansRef = rtdb.ref(res.id);
@@ -419,7 +406,7 @@ export const asyncListenNice = (postDoc: string, uid: string) => {
 
 // わかる！を押した時
 
-export const asyncGotit = (dparam: DetailParams, uid: string) => {
+export const asyncGotit = (dparam: Pin, uid: string) => {
   return async dispatch => {
     const ansRef = rtdb.ref(dparam.ansDoc);
     ansRef.transaction(function(ans) {
@@ -569,12 +556,19 @@ export const asyncGetMoreAnss = (
       .then(snap => {
         const additional = [];
         snap.forEach(doc => {
-          const ans: Ans = {
+          const ans: Pin = {
             ansDoc: doc.id,
+            postDoc: doc.data().postDoc,
+            uri: doc.data().uri,
+            width: doc.data().width,
+            height: doc.data().height,
+            thms: doc.data().thms,
+            order: doc.data().order,
             body: doc.data().body,
+            postBy: doc.data().postBy,
+            postAt: doc.data().postAt,
             ansBy: doc.data().ansBy,
             ansAt: doc.data().ansAt,
-            orderThm: doc.data().orderThm,
           };
           additional.push(ans);
         });
@@ -622,36 +616,57 @@ export const asyncGetAnss = (postDoc: string) => {
       .orderBy('ansAt')
       .limit(10)
       .get();
-    const anss1: Ans[] = [];
-    const anss2: Ans[] = [];
-    const anss3: Ans[] = [];
+    const anss1: Pin[] = [];
+    const anss2: Pin[] = [];
+    const anss3: Pin[] = [];
     ans1.forEach(doc => {
-      const ans: Ans = {
+      const ans: Pin = {
         ansDoc: doc.id,
+        postDoc: doc.data().postDoc,
+        uri: doc.data().uri,
+        width: doc.data().width,
+        height: doc.data().height,
+        thms: doc.data().thms,
+        order: doc.data().order,
         body: doc.data().body,
+        postBy: doc.data().postBy,
+        postAt: doc.data().postAt,
         ansBy: doc.data().ansBy,
         ansAt: doc.data().ansAt,
-        orderThm: doc.data().orderThm,
       };
       anss1.push(ans);
     });
     ans2.forEach(doc => {
-      const ans: Ans = {
+      const ans: Pin = {
         ansDoc: doc.id,
+        postDoc: doc.data().postDoc,
+        uri: doc.data().uri,
+        width: doc.data().width,
+        height: doc.data().height,
+        thms: doc.data().thms,
+        order: doc.data().order,
         body: doc.data().body,
+        postBy: doc.data().postBy,
+        postAt: doc.data().postAt,
         ansBy: doc.data().ansBy,
         ansAt: doc.data().ansAt,
-        orderThm: doc.data().orderThm,
       };
       anss2.push(ans);
     });
     ans3.forEach(doc => {
-      const ans: Ans = {
+      const ans: Pin = {
         ansDoc: doc.id,
+        postDoc: doc.data().postDoc,
+        uri: doc.data().uri,
+        width: doc.data().width,
+        height: doc.data().height,
+        thms: doc.data().thms,
+        order: doc.data().order,
         body: doc.data().body,
+        postBy: doc.data().postBy,
+        postAt: doc.data().postAt,
         ansBy: doc.data().ansBy,
         ansAt: doc.data().ansAt,
-        orderThm: doc.data().orderThm,
       };
       anss3.push(ans);
     });
@@ -662,10 +677,10 @@ export const asyncGetAnss = (postDoc: string) => {
 // 与えられたansDocから各リンクを取得する
 
 export const getLinks = actionCreator<{
-  mpin: Pin[];
-  fpin: Pin[];
-  tpin: Pin[];
-  links: Pin[];
+  mpin: LinkPin[];
+  fpin: LinkPin[];
+  tpin: LinkPin[];
+  links: LinkPin[];
 }>('GET_LINKS');
 
 export const asyncGetMoreLinks = (
@@ -675,9 +690,9 @@ export const asyncGetMoreLinks = (
   lastToPinAt: firebase.firestore.Timestamp,
 ) => {
   return async dispatch => {
-    const mutualList: Pin[] = [];
-    const fromList: Pin[] = [];
-    const toList: Pin[] = [];
+    const mutualList: LinkPin[] = [];
+    const fromList: LinkPin[] = [];
+    const toList: LinkPin[] = [];
     dispatch(startFetch({}));
     const base = db.collection('links').doc(ansDoc);
     const mutual = await base
@@ -704,10 +719,14 @@ export const asyncGetMoreLinks = (
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
+        width: snap.data().width,
+        height: snap.data().height,
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        postedAt: snap.data().postAt,
+        postBy: snap.data().postBy,
+        postAt: snap.data().postAt,
+        ansBy: snap.data().ansBy,
         ansAt: snap.data().ansAt,
         linkAt: snap.data().linkAt,
       });
@@ -718,10 +737,14 @@ export const asyncGetMoreLinks = (
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
+        width: snap.data().width,
+        height: snap.data().height,
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        postedAt: snap.data().postAt,
+        postBy: snap.data().postBy,
+        postAt: snap.data().postAt,
+        ansBy: snap.data().ansBy,
         ansAt: snap.data().ansAt,
         linkAt: snap.data().linkAt,
       });
@@ -732,10 +755,14 @@ export const asyncGetMoreLinks = (
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
+        width: snap.data().width,
+        height: snap.data().height,
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        postedAt: snap.data().postAt,
+        postBy: snap.data().postBy,
+        postAt: snap.data().postAt,
+        ansBy: snap.data().ansBy,
         ansAt: snap.data().ansAt,
         linkAt: snap.data().linkAt,
       });
@@ -749,9 +776,9 @@ export const asyncGetMoreLinks = (
 
 export const asyncGetLinks = (ansDoc: string) => {
   return async dispatch => {
-    const mutualList: Pin[] = [];
-    const fromList: Pin[] = [];
-    const toList: Pin[] = [];
+    const mutualList: LinkPin[] = [];
+    const fromList: LinkPin[] = [];
+    const toList: LinkPin[] = [];
     dispatch(startFetch({}));
     const base = db.collection('links').doc(ansDoc);
     const mutual = await base.collection('mutual').get();
@@ -763,11 +790,16 @@ export const asyncGetLinks = (ansDoc: string) => {
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
+        width: snap.data().width,
+        height: snap.data().height,
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        postedAt: snap.data().postAt,
+        postBy: snap.data().postBy,
+        postAt: snap.data().postAt,
+        ansBy: snap.data().ansBy,
         ansAt: snap.data().ansAt,
+        linkAt: snap.data().linkAt,
       });
     });
     from.forEach(snap => {
@@ -775,11 +807,16 @@ export const asyncGetLinks = (ansDoc: string) => {
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
+        width: snap.data().width,
+        height: snap.data().height,
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        postedAt: snap.data().postAt,
+        postBy: snap.data().postBy,
+        postAt: snap.data().postAt,
+        ansBy: snap.data().ansBy,
         ansAt: snap.data().ansAt,
+        linkAt: snap.data().linkAt,
       });
     });
     to.forEach(snap => {
@@ -787,11 +824,16 @@ export const asyncGetLinks = (ansDoc: string) => {
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
         uri: snap.data().uri,
+        width: snap.data().width,
+        height: snap.data().height,
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        postedAt: snap.data().postAt,
+        postBy: snap.data().postBy,
+        postAt: snap.data().postAt,
+        ansBy: snap.data().ansBy,
         ansAt: snap.data().ansAt,
+        linkAt: snap.data().linkAt,
       });
     });
     const links = mutualList.concat(fromList).concat(toList);
