@@ -81,7 +81,6 @@ postDoc
             * postAt
             * niceAt
             * postDoc(参照用)
-            * parent(参照用)
     * subcollection('gotits')：一覧表示で必要になる情報
         * $ansDocument(自動生成でなく指定する)
             * postDoc
@@ -97,7 +96,6 @@ postDoc
             * postAt
             * gotitAt
             * ansDoc(参照用)
-            * parent(参照用)
     
 * onSnapshot()でドキュメントをリスンできる
 

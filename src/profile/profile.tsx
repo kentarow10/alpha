@@ -76,7 +76,7 @@ const profile = () => {
                 source={{ uri: item.item.uri }}
                 style={{ width: 150, height: 150 }}
               />
-              <Text>{item.item.owner}</Text>
+              <Text>{item.item.postBy}</Text>
             </View>
           );
         }}
@@ -96,7 +96,7 @@ const profile = () => {
                 source={{ uri: item.item.uri }}
                 style={{ width: 50, height: 50 }}
               />
-              <Text>{item.item.thms[item.item.orderThm - 1]}</Text>
+              <Text>{item.item.thms[item.item.order - 1]}</Text>
               <Text>{item.item.body}</Text>
             </View>
           );
