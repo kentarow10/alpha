@@ -1,9 +1,7 @@
 import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
-
 import { Me } from './me';
-import { Ans, Post, Comment } from '../types';
 
 import {
   getMyInfo,

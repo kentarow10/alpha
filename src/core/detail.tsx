@@ -30,7 +30,7 @@ import {
   RouteProp,
   DrawerActions,
 } from '@react-navigation/native';
-import { PostedParams, NavigationParamList } from '../store/types';
+import { NavigationParamList } from '../store/types';
 import firebase from '../../firebase/firebase';
 import {
   PostedState,
@@ -439,9 +439,9 @@ export const Detail = (props: Props) => {
                               uri: i.uri,
                               width: i.width,
                               height: i.height,
-                              owner: i.postedBy,
+                              postBy: i.postBy,
                               thms: i.thms,
-                              createdAt: i.postedAt,
+                              postAt: i.postAt,
                             }),
                           );
                         }}

@@ -2,7 +2,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Me } from './me';
-import { Comb, Ans, Post, Comment, Nice, Pin } from '../types';
+import { Post, NicePost, Pin, GotitPin, LinkPin } from '../types';
 import { MyName } from './selector';
 
 // 準備
@@ -33,15 +33,15 @@ export const getMyInfo = actionCreator<{ userName: string; siBody: string }>(
 
 export const getIconUrl = actionCreator<{ iconUrl: string }>('GET_ICON_URL');
 
-export const getMyPins = actionCreator<Comb[]>('GET_MY_PINS');
+export const getMyPins = actionCreator<Pin[]>('GET_MY_PINS');
 
 export const getMyPosts = actionCreator<Post[]>('GET_MY_POST');
 
-export const getMyNicePosts = actionCreator<SimpleNice[]>('GET_MY_NICE_POST');
+export const getMyNicePosts = actionCreator<NicePost[]>('GET_MY_NICE_POST');
 
-export const getMyGotitPins = actionCreator<Pin[]>('GET_MY_GOTIT_ANS');
+export const getMyGotitPins = actionCreator<GotitPin[]>('GET_MY_GOTIT_ANS');
 
-export const getMyLinkedAnss = actionCreator<Comb[]>('GET_MY_LINKED_ANS');
+export const getMyLinkedAnss = actionCreator<LinkPin[]>('GET_MY_LINKED_ANS');
 
 export const updateSiBody = actionCreator<{ siBody: string }>('UPDATE_SIBODY');
 
@@ -59,27 +59,27 @@ export type SimpleNice = {
 
 // 自分のいいねのリスン
 
-export const listenMyNices = (uid: string) => {
-  return async dispatch => {
-    db.collection('users')
-      .doc(uid)
-      .collection('nices')
-      .onSnapshot(snap => {
-        const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
-        console.log('listened change at ' + source);
-        const niceList: SimpleNice[] = [];
-        snap.forEach(post => {
-          if (post.data().flag) {
-            const postDoc = post.id;
-            const uri = post.data().uri;
-            const postBy = post.data().postBy;
-            niceList.push({ postDoc, uri, postBy });
-          }
-        });
-        dispatch(getMyNicePosts(niceList));
-      });
-  };
-};
+// export const listenMyNices = (uid: string) => {
+//   return async dispatch => {
+//     db.collection('users')
+//       .doc(uid)
+//       .collection('nices')
+//       .onSnapshot(snap => {
+//         const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
+//         console.log('listened change at ' + source);
+//         const niceList: NicePost[] = [];
+//         snap.forEach(post => {
+//           if (post.data().flag) {
+//             const postDoc = post.id;
+//             const uri = post.data().uri;
+//             const postBy = post.data().postBy;
+//             niceList.push({ postDoc, uri, postBy });
+//           }
+//         });
+//         dispatch(getMyNicePosts(niceList));
+//       });
+//   };
+// };
 
 // 自分が分かる！した回答一覧
 
@@ -96,47 +96,47 @@ export const listenMyNices = (uid: string) => {
 
 // 自分のわかる！のリスン
 
-export const listenMyGotits = (uid: string) => {
-  return async dispatch => {
-    db.collection('users')
-      .doc(uid)
-      .collection('gotits')
-      .onSnapshot(snap => {
-        const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
-        console.log('listened change at ' + source);
-        const gotitList: Pin[] = [];
-        snap.forEach(ans => {
-          if (ans.data().flag) {
-            const ansDoc = ans.id;
-            const postDoc = ans.data().postDoc;
-            const uri = ans.data().uri;
-            const thm = ans.data().thm;
-            const body = ans.data().body;
-            const ansBy = ans.data().ansBy;
-            gotitList.push({ ansDoc, postDoc, uri, thm, body, ansBy });
-          }
-        });
-        dispatch(getMyGotitPins(gotitList));
-      });
-  };
-};
+// export const listenMyGotits = (uid: string) => {
+//   return async dispatch => {
+//     db.collection('users')
+//       .doc(uid)
+//       .collection('gotits')
+//       .onSnapshot(snap => {
+//         const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
+//         console.log('listened change at ' + source);
+//         const gotitList: Pin[] = [];
+//         snap.forEach(ans => {
+//           if (ans.data().flag) {
+//             const ansDoc = ans.id;
+//             const postDoc = ans.data().postDoc;
+//             const uri = ans.data().uri;
+//             const thm = ans.data().thm;
+//             const body = ans.data().body;
+//             const ansBy = ans.data().ansBy;
+//             gotitList.push({ ansDoc, postDoc, uri, thm, body, ansBy });
+//           }
+//         });
+//         dispatch(getMyGotitPins(gotitList));
+//       });
+//   };
+// };
 
-export const asyncGetMyGotitPins = (uid: string) => {
-  return async dispatch => {
-    const gotits = await rtdb.ref(uid + '/gotits').once('value');
-    const ansDoc = Object.keys(gotits);
-    const gotitsList: Pin[] = ansDoc.map(ad => {
-      const postDoc = gotits[ad].postDoc;
-      const uri = gotits[ad].uri;
-      const thm = gotits[ad].thm;
-      const body = gotits[ad].body;
-      const ansBy = gotits[ad].ansBy;
+// export const asyncGetMyGotitPins = (uid: string) => {
+//   return async dispatch => {
+//     const gotits = await rtdb.ref(uid + '/gotits').once('value');
+//     const ansDoc = Object.keys(gotits);
+//     const gotitsList: Pin[] = ansDoc.map(ad => {
+//       const postDoc = gotits[ad].postDoc;
+//       const uri = gotits[ad].uri;
+//       const thm = gotits[ad].thm;
+//       const body = gotits[ad].body;
+//       const ansBy = gotits[ad].ansBy;
 
-      return { ansDoc: ad, postDoc, uri, thm, body, ansBy };
-    });
-    dispatch(getMyGotitPins(gotitsList));
-  };
-};
+//       return { ansDoc: ad, postDoc, uri, thm, body, ansBy };
+//     });
+//     dispatch(getMyGotitPins(gotitsList));
+//   };
+// };
 
 // ほかのユーザーからリンクされた自分の回答一覧
 
@@ -182,10 +182,10 @@ export const asyncGetMyPosts = (uid: string) => {
         const posts: Post[] = [];
         snap.forEach(doc => {
           const thms = doc.data().thms;
-          const owner = doc.data().postedBy;
-          const width = doc.data().w;
-          const height = doc.data().h;
-          const createdAt = doc.data().postAt.toDate();
+          const postBy = doc.data().postBy;
+          const width = doc.data().width;
+          const height = doc.data().height;
+          const postAt = doc.data().postAt.toDate();
           storage
             .ref(doc.data().path)
             .getDownloadURL()
@@ -195,10 +195,10 @@ export const asyncGetMyPosts = (uid: string) => {
                 uri,
                 path: doc.data().path,
                 thms,
-                owner,
+                postBy,
                 width,
                 height,
-                postedAt: createdAt,
+                postAt,
               });
             })
             .catch(e => {
@@ -227,6 +227,8 @@ export const asyncGetMyPins = (uid: string) => {
           postDoc: doc.data().postDoc,
           ansDoc: doc.id,
           uri: doc.data().uri,
+          width: doc.data().width,
+          height: doc.data().height,
           thms: doc.data().thms,
           order: doc.data().order,
           body: doc.data().body,

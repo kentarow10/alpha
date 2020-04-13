@@ -34,22 +34,14 @@ export type Comment = Pin & {
   comAt: firebase.firestore.Timestamp;
 };
 
-export type NicesPost = {
-  postDoc: string;
-  uri: string;
-  width: number;
-  height: number;
-  thms: string[];
-  postBy: string;
-  postAt: firebase.firestore.Timestamp;
+export type NicePost = Post & {
+  niceBy: string;
   niceAt: firebase.firestore.Timestamp;
-  parentUid: string;
 };
 
 export type GotitPin = Pin & {
   gotitBy: string;
   gotitAt: firebase.firestore.Timestamp;
-  parentUid: string;
 };
 
 export type LinkPin = Pin & {

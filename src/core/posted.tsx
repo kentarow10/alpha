@@ -28,7 +28,7 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import { PostedParams, NavigationParamList } from '../store/types';
+import { NavigationParamList } from '../store/types';
 import {
   PostedState,
   getParams,
@@ -56,9 +56,9 @@ type Props = {
   uri: string;
   width: number;
   height: number;
-  owner: string;
+  postBy: string;
   thms: string[];
-  createdAt: firebase.firestore.Timestamp;
+  postAt: firebase.firestore.Timestamp;
   setModal: (b: boolean) => void;
   close: boolean;
   goAnswer: () => void;
@@ -203,9 +203,9 @@ const Posted = (props: Props) => {
         uri: props.uri,
         width: props.width,
         height: props.height,
-        owner: props.owner,
+        postBy: props.postBy,
         thms: props.thms,
-        createdAt: props.createdAt,
+        postAt: props.postAt,
       }),
     );
   }, []);
@@ -225,7 +225,7 @@ const Posted = (props: Props) => {
           order={order}
           setOrder={setOrder}
           setModal={props.setModal}
-          postAt={posted.ppram.createdAt}
+          postAt={posted.ppram.postAt}
           numNice={posted.ppram.numNice}
         />
       </View>
@@ -259,7 +259,7 @@ const Posted = (props: Props) => {
                   posted.ppram.postDoc,
                   uid,
                   posted.ppram.uri,
-                  posted.ppram.owner,
+                  posted.ppram.postBy,
                 ),
               );
             }}
@@ -341,12 +341,12 @@ const Posted = (props: Props) => {
                     width: posted.ppram.width,
                     height: posted.ppram.height,
                     thms: posted.ppram.thms,
-                    order: item.item.orderThm,
+                    order: item.item.order,
                     body: item.item.body,
                     numNice: posted.ppram.numNice,
-                    postedBy: posted.ppram.owner,
+                    postBy: posted.ppram.postBy,
                     ansBy: item.item.ansBy,
-                    postedAt: posted.ppram.createdAt,
+                    postAt: posted.ppram.postAt,
                     ansAt: item.item.ansAt,
                   }),
                 );

@@ -42,8 +42,8 @@ postDoc
 ## collection('posts')
 * $postDocument
     * path
-    * w
-    * h
+    * width
+    * height
     * postBy
     * thms
     * postAt
@@ -55,9 +55,8 @@ postDoc
             * ansBy
             * ansAt
             * order
-            * w
-            * h
-            * tate
+            * width
+            * height
             * postBy
             * thms
             * postAt
@@ -75,19 +74,28 @@ postDoc
     * subcollection('nices')：一覧表示で必要になる情報
         * $postDocument(自動生成でなく指定する)
             * uri
+            * width
+            * height
             * postBy
+            * thms
             * postAt
+            * niceAt
             * postDoc(参照用)
             * parent(参照用)
     * subcollection('gotits')：一覧表示で必要になる情報
         * $ansDocument(自動生成でなく指定する)
             * postDoc
             * uri
-            * thms
-            * order
             * body
             * ansBy
             * ansAt
+            * order
+            * width
+            * height
+            * postBy
+            * thms
+            * postAt
+            * gotitAt
             * ansDoc(参照用)
             * parent(参照用)
     

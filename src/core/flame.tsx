@@ -30,7 +30,7 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import { PostedParams, NavigationParamList } from '../store/types';
+import { NavigationParamList } from '../store/types';
 import firebase from '../../firebase/firebase';
 import { postedImage as PostedImage } from '../components/postedImage';
 import { Header } from '../components/header';
@@ -92,18 +92,9 @@ const flame = () => {
 
   return (
     <React.Fragment>
-      {/* <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      > */}
       <SafeAreaView style={{ height: HEIGHT }}>
         <Header mode="back" />
         <Divider />
-        {/* <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-          style={{ flex: 0.5 }}
-          keyboardVerticalOffset={800}
-        > */}
         <ScrollView
           ref={scrl}
           onScroll={({ nativeEvent }) => {
@@ -125,9 +116,9 @@ const flame = () => {
                   uri={prm.uri}
                   width={prm.width}
                   height={prm.height}
-                  owner={prm.owner}
+                  owner={prm.postBy}
                   thms={prm.thms}
-                  createdAt={prm.postedAt}
+                  createdAt={prm.postAt}
                   close={close}
                   setModal={setModal}
                   goAnswer={goAnswer}
@@ -159,9 +150,7 @@ const flame = () => {
             </Portal>
           </Provider>
         </ScrollView>
-        {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
-      {/* </KeyboardAvoidingView> */}
     </React.Fragment>
   );
 };

@@ -163,7 +163,7 @@ export const Answer = (props: Props) => {
           order={order}
           setOrder={setOrder}
           numNice={posted.ppram.numNice}
-          postAt={posted.ppram.createdAt}
+          postAt={posted.ppram.postAt}
           inAns={true}
         />
         {/* <View style={{ flex: 1 }}> */}

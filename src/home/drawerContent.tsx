@@ -192,12 +192,18 @@ export function DrawerContent(props: Props) {
                       onPress={() => {
                         console.log(item.item);
                         setItem({
-                          ansDoc: item.item.ansDoc,
-                          postDoc: item.item.postDoc,
-                          uri: item.item.uri,
-                          thms: item.item.thms,
-                          order: item.item.order,
-                          body: item.item.body,
+                          ansDoc: '',
+                          postDoc: '',
+                          uri: '',
+                          width: 0,
+                          height: 0,
+                          thms: [],
+                          order: 1,
+                          body: '',
+                          postAt: new firebase.firestore.Timestamp(0, 0),
+                          ansAt: new firebase.firestore.Timestamp(0, 0),
+                          postBy: '',
+                          ansBy: '',
                         });
                         setModal(true);
                       }}

@@ -29,8 +29,8 @@ import { Text } from 'react-native-paper';
 import { GetPosts } from '../store/timeLine/selector';
 import { asyncGetPosts } from '../store/timeLine/actions';
 import { NavigationContext } from '@react-navigation/native';
-import { TimeLime } from '../store/timeLine/timeLine';
 import { Header } from '../components/header';
+import { TimeLimeScreen } from '../store/screenTypes';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -41,7 +41,7 @@ const imgH = imgW * 1.414;
 const timeLine = () => {
   const dispatch = useDispatch();
   const navigation = useContext(NavigationContext);
-  const posts: TimeLime = useSelector(GetPosts);
+  const posts: TimeLimeScreen = useSelector(GetPosts);
   const { colors } = useTheme();
 
   useEffect(() => {
@@ -104,8 +104,8 @@ const timeLine = () => {
                         width: item.item.width,
                         height: item.item.height,
                         thms: item.item.thms,
-                        owner: item.item.owner,
-                        postedAt: item.item.postedAt,
+                        postBy: item.item.postBy,
+                        postAt: item.item.postAt,
                         toDetail: false,
                       });
                     }}

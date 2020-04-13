@@ -1,4 +1,4 @@
-import { Post, Ans, Pin, Nice } from '../types';
+import { Post, Pin, NicePost, GotitPin, LinkPin } from '../types';
 import { SimpleNice } from './actions';
 
 export type Me = {
@@ -11,9 +11,9 @@ export type Me = {
   showPostMode: boolean;
   myPins: Pin[];
   myPosts: Post[];
-  myNicePosts: SimpleNice[];
-  myGotitPins: Pin[];
-  myLinkedPins: Pin[];
+  myNicePosts: NicePost[];
+  myGotitPins: GotitPin[];
+  myLinkedPins: LinkPin[];
 };
 
 export * from './actions';
