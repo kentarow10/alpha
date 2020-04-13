@@ -1,5 +1,8 @@
 # 中身
 
+postDoc
+
+
 ## collection('links')
 * :ansDocument
     * subcollection('from')
@@ -11,6 +14,7 @@
             * order
             * body
             * ansAt
+            * linkAt
             * parent(参照用)
     * subcollection(to')
         * :ansDocument
@@ -21,6 +25,7 @@
             * order
             * body
             * ansAt
+            * linkAt
             * parent(参照用)
     * subcollection('mutual')
         * :ansDocument
@@ -31,6 +36,7 @@
             * order
             * body
             * ansAt
+            * linkAt
             * parent(参照用)
 
 ## collection('posts')

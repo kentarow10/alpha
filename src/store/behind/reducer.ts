@@ -103,7 +103,8 @@ const initialDetail: Detail = {
     uri: '',
     width: 0,
     height: 0,
-    thm: '',
+    thms: [],
+    order: 1,
     body: '',
     numNice: 0,
     postedBy: '',
@@ -143,13 +144,21 @@ export const detailReducer: Reducer<Detail> = reducerWithInitialState(
     ...state,
     comments: payload,
   }))
-  .case(getLinks, (state, payload) => ({
-    ...state,
-    mLinks: payload.mpin,
-    fLinks: payload.fpin,
-    tLinks: payload.tpin,
-    links: payload.links,
-  }));
+  .case(getLinks, (state, payload) => {
+    const mUpdated = state.mLinks.concat(payload.mpin);
+    const fUpdated = state.fLinks.concat(payload.fpin);
+    const tUpdated = state.tLinks.concat(payload.tpin);
+    const updated = state.mLinks.concat(payload.links);
+
+    return {
+      ...state,
+      isFetching: false,
+      mLinks: mUpdated,
+      fLinks: fUpdated,
+      tLinks: tUpdated,
+      links: updated,
+    };
+  });
 
 // post screen
 

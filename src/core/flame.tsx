@@ -31,6 +31,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import { PostedParams, NavigationParamList } from '../store/types';
+import firebase from '../../firebase/firebase';
 import { postedImage as PostedImage } from '../components/postedImage';
 import { Header } from '../components/header';
 import Posted from './posted';
@@ -62,7 +63,7 @@ const flame = () => {
   const [showModal, setModal] = useState(false);
   const scrl = useRef(null);
   const [close, setClose] = useState(false);
-  const [navState, setNavState] = useState('POSTED');
+  const [navState, setNavState] = useState(prm.toDetail ? 'DETAIL' : 'POSTED');
   const goAnswer = (): void => {
     setNavState('ANSWER');
   };
@@ -84,6 +85,10 @@ const flame = () => {
       contentSize.height - paddingToBottom
     );
   };
+  useEffect(() => {
+    const ts = new firebase.firestore.Timestamp(0, 0);
+    console.log(ts.toDate());
+  }, []);
 
   return (
     <React.Fragment>

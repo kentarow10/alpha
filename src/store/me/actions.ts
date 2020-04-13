@@ -221,18 +221,18 @@ export const asyncGetMyPins = (uid: string) => {
     dispatch(startFetch({}));
     const anss = db.collectionGroup('answers').where('ansBy', '==', uid);
     anss.get().then(snap => {
-      const myanss: Comb[] = [];
+      const myanss: Pin[] = [];
       snap.forEach(doc => {
-        const ans: Comb = {
+        const ans: Pin = {
           postDoc: doc.data().postDoc,
           ansDoc: doc.id,
           uri: doc.data().uri,
           thms: doc.data().thms,
-          orderThm: doc.data().orderThm,
+          order: doc.data().order,
           body: doc.data().body,
-          postedBy: doc.data().postedBy,
+          postBy: doc.data().postedBy,
           ansBy: doc.data().ansBy,
-          postedAt: doc.data().postedAt,
+          postAt: doc.data().postedAt,
           ansAt: doc.data().ansAt,
         };
         myanss.push(ans);

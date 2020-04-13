@@ -32,7 +32,7 @@ import {
   Button,
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
-
+import firebase from '../../firebase/firebase';
 import { PreferencesContext } from '../context/preferencesContext';
 import { BaseRouter, DrawerActions } from '@react-navigation/native';
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
@@ -105,9 +105,15 @@ export function DrawerContent(props: Props) {
     ansDoc: '',
     postDoc: '',
     uri: '',
+    width: 0,
+    height: 0,
     thms: [],
-    orderThm: 1,
+    order: 1,
     body: '',
+    postAt: new firebase.firestore.Timestamp(0, 0),
+    ansAt: new firebase.firestore.Timestamp(0, 0),
+    postBy: '',
+    ansBy: '',
   });
 
   const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
@@ -190,7 +196,7 @@ export function DrawerContent(props: Props) {
                           postDoc: item.item.postDoc,
                           uri: item.item.uri,
                           thms: item.item.thms,
-                          orderThm: item.item.orderThm,
+                          order: item.item.order,
                           body: item.item.body,
                         });
                         setModal(true);
@@ -201,7 +207,7 @@ export function DrawerContent(props: Props) {
                           source={{ uri: item.item.uri }}
                           style={{ width: 50, height: 50 }}
                         />
-                        <Text>{item.item.thms[item.item.orderThm - 1]}</Text>
+                        <Text>{item.item.thms[item.item.order - 1]}</Text>
                         <Text>{item.item.body}</Text>
                       </View>
                     </TouchableOpacity>
@@ -234,7 +240,7 @@ export function DrawerContent(props: Props) {
                         selectedItem.postDoc,
                         selectedItem.uri,
                         selectedItem.thms,
-                        selectedItem.orderThm,
+                        selectedItem.order,
                         selectedItem.body,
                       ),
                     );

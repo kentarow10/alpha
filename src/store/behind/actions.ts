@@ -9,9 +9,9 @@ import {
   PostedParams,
   NavigationParamList,
   DetailParams,
+  Pin,
 } from '../types';
 import { database } from 'firebase';
-import { Pin } from '../me/me';
 
 // 準備
 
@@ -50,7 +50,7 @@ export const mutualCheck = async (myAnsDoc: string, ansDoc: string) => {
   const myTo = db
     .collection('links')
     .doc(myAnsDoc)
-    .collection('from')
+    .collection('to')
     .doc(ansDoc);
   const myMutual = db
     .collection('links')
@@ -169,6 +169,7 @@ export const asyncLink = (
   myansBody: string,
 ) => {
   return async dispatch => {
+    const linkAt = firebase.firestore.FieldValue.serverTimestamp();
     const fromansRef = db
       .collection('links')
       .doc(dparam.ansDoc)
@@ -176,10 +177,13 @@ export const asyncLink = (
       .doc(myansDoc);
     fromansRef.set({
       postDoc: myansPostDoc,
+      ansDoc: myansDoc,
       uri: myansUri,
       thms: myansThms,
       order: myansThmOrder,
       body: myansBody,
+      linkAt,
+      parent: dparam.ansDoc,
     });
     const toansRef = db
       .collection('links')
@@ -188,10 +192,13 @@ export const asyncLink = (
       .doc(dparam.ansDoc);
     toansRef.set({
       postDoc: dparam.postDoc,
+      ansDoc: dparam.ansDoc,
       uri: dparam.uri,
       thms: dparam.thms,
       order: dparam.order,
       body: dparam.body,
+      linkAt,
+      parent: myansDoc,
     });
   };
 };
@@ -271,7 +278,7 @@ export const asyncAnswer = (
         body,
         ansBy,
         ansAt,
-        orderThm,
+        order: orderThm,
         w: pparam.width,
         h: pparam.height,
         tate,
@@ -432,6 +439,7 @@ export const asyncGotit = (dparam: DetailParams, uid: string) => {
       }
     });
 
+    const gotitAt = firebase.firestore.FieldValue.serverTimestamp();
     const mygotit = db
       .collection('users')
       .doc(uid)
@@ -446,9 +454,11 @@ export const asyncGotit = (dparam: DetailParams, uid: string) => {
               flag: true,
               postDoc: dparam.postDoc,
               uri: dparam.uri,
-              thm: dparam.thm,
+              thm: dparam.thms,
+              order: dparam.order,
               body: dparam.body,
               ansBy: dparam.ansBy,
+              gotitAt,
             });
           } else {
             if (mygotitDoc.data().flag) {
@@ -458,9 +468,11 @@ export const asyncGotit = (dparam: DetailParams, uid: string) => {
                 flag: true,
                 postDoc: dparam.postDoc,
                 uri: dparam.uri,
-                thm: dparam.thm,
+                thm: dparam.thms,
+                order: dparam.order,
                 body: dparam.body,
                 ansBy: dparam.ansBy,
+                gotitAt,
               });
             }
           }
@@ -500,6 +512,7 @@ export const asyncNice = (
       return post;
     });
 
+    const niceAt = firebase.firestore.FieldValue.serverTimestamp();
     const mynice = db
       .collection('users')
       .doc(uid)
@@ -514,6 +527,7 @@ export const asyncNice = (
               flag: true,
               uri,
               postBy,
+              niceAt,
             });
           } else {
             if (myniceDoc.data().flag) {
@@ -523,6 +537,7 @@ export const asyncNice = (
                 flag: true,
                 uri,
                 postBy,
+                niceAt,
               });
             }
           }
@@ -548,7 +563,7 @@ export const asyncGetMoreAnss = (
       .collection('answers')
       .where('orderThm', '==', orderThm)
       .orderBy('ansAt')
-      .limit(5)
+      .limit(10)
       .startAfter(lastAnsAt)
       .get()
       .then(snap => {
@@ -653,7 +668,84 @@ export const getLinks = actionCreator<{
   links: Pin[];
 }>('GET_LINKS');
 
-export const asyncGetMoreLinks = (ansDoc: string, lastPinAt)
+export const asyncGetMoreLinks = (
+  ansDoc: string,
+  lastMutualPinAt: firebase.firestore.Timestamp,
+  lastFromPinAt: firebase.firestore.Timestamp,
+  lastToPinAt: firebase.firestore.Timestamp,
+) => {
+  return async dispatch => {
+    const mutualList: Pin[] = [];
+    const fromList: Pin[] = [];
+    const toList: Pin[] = [];
+    dispatch(startFetch({}));
+    const base = db.collection('links').doc(ansDoc);
+    const mutual = await base
+      .collection('mutual')
+      .orderBy('linkAt')
+      .limit(10)
+      .startAfter(lastMutualPinAt)
+      .get();
+    const from = await base
+      .collection('from')
+      .orderBy('linkAt')
+      .limit(10)
+      .startAfter(lastFromPinAt)
+      .get();
+    const to = await base
+      .collection('to')
+      .orderBy('linkAt')
+      .limit(10)
+      .startAfter(lastToPinAt)
+      .get();
+
+    mutual.forEach(snap => {
+      mutualList.push({
+        ansDoc: snap.id,
+        postDoc: snap.data().postDoc,
+        uri: snap.data().uri,
+        thms: snap.data().thms,
+        order: snap.data().order,
+        body: snap.data().body,
+        postedAt: snap.data().postAt,
+        ansAt: snap.data().ansAt,
+        linkAt: snap.data().linkAt,
+      });
+    });
+    from.forEach(snap => {
+      console.log(snap.data());
+      fromList.push({
+        ansDoc: snap.id,
+        postDoc: snap.data().postDoc,
+        uri: snap.data().uri,
+        thms: snap.data().thms,
+        order: snap.data().order,
+        body: snap.data().body,
+        postedAt: snap.data().postAt,
+        ansAt: snap.data().ansAt,
+        linkAt: snap.data().linkAt,
+      });
+    });
+    to.forEach(snap => {
+      console.log(snap.data());
+      toList.push({
+        ansDoc: snap.id,
+        postDoc: snap.data().postDoc,
+        uri: snap.data().uri,
+        thms: snap.data().thms,
+        order: snap.data().order,
+        body: snap.data().body,
+        postedAt: snap.data().postAt,
+        ansAt: snap.data().ansAt,
+        linkAt: snap.data().linkAt,
+      });
+    });
+    const links = mutualList.concat(fromList).concat(toList);
+    dispatch(
+      getLinks({ mpin: mutualList, fpin: fromList, tpin: toList, links }),
+    );
+  };
+};
 
 export const asyncGetLinks = (ansDoc: string) => {
   return async dispatch => {
@@ -674,7 +766,8 @@ export const asyncGetLinks = (ansDoc: string) => {
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        icon: 'arrow-left-right-bold-outline',
+        postedAt: snap.data().postAt,
+        ansAt: snap.data().ansAt,
       });
     });
     from.forEach(snap => {
@@ -685,7 +778,8 @@ export const asyncGetLinks = (ansDoc: string) => {
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        icon: 'arrow-right-bold-outline',
+        postedAt: snap.data().postAt,
+        ansAt: snap.data().ansAt,
       });
     });
     to.forEach(snap => {
@@ -696,7 +790,8 @@ export const asyncGetLinks = (ansDoc: string) => {
         thms: snap.data().thms,
         order: snap.data().order,
         body: snap.data().body,
-        icon: 'arrow-left-bold-outline',
+        postedAt: snap.data().postAt,
+        ansAt: snap.data().ansAt,
       });
     });
     const links = mutualList.concat(fromList).concat(toList);

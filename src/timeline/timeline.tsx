@@ -106,6 +106,7 @@ const timeLine = () => {
                         thms: item.item.thms,
                         owner: item.item.owner,
                         postedAt: item.item.postedAt,
+                        toDetail: false,
                       });
                     }}
                   >

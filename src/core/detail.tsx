@@ -31,6 +31,7 @@ import {
   DrawerActions,
 } from '@react-navigation/native';
 import { PostedParams, NavigationParamList } from '../store/types';
+import firebase from '../../firebase/firebase';
 import {
   PostedState,
   getParams,
@@ -42,6 +43,7 @@ import {
   asyncComment,
   asyncFetchComment,
   asyncGetLinks,
+  asyncGetMoreLinks,
   // asyncGotit2,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
@@ -150,6 +152,19 @@ export const Detail = (props: Props) => {
   useEffect(() => {
     if (props.close) {
       console.log('|||||||||||||||||||||||||||||||||||||||');
+      const mTime = detail.mLinks.length
+        ? detail.mLinks[detail.mLinks.length - 1].linkAt
+        : new firebase.firestore.Timestamp(0, 0);
+      const fTime = detail.fLinks.length
+        ? detail.fLinks[detail.fLinks.length - 1].linkAt
+        : new firebase.firestore.Timestamp(0, 0);
+      const tTime = detail.tLinks.length
+        ? detail.tLinks[detail.tLinks.length - 1].linkAt
+        : new firebase.firestore.Timestamp(0, 0);
+      console.log(mTime);
+      console.log(fTime);
+      console.log(tTime);
+      dispatch(asyncGetMoreLinks(detail.dpram.ansDoc, mTime, fTime, tTime));
     } else {
       console.log('not called more fetch');
     }
@@ -157,7 +172,14 @@ export const Detail = (props: Props) => {
 
   useEffect(() => {
     dispatch(asyncFetchComment(detail.dpram.postDoc, detail.dpram.ansDoc));
-    dispatch(asyncGetLinks(detail.dpram.ansDoc));
+    dispatch(
+      asyncGetMoreLinks(
+        detail.dpram.ansDoc,
+        new firebase.firestore.Timestamp(0, 0),
+        new firebase.firestore.Timestamp(0, 0),
+        new firebase.firestore.Timestamp(0, 0),
+      ),
+    );
     dispatch(asyncListenGotit(detail.dpram.ansDoc, uid));
   }, [detail.dpram.ansDoc]);
 
@@ -230,7 +252,7 @@ export const Detail = (props: Props) => {
                 fontWeight: '500',
               }}
             >
-              {detail.dpram.thms[detail.dpram.order - 1]}
+              {/* {detail.dpram.thms[detail.dpram.order - 1]} */}
             </Text>
           </TouchableOpacity>
 
@@ -404,41 +426,61 @@ export const Detail = (props: Props) => {
               <SectionList
                 sections={DATA}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={item => (
-                  <>
-                    <View style={styles.link}>
-                      <View style={styles.itemHeader}>
-                        <Image
-                          source={{ uri: item.item.uri }}
-                          resizeMode="cover"
-                          style={{
-                            width: 70,
-                            height: 70,
-                            borderRadius: 10,
-                          }}
-                        />
-                        <View style={styles.itemBody}>
-                          <View>
-                            <Text style={{ fontWeight: '500' }}>
-                              {item.item.thms[item.item.order - 1]}
-                            </Text>
-                          </View>
-                          <View>
-                            <Text
+                renderItem={item => {
+                  const i = item.item;
+
+                  return (
+                    <>
+                      <TouchableOpacity
+                        onPress={() => {
+                          dispatch(
+                            getParams({
+                              postDoc: i.postDoc,
+                              uri: i.uri,
+                              width: i.width,
+                              height: i.height,
+                              owner: i.postedBy,
+                              thms: i.thms,
+                              createdAt: i.postedAt,
+                            }),
+                          );
+                        }}
+                      >
+                        <View style={styles.link}>
+                          <View style={styles.itemHeader}>
+                            <Image
+                              source={{ uri: item.item.uri }}
+                              resizeMode="cover"
                               style={{
-                                marginTop: 9,
-                                fontWeight: '500',
+                                width: 70,
+                                height: 70,
+                                borderRadius: 10,
                               }}
-                            >
-                              {item.item.body}
-                            </Text>
+                            />
+                            <View style={styles.itemBody}>
+                              <View>
+                                <Text style={{ fontWeight: '500' }}>
+                                  {item.item.thms[item.item.order - 1]}
+                                </Text>
+                              </View>
+                              <View>
+                                <Text
+                                  style={{
+                                    marginTop: 9,
+                                    fontWeight: '500',
+                                  }}
+                                >
+                                  {item.item.body}
+                                </Text>
+                              </View>
+                            </View>
                           </View>
                         </View>
-                      </View>
-                    </View>
-                    <Divider />
-                  </>
-                )}
+                        <Divider />
+                      </TouchableOpacity>
+                    </>
+                  );
+                }}
                 renderSectionHeader={({ section: { title, icon } }) => (
                   <>
                     <View
