@@ -3,7 +3,7 @@ export type Auth = {
   isError: boolean;
   isFirst: number; // 0がfalse,1がtrue。sqliteがbooleanを扱えないため。
   uid: string;
-  userName: string;
+  accountName: string;
 };
 
 export * from './actions';

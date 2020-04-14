@@ -9,7 +9,7 @@ const initialState: Auth = {
   isError: false,
   isFirst: 2, // 0がfalse,1がtrue。sqliteがbooleanを扱えないため。
   uid: '',
-  userName: '',
+  accountName: '',
 };
 
 const reducer: Reducer<Auth> = reducerWithInitialState(initialState)
@@ -27,7 +27,7 @@ const reducer: Reducer<Auth> = reducerWithInitialState(initialState)
     isFetching: false,
     isFirst: payload.isFirst,
     uid: payload.uid,
-    userName: payload.userName,
+    accountName: payload.accountName,
   }));
 
 export default reducer;

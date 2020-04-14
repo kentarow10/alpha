@@ -22,7 +22,8 @@ const signup = () => {
   const [signup, setSignup] = useState({
     email: 'test@test.com',
     pass: 'password',
-    userName: 'test',
+    userName: 'テストユーザー',
+    accountName: 'account_name',
   });
   const setEmail = (v: string) => {
     setSignup({ ...signup, email: v });
@@ -32,6 +33,9 @@ const signup = () => {
   };
   const setName = (v: string) => {
     setSignup({ ...signup, userName: v });
+  };
+  const setAcName = (v: string) => {
+    setSignup({ ...signup, accountName: v });
   };
 
   return (
@@ -53,14 +57,28 @@ const signup = () => {
       />
       <TextInput
         // style={styles.field}
-        label="おなまえ"
+        label="ニックネーム"
         mode="outlined"
         value={signup.userName}
         onChangeText={setName}
       />
+      <TextInput
+        // style={styles.field}
+        label="アカウントネーム"
+        mode="outlined"
+        value={signup.accountName}
+        onChangeText={setAcName}
+      />
       <Button
         onPress={() => {
-          dispatch(createUser(signup.email, signup.pass, signup.userName));
+          dispatch(
+            createUser(
+              signup.email,
+              signup.pass,
+              signup.userName,
+              signup.accountName,
+            ),
+          );
         }}
         mode="contained"
         // style={styles.btnLogin}

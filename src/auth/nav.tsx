@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavigationContext } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { GetAuth } from '../store/auth/auth';
+import { GetAuth, asyncAutoLogin } from '../store/auth/auth';
 import firebase from '../../firebase/firebase';
 import SignInScreen from './signin';
 import SignUpScreen from './signup';

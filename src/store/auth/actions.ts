@@ -1,9 +1,10 @@
 import { Dispatch } from 'redux';
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
+import FireBase, { db, storage, rtdb } from '../../../firebase/firebase';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
+import { AsyncStorage } from 'react-native';
 
 // preparation
 
@@ -18,26 +19,10 @@ export const trnError = actionCreator<{}>('TRN_ERROR');
 export const setUserInfo = actionCreator<{
   isFirst: number;
   uid: string;
-  userName: string;
+  accountName: string;
 }>('SET_USER_INFO');
 
 // helpers
-
-export const autoLogin = (dispatch: Dispatch<any>) => {
-  const db = SQLite.openDatabase('alpha_app');
-  dispatch(trnStart({}));
-
-  db.transaction(tx => {
-    tx.executeSql('select * from users', null, (_, resultSet) => {
-      const authed = resultSet.rows.item(0).isFirst;
-      if (authed === 0) {
-        const uid = resultSet.rows.item(0).uid;
-        const userName = resultSet.rows.item(0).userName;
-        dispatch(setUserInfo({ isFirst: 0, uid, userName }));
-      }
-    });
-  });
-};
 
 // async actions
 
@@ -45,13 +30,12 @@ export const login = (mail: string, pass: string) => {
   return dispatch => {
     dispatch(trnStart({}));
     // const db = SQLite.openDatabase('alpha_app');
-    firebase
-      .auth()
+    FireBase.auth()
       .signInWithEmailAndPassword(mail, pass)
       .then(res => {
         // dispatch(trnError({}));
         const uid = res.user.uid;
-        dispatch(setUserInfo({ isFirst: 0, uid, userName: mail }));
+        dispatch(setUserInfo({ isFirst: 0, uid, accountName: '' }));
         // db.transaction(tx => {
         //   tx.executeSql(
         //     'select * from users where uid = (?)',
@@ -75,113 +59,81 @@ export const login = (mail: string, pass: string) => {
   };
 };
 
-// 動作確認済
-export const createUser2 = (mail: string, pass: string, name: string) => {
-  return dispatch => {
+export const asyncAutoLogin = () => {
+  return async dispatch => {
     dispatch(trnStart({}));
-    // const db = SQLite.openDatabase('alpha_app');
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(mail, pass)
-      .then(() => {
-        console.log('success');
+    const isLogin = await AsyncStorage.getItem('userToken');
+    console.log({ isLogin });
+
+    FireBase.auth().onAuthStateChanged(function(user) {
+      if (isLogin && user) {
         dispatch(
-          setUserInfo({
-            isFirst: 1,
-            uid: '',
-            userName: name,
-          }),
+          setUserInfo({ isFirst: 0, uid: user.uid, accountName: isLogin }),
         );
-      })
-      .catch(e => {
-        console.log(e);
-        dispatch(trnError({}));
-      });
+      } else {
+        dispatch(setUserInfo({ isFirst: 0, uid: '', accountName: '' }));
+      }
+    });
   };
 };
 
-export const createUser = (mail: string, pass: string, name: string) => {
-  return dispatch => {
-    dispatch(trnStart({}));
+export const createUser = (
+  mail: string,
+  pass: string,
+  name: string,
+  account: string,
+) => {
+  return async dispatch => {
     console.log('create user');
-    const sq = SQLite.openDatabase('alpha_app');
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(mail, pass)
-      .then(res => {
-        const uid = res.user.uid;
+    dispatch(trnStart({}));
+    await AsyncStorage.setItem('userToken', account);
+    FireBase.auth()
+      .setPersistence(FireBase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        FireBase.auth()
+          .createUserWithEmailAndPassword(mail, pass)
+          .then(res => {
+            const uid = res.user.uid;
 
-        const userRef = rtdb.ref(uid);
-        userRef.set({ name });
-        const uref = db.collection('users').doc(uid);
+            const userRef = rtdb.ref(uid);
+            userRef.set({ name, account });
+            const uref = db.collection('users').doc(uid);
 
-        uref
-          .collection('nices')
-          .doc('samplePostDocument')
-          .set({ flag: true });
-        uref
-          .collection('gotits')
-          .doc('sampleAnsDocument')
-          .set({ flag: true });
-        uref
-          .set({
-            name,
-            iconPath: '',
-            siBody: '',
+            // uref
+            //   .collection('nices')
+            //   .doc('samplePostDocument')
+            //   .set({ flag: true });
+            // uref
+            //   .collection('gotits')
+            //   .doc('sampleAnsDocument')
+            //   .set({ flag: true });
+            uref
+              .set({
+                name,
+                account,
+                iconPath: '',
+                siBody: '',
+              })
+              .then(() => {
+                dispatch(
+                  setUserInfo({ isFirst: 0, uid, accountName: account }),
+                );
+              })
+              .catch(e => {
+                alert(e);
+              });
+          })
+          .then(() => {
+            alert('登録完了しました！');
           })
           .catch(e => {
             alert(e);
           });
-
-        sq.transaction(
-          tx => {
-            tx.executeSql(
-              'create table users (id integer primary key not null, isFirst integer, uid text, userName text);',
-              null,
-              () => {
-                console.log('success');
-              },
-              e => {
-                console.log(e);
-
-                return true;
-              },
-            );
-
-            tx.executeSql(
-              'insert into users (isFirst, uid, userName) values (?,?,?)',
-              [1, uid, name],
-              () => {
-                dispatch(
-                  setUserInfo({
-                    isFirst: 1,
-                    uid,
-                    userName: name,
-                  }),
-                );
-              },
-              e => {
-                console.log(e);
-                dispatch(trnError({}));
-
-                return true;
-              },
-            );
-          },
-          () => {
-            console.log('fail all');
-          },
-          () => {
-            console.log('success');
-            db.collection('users')
-              .doc(uid)
-              .set({
-                userName: name,
-                iconPath: '',
-                siBody: '',
-              });
-          },
-        );
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
       });
   };
 };
