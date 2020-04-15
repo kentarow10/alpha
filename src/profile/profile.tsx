@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   useTheme,
@@ -23,28 +23,28 @@ import { asyncGetAnss } from '../store/behind/behind';
 import { NavigationContext } from '@react-navigation/native';
 import { Ftext } from '../components/Ftext';
 import { Tegaki } from '../components/Tegaki';
+import { asyncGetUserName } from '../store/screenMgr/mgr';
+import { useName } from '../hooks/useName';
+import { GetUid } from '../store/auth/auth';
 
 const profile = () => {
   const dispatch = useDispatch();
   const me = useSelector(GetAllMe);
+  const uid = useSelector(GetUid);
+  const myname = useName(uid);
   const navigation = useContext(NavigationContext);
-  const user = firebase.auth().currentUser;
-  let uid = '';
-  if (user != null) {
-    uid = user.uid;
-  }
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
     // dispatch(asyncGetMyPosts(uid));
-    dispatch(asyncGetMyPins(uid));
+    // dispatch(asyncGetMyPins(uid));
   }, []);
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
       <Card>
         <Card.Title
-          title={me.userName}
+          title={myname}
           subtitle="Card Subtitle"
           left={props => (
             <Avatar.Image size={24} source={{ uri: me.iconPath }} />

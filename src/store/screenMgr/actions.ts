@@ -27,12 +27,5 @@ export const omitText = (num: number, text: string): string => {
 export const asyncGetUserName = async (uid: string) => {
   const uJson = await rtdb.ref(uid).once('value');
 
-  return uJson.val().userName;
-};
-
-export const asyncGetFont = async () => {
-  await Font.loadAsync({
-    myfont: require('../../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
-    // tegaki: require('../../../assets/fonts/851MkPOP_002.ttf'),
-  });
+  return uJson.val().name;
 };
