@@ -100,6 +100,13 @@ export const RootNavigator = () => {
           unmountOnBlur: true,
         }}
       />
+      <Drawer.Screen
+        name="POST"
+        component={Post}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
     </Drawer.Navigator>
   );
 };

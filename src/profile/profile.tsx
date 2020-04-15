@@ -21,6 +21,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
 import { asyncGetAnss } from '../store/behind/behind';
 import { NavigationContext } from '@react-navigation/native';
+import { Ftext } from '../components/Ftext';
+import { Tegaki } from '../components/Tegaki';
 
 const profile = () => {
   const dispatch = useDispatch();
@@ -52,16 +54,15 @@ const profile = () => {
           <Paragraph>{me.siBody}</Paragraph>
         </Card.Content>
         <Card.Actions>
-          <Button
+          <Bt
+            title="投稿する"
             onPress={() => {
               navigation.navigate('POST');
             }}
-          >
-            投稿する
-          </Button>
+          />
         </Card.Actions>
       </Card>
-      <Text>自分の投稿</Text>
+      <Ftext text="自分の投稿" />
       <FlatList
         data={me.myPosts}
         // horizontal={true}
@@ -81,7 +82,7 @@ const profile = () => {
           );
         }}
       />
-      <Text>自分の回答</Text>
+      <Tegaki text="自分の回答" />
       <FlatList
         data={me.myPins}
         horizontal={true}

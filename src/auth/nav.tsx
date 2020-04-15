@@ -4,6 +4,7 @@ import { StyleSheet, View, Dimensions, AsyncStorage } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavigationContext } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import * as Font from 'expo-font';
 
 import { GetAuth, asyncAutoLogin } from '../store/auth/auth';
 import firebase from '../../firebase/firebase';
@@ -26,10 +27,23 @@ const authNav = () => {
   const Stack = createStackNavigator();
   const dispatch = useDispatch();
   const state = useSelector(GetAuth);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      setLoading(true);
+      await Font.loadAsync({
+        myfont: require('../../assets/fonts/logotypejp_mp_b_1.1.ttf'),
+        tegaki: require('../../assets/fonts/851MkPOP_002.ttf'),
+      });
+    };
+    loadFonts();
+    setLoading(false);
+  }, []);
 
   return (
     <Stack.Navigator headerMode="none">
-      {state.isFetching ? (
+      {state.isFetching || loading ? (
         <Stack.Screen name="Splash" component={SplashScreen} />
       ) : state.uid === '' ? (
         <>

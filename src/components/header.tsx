@@ -78,7 +78,7 @@ export const Header = (props: Props) => {
               color: '#00A85A',
               fontSize: 22,
               textAlign: 'center',
-              //   fontFamily: 'myfont',
+              fontFamily: 'myfont',
             }}
           >
             グラピィ

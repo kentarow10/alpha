@@ -116,7 +116,7 @@ export const createUser = (
               })
               .then(() => {
                 dispatch(
-                  setUserInfo({ isFirst: 0, uid, accountName: account }),
+                  setUserInfo({ isFirst: 1, uid, accountName: account }),
                 );
               })
               .catch(e => {

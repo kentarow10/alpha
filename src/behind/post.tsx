@@ -1,5 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   useTheme,
@@ -20,6 +26,7 @@ import {
   Dimensions,
   StyleSheet,
   Picker,
+  Keyboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -39,6 +46,7 @@ import { GetUid } from '../store/auth/auth';
 import { NavigationContext } from '@react-navigation/native';
 import { inputThmSwitch as ITS } from '../components/inputThmSwitch';
 import { cls } from '../store/screenMgr/mgr';
+import { Header } from '../components/header';
 
 const W = Dimensions.get('window').width;
 const H = Dimensions.get('window').height;
@@ -346,6 +354,42 @@ const post = () => {
     }
   };
 
+  const [mock, setMock] = useState(false);
+  const scrlRef = useRef(null);
+
+  const _keyboardWillShow = () => {
+    setMock(true);
+  };
+
+  const _keyboardDidShow = () => {
+    if (scrlRef) {
+      scrlRef.current.scrollTo({ x: 0, y: 280, animation: true });
+    }
+  };
+
+  const _keyboardDidHide = () => {
+    scrlRef.current.scrollTo({ x: 0, y: 140, animation: true });
+    setTimeout(() => {
+      setMock(false);
+    }, 0);
+  };
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
+    // willHideでバグる
+    // Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
+      //   Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+    };
+  }, []);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setThm1('');
@@ -367,22 +411,8 @@ const post = () => {
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-      <View style={styles.headerBar}>
-        <Text
-          style={{
-            // height: 40,
-            marginTop: 3,
-            color: '#00A85A',
-            fontSize: 20,
-            textAlign: 'center',
-            fontWeight: 'bold',
-            // fontFamily: 'MyFont',
-          }}
-        >
-          シェアピ
-        </Text>
-      </View>
-      <ScrollView>
+      <Header mode="back" />
+      <ScrollView ref={scrlRef}>
         <Card>
           {state.url === '' ? (
             <>
@@ -431,6 +461,7 @@ const post = () => {
               fontSize: 14,
               fontWeight: '400',
               textAlignVertical: 'bottom',
+              // fontFamily: 'tegaki',
             }}
           >
             お題の数を選んでください
@@ -509,6 +540,11 @@ const post = () => {
           投稿！
         </Button>
         <View style={{ height: 36, backgroundColor: 'white' }}></View>
+        {mock ? (
+          <View style={{ height: 280, backgroundColor: 'white' }}></View>
+        ) : (
+          <></>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
