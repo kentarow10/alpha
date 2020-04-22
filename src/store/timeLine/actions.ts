@@ -27,6 +27,12 @@ export const getPosts = actionCreator<Post[]>('GET_POST');
 
 // async Actions
 
+export const asyncGetName = async (uid: string) => {
+  const uJson = await rtdb.ref(uid).once('value');
+
+  return uJson.val().name;
+};
+
 export const asyncGetPosts = () => {
   return dispatch => {
     dispatch(startFetch({}));

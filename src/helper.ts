@@ -1,3 +1,5 @@
+import { rtdb } from '../firebase/firebase';
+
 const formatDate = (date: Date, format: string): string => {
   format = format.replace(/YYYY/, date.getFullYear().toString());
   format = format.replace(/MM/, (date.getMonth() + 1).toString());
@@ -14,4 +16,10 @@ export const timeExpress = (time: firebase.firestore.Timestamp): string => {
   const ex = formatDate(date, format);
 
   return ex;
+};
+
+export const asyncGetName = async (uid: string) => {
+  const uJson = await rtdb.ref(uid).once('value');
+
+  return uJson.val().name;
 };

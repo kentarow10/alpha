@@ -24,8 +24,8 @@ import { NavigationContext } from '@react-navigation/native';
 import { Ftext } from '../components/Ftext';
 import { Tegaki } from '../components/Tegaki';
 import { asyncGetUserName } from '../store/screenMgr/mgr';
-import { useName } from '../hooks/useName';
 import { GetUid } from '../store/auth/auth';
+import { useName } from '../hooks/useName';
 
 const profile = () => {
   const dispatch = useDispatch();

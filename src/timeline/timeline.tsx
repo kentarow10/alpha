@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Font from 'expo-font';
 import {
@@ -53,6 +53,7 @@ const timeLine = () => {
     img: {
       width: imgW,
       height: imgH,
+      // overflow: 'scroll',
     },
     headerBar: {
       flexDirection: 'row',
@@ -90,9 +91,9 @@ const timeLine = () => {
           <FlatList
             data={posts.posts}
             keyExtractor={(item, index) => index.toString()}
-            numColumns={3}
+            numColumns={2}
             style={{ marginBottom: 36 }}
-            renderItem={item => {
+            renderItem={async item => {
               return (
                 <View style={{ flexDirection: 'column' }}>
                   {/* <View style={{ height: 57, width: imgW }}></View> */}
@@ -135,7 +136,9 @@ const timeLine = () => {
                           <View style={styles.area}>
                             <Provider>
                               <Portal>
-                                <Text style={styles.text}>by username</Text>
+                                <Text style={styles.text}>
+                                  {useName(item.item.postBy)}
+                                </Text>
                               </Portal>
                             </Provider>
                           </View>
