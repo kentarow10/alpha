@@ -8,8 +8,17 @@ import {
   Title,
   Paragraph,
   Button,
+  Divider,
 } from 'react-native-paper';
-import { View, Button as Bt, Image, Text, FlatList } from 'react-native';
+import {
+  View,
+  Button as Bt,
+  Image,
+  Text,
+  FlatList,
+  Dimensions,
+  StyleSheet,
+} from 'react-native';
 import {
   GetAllMe,
   asyncGetMyInfo,
@@ -23,9 +32,17 @@ import { asyncGetAnss } from '../store/behind/behind';
 import { NavigationContext } from '@react-navigation/native';
 import { Ftext } from '../components/Ftext';
 import { Tegaki } from '../components/Tegaki';
-import { asyncGetUserName } from '../store/screenMgr/mgr';
+import { asyncGetUserName, cls } from '../store/screenMgr/mgr';
 import { GetUid } from '../store/auth/auth';
 import { useName } from '../hooks/useName';
+import { Header } from '../components/header';
+import {
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 const profile = () => {
   const dispatch = useDispatch();
@@ -33,6 +50,38 @@ const profile = () => {
   const uid = useSelector(GetUid);
   const myname = useName(uid);
   const navigation = useContext(NavigationContext);
+  const styles = StyleSheet.create({
+    btns: {
+      marginVertical: 12,
+      marginHorizontal: 12,
+      backgroundColor: 'white',
+      paddingVertical: 11,
+      paddingHorizontal: 51,
+      borderRadius: 8,
+      shadowColor: 'green',
+      shadowRadius: 2,
+      shadowOpacity: 0.1,
+      shadowOffset: {
+        height: 0,
+        // width: 1,
+      },
+    },
+    btns2: {
+      marginVertical: 12,
+      marginHorizontal: 12,
+      backgroundColor: 'white',
+      paddingVertical: 11,
+      paddingHorizontal: 40,
+      borderRadius: 8,
+      shadowColor: 'green',
+      shadowRadius: 2,
+      shadowOpacity: 0.1,
+      shadowOffset: {
+        height: 0,
+        // width: 1,
+      },
+    },
+  });
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
@@ -42,67 +91,78 @@ const profile = () => {
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-      <Card>
-        <Card.Title
-          title={myname}
-          subtitle="Card Subtitle"
-          left={props => (
-            <Avatar.Image size={24} source={{ uri: me.iconPath }} />
-          )}
-        />
-        <Card.Content>
-          <Paragraph>{me.siBody}</Paragraph>
-        </Card.Content>
-        <Card.Actions>
-          <Bt
-            title="投稿する"
-            onPress={() => {
-              navigation.navigate('POST');
-            }}
+      <Header mode="me" />
+      <View
+        style={{
+          width: WIDTH,
+          height: WIDTH,
+          backgroundColor: 'orange',
+          // borderBottomLeftRadius: 60,
+          // borderBottomRightRadius: 60,
+        }}
+      ></View>
+      <Divider />
+      <View style={{ width: WIDTH, height: 150, backgroundColor: 'white' }}>
+        <View
+          style={{
+            position: 'absolute',
+            top: -28,
+            left: WIDTH / 2 - 30,
+            width: 60,
+            height: 60,
+            backgroundColor: 'white',
+          }}
+        >
+          <Image
+            source={{ uri: me.iconPath }}
+            style={{ width: 60, height: 60, borderRadius: 20 }}
           />
-        </Card.Actions>
-      </Card>
-      <Ftext text="自分の投稿" />
-      <FlatList
-        data={me.myPosts}
-        // horizontal={true}
-        onRefresh={() => {
-          dispatch(asyncGetMyPosts(uid));
+        </View>
+        <View style={{ marginTop: 46, alignSelf: 'center' }}>
+          <Text style={{ fontFamily: 'myfont' }}>{myname}</Text>
+        </View>
+        <View
+          style={{
+            paddingHorizontal: 36,
+            paddingVertical: 20,
+            alignSelf: 'center',
+            backgroundColor: 'white',
+          }}
+        >
+          <Text style={{ fontFamily: 'myfont' }}>
+            {me.siBody}
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          </Text>
+        </View>
+      </View>
+      <View
+        style={{
+          height: 66,
+          flexDirection: 'row',
+          justifyContent: 'center',
         }}
-        refreshing={me.isFetching}
-        renderItem={item => {
-          return (
-            <View>
-              <Image
-                source={{ uri: item.item.uri }}
-                style={{ width: 150, height: 150 }}
-              />
-              <Text>{item.item.postBy}</Text>
-            </View>
-          );
+      >
+        <TouchableOpacity style={styles.btns} onPress={() => {}}>
+          <Text style={{ fontFamily: 'myfont' }}>投稿</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btns} onPress={() => {}}>
+          <Text style={{ fontFamily: 'myfont' }}>回答</Text>
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          height: 66,
+          flexDirection: 'row',
+          justifyContent: 'center',
         }}
-      />
-      <Tegaki text="自分の回答" />
-      <FlatList
-        data={me.myPins}
-        horizontal={true}
-        onRefresh={() => {
-          dispatch(asyncGetMyPins(uid));
-        }}
-        refreshing={me.isFetching}
-        renderItem={item => {
-          return (
-            <View>
-              <Image
-                source={{ uri: item.item.uri }}
-                style={{ width: 50, height: 50 }}
-              />
-              <Text>{item.item.thms[item.item.order - 1]}</Text>
-              <Text>{item.item.body}</Text>
-            </View>
-          );
-        }}
-      />
+      >
+        <TouchableOpacity style={styles.btns2} onPress={() => {}}>
+          <Text style={{ fontFamily: 'myfont' }}>いいね！</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btns2} onPress={() => {}}>
+          <Text style={{ fontFamily: 'myfont' }}>分かる！</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

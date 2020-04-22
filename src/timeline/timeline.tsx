@@ -93,7 +93,7 @@ const timeLine = () => {
             keyExtractor={(item, index) => index.toString()}
             numColumns={2}
             style={{ marginBottom: 36 }}
-            renderItem={async item => {
+            renderItem={item => {
               return (
                 <View style={{ flexDirection: 'column' }}>
                   {/* <View style={{ height: 57, width: imgW }}></View> */}
@@ -131,19 +131,19 @@ const timeLine = () => {
                         resizeMode="cover"
                         style={styles.img}
                       />
-                      <Provider>
+                      {/* <Provider>
                         <Portal>
                           <View style={styles.area}>
                             <Provider>
                               <Portal>
                                 <Text style={styles.text}>
-                                  {useName(item.item.postBy)}
+                                  {item.item.poster}
                                 </Text>
                               </Portal>
                             </Provider>
                           </View>
                         </Portal>
-                      </Provider>
+                      </Provider> */}
                     </Card>
                   </TouchableOpacity>
                 </View>

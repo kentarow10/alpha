@@ -2,6 +2,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Post, Comment } from '../types';
+import { asyncGetUserName } from '../screenMgr/mgr';
 
 // 準備
 
@@ -40,9 +41,10 @@ export const asyncGetPosts = () => {
       .get()
       .then(snap => {
         const posts: Post[] = [];
-        snap.forEach(doc => {
+        snap.forEach(async doc => {
           const thms = doc.data().thms;
           const postBy = doc.data().postBy;
+          const poster = await asyncGetName(postBy);
           const width = doc.data().w;
           const height = doc.data().h;
           const postAt = doc.data().postAt.toDate();
@@ -55,6 +57,7 @@ export const asyncGetPosts = () => {
                 uri,
                 path: doc.data().path,
                 thms,
+                poster,
                 postBy,
                 width,
                 height,
