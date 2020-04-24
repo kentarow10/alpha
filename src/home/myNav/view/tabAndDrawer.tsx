@@ -118,7 +118,7 @@ export default function DrawerView({
       flex: 1,
     },
     tabBarStyle:{
-        height: 70,
+        height: 56,
         position: "absolute",
         bottom: 0,
         backgroundColor: colors.background,

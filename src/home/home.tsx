@@ -16,6 +16,7 @@ import Detail from '../behind/detail';
 import Post from '../behind/post';
 import { answer } from '../behind/answer';
 import flame from '../core/flame';
+import { EditProfile } from '../profile/editProfile';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -70,24 +71,36 @@ export const RootNavigator = () => {
         }}
       />
       <Drawer.Screen
-        name="いいねした投稿"
+        name="お知らせ"
         component={MyNices}
         options={{
           inNav: true,
           icon: {
-            name: 'lightbulb-on-outline',
+            name: 'information-outline',
             color: 'orange',
             size: 20,
           },
         }}
       />
       <Drawer.Screen
-        name="GREEN"
+        name="プロフィール編集"
+        component={EditProfile}
+        options={{
+          inNav: true,
+          icon: {
+            name: 'circle-edit-outline',
+            color: 'green',
+            size: 20,
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="THANKYOUCARD設定"
         component={green}
         options={{
           inNav: true,
           icon: {
-            name: 'leaf',
+            name: 'email-outline',
             color: 'green',
             size: 20,
           },

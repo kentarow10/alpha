@@ -30,6 +30,7 @@ import {
   TouchableRipple,
   useTheme,
   Button,
+  Divider,
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
 import firebase from '../../firebase/firebase';
@@ -40,6 +41,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { GetAllMe } from '../store/me/me';
 import { asyncLink, DetailState } from '../store/behind/behind';
 import { rtdb } from '../../firebase/firebase';
+import { cls } from '../store/screenMgr/mgr';
+import { useName } from '../hooks/useName';
+import { GetUid } from '../store/auth/auth';
 
 type Props = DrawerContentComponentProps<DrawerContentOptions>;
 const { width, height } = Dimensions.get('window');
@@ -53,12 +57,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   title: {
-    marginTop: 20,
+    marginTop: 14,
     fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,
     lineHeight: 14,
+    paddingTop: 8,
+    marginBottom: 8,
   },
   row: {
     marginTop: 20,
@@ -75,7 +81,7 @@ const styles = StyleSheet.create({
     marginRight: 3,
   },
   drawerSection: {
-    marginTop: 15,
+    marginTop: 10,
   },
   preference: {
     flexDirection: 'row',
@@ -98,7 +104,9 @@ export function DrawerContent(props: Props) {
   const dispatch = useDispatch();
   const paperTheme = useTheme();
   const { theme, toggleTheme } = React.useContext(PreferencesContext);
-  const mypins = useSelector(GetAllMe);
+  const uid = useSelector(GetUid);
+  const myname = useName(uid);
+  const me = useSelector(GetAllMe);
   const detail = useSelector(DetailState);
   const [modal, setModal] = useState(false);
   const [selectedItem, setItem] = useState({
@@ -168,6 +176,9 @@ export function DrawerContent(props: Props) {
         {props.mypinsMode ? (
           <>
             <View style={styles.userInfoSection}>
+              <View>
+                <Text style={{ fontFamily: 'Myfont' }}>グラピィ</Text>
+              </View>
               <TouchableOpacity
                 style={{ marginLeft: 10 }}
                 onPress={() => {
@@ -185,7 +196,7 @@ export function DrawerContent(props: Props) {
             </View>
             <View style={styles.drawerSection}>
               <FlatList
-                data={mypins.myPins}
+                data={me.myPins}
                 renderItem={item => {
                   return (
                     <TouchableOpacity
@@ -260,36 +271,58 @@ export function DrawerContent(props: Props) {
         ) : (
           <>
             <View style={styles.userInfoSection}>
+              <View style={{ height: 48, justifyContent: 'center' }}>
+                <Text
+                  style={{
+                    fontFamily: 'myfont',
+                    fontSize: 20,
+                    textAlign: 'center',
+                    color: cls.grn,
+                  }}
+                >
+                  グラピィ
+                </Text>
+              </View>
+              <Divider />
               <TouchableOpacity
-                style={{ marginLeft: 10 }}
+                style={{
+                  marginLeft: 10,
+                  marginTop: 12,
+                  justifyContent: 'center',
+                }}
                 onPress={() => {
                   props.navigation.toggleDrawer();
                 }}
               >
-                <Avatar.Image
+                <Image
                   source={{
                     uri:
                       'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
                   }}
-                  size={50}
+                  // source={{ uri: me.iconPath }}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 20,
+                    alignSelf: 'center',
+                  }}
                 />
               </TouchableOpacity>
-              <Title style={styles.title}>Dawid Urbaniak</Title>
-              <Caption style={styles.caption}>@trensik</Caption>
-              <View style={styles.row}>
-                <View style={styles.section}>
-                  <Paragraph style={[styles.paragraph, styles.caption]}>
-                    202
-                  </Paragraph>
-                  <Caption style={styles.caption}>Obserwuje</Caption>
-                </View>
-                <View style={styles.section}>
-                  <Paragraph style={[styles.paragraph, styles.caption]}>
-                    159
-                  </Paragraph>
-                  <Caption style={styles.caption}>Obserwujący</Caption>
-                </View>
-              </View>
+              <Title
+                style={
+                  (styles.title,
+                  {
+                    fontFamily: 'myfont',
+                    textAlign: 'center',
+                    marginBottom: 8,
+                  })
+                }
+              >
+                {myname}
+              </Title>
+              <Divider />
+              <Caption style={styles.caption}>id : trensik</Caption>
+              <Divider />
             </View>
             <Drawer.Section style={styles.drawerSection}>
               {props.state.routes
@@ -306,7 +339,7 @@ export function DrawerContent(props: Props) {
                             ? props.descriptors[route.key].options.icon.name
                             : 'account-outline'
                         }
-                        color={paperTheme.colors.text}
+                        color={cls.rd}
                         size={
                           props.descriptors[route.key].options.icon != undefined
                             ? props.descriptors[route.key].options.icon.size
@@ -324,10 +357,12 @@ export function DrawerContent(props: Props) {
                   />
                 ))}
             </Drawer.Section>
-            <Drawer.Section title="Preferences">
+            <Drawer.Section>
               <TouchableRipple onPress={toggleTheme}>
                 <View style={styles.preference}>
-                  <Text>Dark Theme</Text>
+                  <Text style={{ fontWeight: 'bold', marginTop: 10 }}>
+                    ダークモード
+                  </Text>
                   <View pointerEvents="none">
                     <Switch value={theme === 'dark'} />
                   </View>

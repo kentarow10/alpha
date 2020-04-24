@@ -23,3 +23,19 @@ export const asyncGetName = async (uid: string) => {
 
   return uJson.val().name;
 };
+
+export const calcHeightRank = (h: number) => {
+  if (h <= 650) {
+    return 650;
+  } else if (650 < h && h <= 700) {
+    return 700;
+  } else if (700 < h && h <= 750) {
+    return 750;
+  } else if (750 < h && h <= 800) {
+    return 800;
+  } else if (800 < h && h <= 850) {
+    return 850;
+  } else if (850 < h) {
+    return 900;
+  }
+};

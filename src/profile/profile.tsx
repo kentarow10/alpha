@@ -18,6 +18,7 @@ import {
   FlatList,
   Dimensions,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import {
   GetAllMe,
@@ -40,9 +41,27 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
+import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import { calcHeightRank } from '../helper';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
+const calcmt = (r: number) => {
+  switch (r) {
+    case 650:
+      return 1;
+    case 700:
+      return 1;
+    case 750:
+      return 5;
+    case 800:
+      return 10;
+    case 850:
+      return 15;
+    default:
+      return 15;
+  }
+};
 
 const profile = () => {
   const dispatch = useDispatch();
@@ -52,38 +71,43 @@ const profile = () => {
   const navigation = useContext(NavigationContext);
   const styles = StyleSheet.create({
     btns: {
-      marginVertical: 12,
-      marginHorizontal: 12,
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      // marginVertical: 12,
+      marginTop: calcmt(calcHeightRank(HEIGHT)),
+      marginHorizontal: 36,
       backgroundColor: 'white',
-      paddingVertical: 11,
+      paddingVertical: 9,
       paddingHorizontal: 51,
-      borderRadius: 8,
+      // borderRadius: 8,
       shadowColor: 'green',
-      shadowRadius: 2,
+      shadowRadius: 4,
       shadowOpacity: 0.1,
       shadowOffset: {
-        height: 0,
+        height: 1,
         // width: 1,
       },
     },
     btns2: {
-      marginVertical: 12,
-      marginHorizontal: 12,
+      marginTop: 2,
+      // marginVertical: 12,
+      marginHorizontal: 36,
       backgroundColor: 'white',
-      paddingVertical: 11,
+      paddingVertical: 9,
       paddingHorizontal: 40,
-      borderRadius: 8,
-      shadowColor: 'green',
+      // borderRadius: 8,
+      shadowColor: cls.grn,
       shadowRadius: 2,
       shadowOpacity: 0.1,
       shadowOffset: {
-        height: 0,
+        height: 1,
         // width: 1,
       },
     },
   });
 
   useEffect(() => {
+    alert(HEIGHT);
     dispatch(asyncGetMyInfo(uid));
     // dispatch(asyncGetMyPosts(uid));
     // dispatch(asyncGetMyPins(uid));
@@ -92,77 +116,123 @@ const profile = () => {
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
       <Header mode="me" />
-      <View
-        style={{
-          width: WIDTH,
-          height: WIDTH,
-          backgroundColor: 'orange',
-          // borderBottomLeftRadius: 60,
-          // borderBottomRightRadius: 60,
-        }}
-      ></View>
-      <Divider />
-      <View style={{ width: WIDTH, height: 150, backgroundColor: 'white' }}>
-        <View
-          style={{
-            position: 'absolute',
-            top: -28,
-            left: WIDTH / 2 - 30,
-            width: 60,
-            height: 60,
-            backgroundColor: 'white',
-          }}
-        >
-          <Image
-            source={{ uri: me.iconPath }}
-            style={{ width: 60, height: 60, borderRadius: 20 }}
-          />
+      <ScrollView style={{ flex: 1 }}>
+        <View style={{ height: WIDTH / 1.414 }}>
+          <View
+            style={{
+              width: WIDTH,
+              flex: 1,
+              backgroundColor: 'orange',
+              // borderBottomLeftRadius: 60,
+              // borderBottomRightRadius: 60,
+            }}
+          ></View>
+          <Divider />
         </View>
-        <View style={{ marginTop: 46, alignSelf: 'center' }}>
-          <Text style={{ fontFamily: 'myfont' }}>{myname}</Text>
+        <View style={{ flex: 1 }}>
+          <View style={{ width: WIDTH, backgroundColor: 'white', flex: 4 }}>
+            <View
+              style={{
+                position: 'absolute',
+                top: -28,
+                left: WIDTH / 2 - 30,
+                width: 60,
+                height: 60,
+                backgroundColor: 'transparent',
+              }}
+            >
+              <Image
+                source={{ uri: me.iconPath }}
+                style={{ width: 60, height: 60, borderRadius: 20 }}
+              />
+            </View>
+            <View style={{ marginTop: 44, alignSelf: 'center' }}>
+              <Text style={{ fontFamily: 'myfont' }}>{myname}</Text>
+            </View>
+            <View
+              style={{
+                paddingHorizontal: 36,
+                paddingVertical: 18,
+                alignSelf: 'center',
+                backgroundColor: 'white',
+              }}
+            >
+              <Text style={{ fontFamily: 'myfont' }}>
+                {me.siBody}
+                aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+              </Text>
+            </View>
+          </View>
+          <View
+            style={{
+              flex: 5,
+              justifyContent: 'center',
+            }}
+          >
+            {/* <View></View> */}
+            <TouchableOpacity style={styles.btns} onPress={() => {}}>
+              <Entypo name="documents" size={16} color={cls.grn} />
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  textAlign: 'center',
+                  marginTop: 4,
+                }}
+              >
+                投稿　　　　　　　　件
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btns} onPress={() => {}}>
+              <MaterialCommunityIcons name="hand" size={16} color={cls.grn} />
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  textAlign: 'center',
+                  marginTop: 4,
+                }}
+              >
+                回答　　　　　　　　件
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btns} onPress={() => {}}>
+              <MaterialCommunityIcons
+                name="thumb-up-outline"
+                size={16}
+                color={cls.grn}
+              />
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  textAlign: 'center',
+                  marginTop: 4,
+                }}
+              >
+                いいね！　　　　　　件
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btns} onPress={() => {}}>
+              <MaterialCommunityIcons
+                name="lightbulb-on"
+                size={16}
+                color={cls.grn}
+              />
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  textAlign: 'center',
+                  marginTop: 4,
+                }}
+              >
+                分かる！　　　　　　件
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View
-          style={{
-            paddingHorizontal: 36,
-            paddingVertical: 20,
-            alignSelf: 'center',
-            backgroundColor: 'white',
-          }}
-        >
-          <Text style={{ fontFamily: 'myfont' }}>
-            {me.siBody}
-            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-          </Text>
-        </View>
-      </View>
-      <View
-        style={{
-          height: 66,
-          flexDirection: 'row',
-          justifyContent: 'center',
-        }}
-      >
-        <TouchableOpacity style={styles.btns} onPress={() => {}}>
-          <Text style={{ fontFamily: 'myfont' }}>投稿</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btns} onPress={() => {}}>
-          <Text style={{ fontFamily: 'myfont' }}>回答</Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          height: 66,
-          flexDirection: 'row',
-          justifyContent: 'center',
-        }}
-      >
-        <TouchableOpacity style={styles.btns2} onPress={() => {}}>
-          <Text style={{ fontFamily: 'myfont' }}>いいね！</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btns2} onPress={() => {}}>
-          <Text style={{ fontFamily: 'myfont' }}>分かる！</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

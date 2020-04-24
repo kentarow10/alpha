@@ -16,6 +16,7 @@ import { NavigationContext } from '@react-navigation/native';
 import { asyncGetFont, cls } from '../store/screenMgr/mgr';
 import { useSelector } from 'react-redux';
 import { GetAllMe } from '../store/me/me';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -35,7 +36,8 @@ export const Header = (props: Props) => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       backgroundColor: 'white',
-      height: 40,
+      paddingTop: 10,
+      height: 50,
     },
     btn: {
       width: 64,
@@ -66,7 +68,13 @@ export const Header = (props: Props) => {
           ) : (
             <>
               <View>
-                <Avatar.Image size={30} source={{ uri: me.iconPath }} />
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.toggleDrawer();
+                  }}
+                >
+                  <Avatar.Image size={30} source={{ uri: me.iconPath }} />
+                </TouchableOpacity>
               </View>
             </>
           )}
