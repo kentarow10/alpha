@@ -66,7 +66,7 @@ export const RootNavigator = () => {
         options={{
           inTab: true,
           icon: {
-            name: 'link-variant',
+            name: 'earth',
           },
         }}
       />

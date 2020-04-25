@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import {
   // DrawerContentComponentProps,
   // DrawerContentOptions,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   preference: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 6,
     paddingHorizontal: 16,
   },
   modal: {
@@ -360,14 +360,65 @@ export function DrawerContent(props: Props) {
             <Drawer.Section>
               <TouchableRipple onPress={toggleTheme}>
                 <View style={styles.preference}>
-                  <Text style={{ fontWeight: 'bold', marginTop: 10 }}>
-                    ダークモード
-                  </Text>
+                  <View style={{ flexDirection: 'row' }}>
+                    <View
+                      style={{ marginTop: 6, marginRight: 28, marginLeft: 6 }}
+                    >
+                      <Feather
+                        name="moon"
+                        size={20}
+                        color="rgba(0, 0, 0, 0.68)"
+                      />
+                    </View>
+
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        marginTop: 10,
+                        color: 'rgba(0, 0, 0, 0.68)',
+                      }}
+                    >
+                      ダークモード
+                    </Text>
+                  </View>
+
                   <View pointerEvents="none">
                     <Switch value={theme === 'dark'} />
                   </View>
                 </View>
               </TouchableRipple>
+              <Divider />
+              <TouchableOpacity
+                onPress={() => {
+                  alert('logout');
+                }}
+              >
+                <View style={styles.preference}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <View
+                      style={{ marginTop: 6, marginRight: 28, marginLeft: 6 }}
+                    >
+                      <MaterialCommunityIcons
+                        name="logout"
+                        size={20}
+                        color="rgba(0, 0, 0, 0.68)"
+                      />
+                    </View>
+
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        marginTop: 10,
+                        color: 'rgba(0, 0, 0, 0.68)',
+                      }}
+                    >
+                      ログアウト
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
             </Drawer.Section>
           </>
         )}

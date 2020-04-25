@@ -107,7 +107,6 @@ const profile = () => {
   });
 
   useEffect(() => {
-    alert(HEIGHT);
     dispatch(asyncGetMyInfo(uid));
     // dispatch(asyncGetMyPosts(uid));
     // dispatch(asyncGetMyPins(uid));

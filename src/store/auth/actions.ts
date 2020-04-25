@@ -113,6 +113,8 @@ export const createUser = (
                 account,
                 iconPath: '',
                 siBody: '',
+                homePath: '',
+                thankPath: '',
               })
               .then(() => {
                 dispatch(
