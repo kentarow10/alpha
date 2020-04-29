@@ -404,7 +404,6 @@ const post = () => {
 
   useEffect(() => {
     if (state.isDone) {
-      console.log('done');
       navigation.navigate('PROFILE');
     }
   }, [state.isDone]);

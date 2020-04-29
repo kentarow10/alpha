@@ -15,6 +15,11 @@ import {
   getMyGotitPins,
   getMyLinkedAnss,
   getMyPins,
+  updateHomeImage,
+  updateIconImage,
+  updateCardImage,
+  updateName,
+  updateSiBody,
 } from './actions';
 
 const initialState: Me = {
@@ -85,6 +90,44 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
     ...state,
     isFetching: false,
     myLinkedPins: payload,
+  }))
+  .case(updateHomeImage, (state, payload) => ({
+    ...state,
+    edit: {
+      ...state.edit,
+      homeUri: payload.uri,
+      homeName: payload.filename,
+    },
+  }))
+  .case(updateIconImage, (state, payload) => ({
+    ...state,
+    edit: {
+      ...state.edit,
+      iconUri: payload.uri,
+      iconName: payload.filename,
+    },
+  }))
+  .case(updateCardImage, (state, payload) => ({
+    ...state,
+    edit: {
+      ...state.edit,
+      cardUri: payload.uri,
+      cardName: payload.filename,
+    },
+  }))
+  .case(updateName, (state, payload) => ({
+    ...state,
+    edit: {
+      ...state.edit,
+      name: payload,
+    },
+  }))
+  .case(updateSiBody, (state, payload) => ({
+    ...state,
+    edit: {
+      ...state.edit,
+      siBody: payload,
+    },
   }));
 
 export default reducer;

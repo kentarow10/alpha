@@ -5,6 +5,7 @@ import { Me } from './me';
 import { Post, NicePost, Pin, GotitPin, LinkPin } from '../types';
 import { MyName } from './selector';
 
+import * as ImagePicker from 'expo-image-picker';
 // 準備
 
 const actionCreator = actionCreatorFactory('ME');
@@ -43,7 +44,17 @@ export const getMyGotitPins = actionCreator<GotitPin[]>('GET_MY_GOTIT_ANS');
 
 export const getMyLinkedAnss = actionCreator<LinkPin[]>('GET_MY_LINKED_ANS');
 
-export const updateSiBody = actionCreator<{ siBody: string }>('UPDATE_SIBODY');
+export const updateSiBody = actionCreator<string>('UPDATE_SIBODY');
+export const updateName = actionCreator<string>('UPDATE_NAME');
+export const updateHomeImage = actionCreator<{ uri: string; filename: string }>(
+  'UPDATE_HOME_IMAGE',
+);
+export const updateIconImage = actionCreator<{ uri: string; filename: string }>(
+  'UPDATE_ICON_IMAGE',
+);
+export const updateCardImage = actionCreator<{ uri: string; filename: string }>(
+  'UPDATE_CARD_IMAGE',
+);
 
 // async Actions
 
@@ -278,17 +289,80 @@ export const asyncGetMyInfo = (uid: string) => {
   };
 };
 
-export const asyncUpdateSib = (uid: string, text: string) => {
+// export const asyncUpdateSib = (uid: string, text: string) => {
+//   return dispatch => {
+//     dispatch(startFetch({}));
+//     db.collection('users')
+//       .doc(uid)
+//       .update({
+//         siBody: text,
+//       })
+//       .then(() => {
+//         dispatch(endFetch({}));
+//         dispatch(updateSiBody({ siBody: text }));
+//       });
+//   };
+// };
+
+const aspectDict = {
+  home: [1.414, 1],
+  icon: [1, 1],
+  card: [1, 1],
+};
+
+export const asyncChooseImage = (kind: keyof typeof aspectDict) => {
   return dispatch => {
+    ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: aspectDict[kind] as [number, number],
+    }).then(res => {
+      if (!res.cancelled) {
+        const uriList = res.uri.split('/');
+        const filename = uriList.pop();
+        if (kind === 'home') {
+          dispatch(updateHomeImage(res.uri, filename));
+        } else if (kind === 'icon') {
+          dispatch(updateIconImage(res.uri, filename));
+        } else {
+          dispatch(updateCardImage(res.uri, filename));
+        }
+      }
+    });
+  };
+};
+
+export const asyncSaveProfile = (
+  uid: string,
+  name: string,
+  siBody: string,
+  homeUrl: string,
+  homeName: string,
+  iconUrl: string,
+  iconName: string,
+) => {
+  return async dispatch => {
     dispatch(startFetch({}));
+    const res1 = await fetch(homeUrl);
+    const blobHome = await res1.blob();
+    const res2 = await fetch(iconUrl);
+    const blobIcon = await res2.blob();
+    const ref2 = storage.ref().child(`${uid}/icon/${iconName}`);
+    ref2.put(blobIcon);
+    const ref1 = storage.ref().child(`${uid}/home/${homeName}`);
+    ref1.put(blobHome);
     db.collection('users')
       .doc(uid)
       .update({
-        siBody: text,
+        name,
+        siBody,
+        iconPath: `${uid}/icon/${iconName}`,
+        homePath: `${uid}/home/${homeName}`,
       })
       .then(() => {
         dispatch(endFetch({}));
-        dispatch(updateSiBody({ siBody: text }));
+      })
+      .catch(e => {
+        console.log(e);
       });
   };
 };

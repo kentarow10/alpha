@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Divider, Button, Provider, Portal } from 'react-native-paper';
 import { useName } from '../hooks/useName';
-import { GetAllMe } from '../store/me/me';
+import { GetAllMe, asyncSaveProfile } from '../store/me/me';
 import { GetUid } from '../store/auth/auth';
 import { cls } from '../store/screenMgr/mgr';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -21,9 +21,12 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 export const EditProfile = () => {
+  const dispatch = useDispatch();
   const me = useSelector(GetAllMe);
   const uid = useSelector(GetUid);
   const myname = useName(uid);
+  const [newName, setNewName] = useState(myname);
+  const [newSiBody, setNewSiBody] = useState(me.siBody);
 
   return (
     <SafeAreaView>
@@ -118,8 +121,9 @@ export const EditProfile = () => {
                 borderBottomColor: cls.grn,
                 borderBottomWidth: 1,
               }}
-              value={myname}
+              value={newName}
               selectionColor={cls.grn}
+              onChangeText={setNewName}
             />
           </View>
           <View
@@ -130,7 +134,7 @@ export const EditProfile = () => {
               alignSelf: 'center',
             }}
           >
-            <Text style={{ fontWeight: 'bold' }}>自己紹介文</Text>
+            <Text style={{ fontWeight: 'bold' }}>自己紹介</Text>
             <TextInput
               style={{
                 width: 300,
@@ -140,8 +144,9 @@ export const EditProfile = () => {
                 borderBottomWidth: 1,
               }}
               multiline={true}
-              value={me.siBody}
+              value={newSiBody}
               selectionColor={cls.grn}
+              onChangeText={setNewSiBody}
             />
           </View>
           <View
@@ -153,6 +158,16 @@ export const EditProfile = () => {
             }}
           >
             <TouchableOpacity
+              onPress={() => {
+                dispatch(
+                  asyncSaveProfile(
+                    newName,
+                    newSiBody,
+                    me.edit.homeUri,
+                    me.edit.iconUri,
+                  ),
+                );
+              }}
               style={{
                 width: 100,
                 padding: 14,
