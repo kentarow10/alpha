@@ -33,6 +33,7 @@ export const getMyInfo = actionCreator<{ userName: string; siBody: string }>(
 );
 
 export const getIconUrl = actionCreator<{ iconUrl: string }>('GET_ICON_URL');
+export const getHomeUrl = actionCreator<{ homeUrl: string }>('GET_HOME_URL');
 
 export const getMyPins = actionCreator<Pin[]>('GET_MY_PINS');
 
@@ -55,6 +56,11 @@ export const updateIconImage = actionCreator<{ uri: string; filename: string }>(
 export const updateCardImage = actionCreator<{ uri: string; filename: string }>(
   'UPDATE_CARD_IMAGE',
 );
+export const initEditScreen = actionCreator<{
+  homeUri: string;
+  iconUri: string;
+}>('INIT_EDIT_SCREEN');
+export const doneEdit = actionCreator<{}>('EDIT_DONE');
 
 // async Actions
 
@@ -264,6 +270,7 @@ export const asyncGetMyInfo = (uid: string) => {
       .then(function(doc) {
         const userName = doc.data().name;
         const iconPath = doc.data().iconPath;
+        const homePath = doc.data().homePath;
         const siBody = doc.data().siBody;
         if (!iconPath) {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -274,7 +281,16 @@ export const asyncGetMyInfo = (uid: string) => {
         } else {
           getFromStorage(iconPath)
             .then(url => {
-              dispatch(getIconUrl(url));
+              console.log({ url });
+              dispatch(getIconUrl({ iconUrl: url }));
+            })
+            .catch(e => {
+              dispatch(fetchImgError({}));
+            });
+          getFromStorage(homePath)
+            .then(url => {
+              console.log({ url });
+              dispatch(getHomeUrl({ homeUrl: url }));
             })
             .catch(e => {
               dispatch(fetchImgError({}));
@@ -304,6 +320,7 @@ export const asyncGetMyInfo = (uid: string) => {
 //   };
 // };
 
+// android Only
 const aspectDict = {
   home: [1.414, 1],
   icon: [1, 1],
@@ -312,22 +329,30 @@ const aspectDict = {
 
 export const asyncChooseImage = (kind: keyof typeof aspectDict) => {
   return dispatch => {
+    console.log('called');
+    console.log(aspectDict[kind]);
     ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: aspectDict[kind] as [number, number],
-    }).then(res => {
-      if (!res.cancelled) {
-        const uriList = res.uri.split('/');
-        const filename = uriList.pop();
-        if (kind === 'home') {
-          dispatch(updateHomeImage(res.uri, filename));
-        } else if (kind === 'icon') {
-          dispatch(updateIconImage(res.uri, filename));
-        } else {
-          dispatch(updateCardImage(res.uri, filename));
+    })
+      .then(res => {
+        if (!res.cancelled) {
+          const uriList = res.uri.split('/');
+          const filename = uriList.pop();
+          if (kind === 'home') {
+            console.log(res.uri);
+            console.log({ filename });
+            dispatch(updateHomeImage({ uri: res.uri, filename }));
+          } else if (kind === 'icon') {
+            dispatch(updateIconImage({ uri: res.uri, filename }));
+          } else {
+            dispatch(updateCardImage({ uri: res.uri, filename }));
+          }
         }
-      }
-    });
+      })
+      .catch(e => {
+        console.log(e);
+      });
   };
 };
 
@@ -337,32 +362,90 @@ export const asyncSaveProfile = (
   siBody: string,
   homeUrl: string,
   homeName: string,
+  isHomeUpdate: boolean,
   iconUrl: string,
   iconName: string,
+  isIconUpdate: boolean,
 ) => {
   return async dispatch => {
     dispatch(startFetch({}));
-    const res1 = await fetch(homeUrl);
-    const blobHome = await res1.blob();
-    const res2 = await fetch(iconUrl);
-    const blobIcon = await res2.blob();
-    const ref2 = storage.ref().child(`${uid}/icon/${iconName}`);
-    ref2.put(blobIcon);
-    const ref1 = storage.ref().child(`${uid}/home/${homeName}`);
-    ref1.put(blobHome);
-    db.collection('users')
-      .doc(uid)
-      .update({
-        name,
-        siBody,
-        iconPath: `${uid}/icon/${iconName}`,
-        homePath: `${uid}/home/${homeName}`,
-      })
-      .then(() => {
-        dispatch(endFetch({}));
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    if (isHomeUpdate && isIconUpdate) {
+      const res1 = await fetch(homeUrl);
+      const blobHome = await res1.blob();
+      const res2 = await fetch(iconUrl);
+      const blobIcon = await res2.blob();
+      const ref2 = storage.ref().child(`${uid}/icon/${iconName}`);
+      ref2.put(blobIcon);
+      const ref1 = storage.ref().child(`${uid}/home/${homeName}`);
+      ref1.put(blobHome);
+      db.collection('users')
+        .doc(uid)
+        .update({
+          name,
+          siBody,
+          iconPath: `${uid}/icon/${iconName}`,
+          homePath: `${uid}/home/${homeName}`,
+        })
+        .then(() => {
+          dispatch(endFetch({}));
+          dispatch(doneEdit({}));
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else if (isIconUpdate) {
+      const res2 = await fetch(iconUrl);
+      const blobIcon = await res2.blob();
+      const ref2 = storage.ref().child(`${uid}/icon/${iconName}`);
+      ref2.put(blobIcon);
+      db.collection('users')
+        .doc(uid)
+        .update({
+          name,
+          siBody,
+          iconPath: `${uid}/icon/${iconName}`,
+        })
+        .then(() => {
+          dispatch(endFetch({}));
+          dispatch(doneEdit({}));
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else if (isHomeUpdate) {
+      const res1 = await fetch(homeUrl);
+      const blobHome = await res1.blob();
+      const ref1 = storage.ref().child(`${uid}/home/${homeName}`);
+      ref1.put(blobHome);
+      db.collection('users')
+        .doc(uid)
+        .update({
+          name,
+          siBody,
+          homePath: `${uid}/home/${homeName}`,
+        })
+        .then(() => {
+          dispatch(endFetch({}));
+          dispatch(doneEdit({}));
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else {
+      db.collection('users')
+        .doc(uid)
+        .update({
+          name,
+          siBody,
+        })
+        .then(() => {
+          dispatch(endFetch({}));
+          dispatch(doneEdit({}));
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+    alert('プロフィールを更新しました！');
   };
 };

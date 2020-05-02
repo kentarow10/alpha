@@ -1,5 +1,6 @@
 export type ScreenMgr = {
   mypinMode: boolean;
+  navState: any;
 };
 
 export const cls = {

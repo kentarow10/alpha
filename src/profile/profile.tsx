@@ -33,7 +33,7 @@ import { asyncGetAnss } from '../store/behind/behind';
 import { NavigationContext } from '@react-navigation/native';
 import { Ftext } from '../components/Ftext';
 import { Tegaki } from '../components/Tegaki';
-import { asyncGetUserName, cls } from '../store/screenMgr/mgr';
+import { asyncGetUserName, cls, ScreenMgrState } from '../store/screenMgr/mgr';
 import { GetUid } from '../store/auth/auth';
 import { useName } from '../hooks/useName';
 import { Header } from '../components/header';
@@ -67,8 +67,7 @@ const profile = () => {
   const dispatch = useDispatch();
   const me = useSelector(GetAllMe);
   const uid = useSelector(GetUid);
-  const myname = useName(uid);
-  const navigation = useContext(NavigationContext);
+  const mng = useSelector(ScreenMgrState);
   const styles = StyleSheet.create({
     btns: {
       flexDirection: 'row',
@@ -110,7 +109,18 @@ const profile = () => {
     dispatch(asyncGetMyInfo(uid));
     // dispatch(asyncGetMyPosts(uid));
     // dispatch(asyncGetMyPins(uid));
-  }, []);
+  }, [mng.navState]);
+  useEffect(() => {
+    if (me.edit.done) {
+      dispatch(asyncGetMyInfo(uid));
+    }
+    // dispatch(asyncGetMyPosts(uid));
+    // dispatch(asyncGetMyPins(uid));
+  }, [me.edit.done]);
+
+  useEffect(() => {
+    console.log(me);
+  });
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
@@ -121,11 +131,18 @@ const profile = () => {
             style={{
               width: WIDTH,
               flex: 1,
-              backgroundColor: 'orange',
+              backgroundColor: 'gray',
               // borderBottomLeftRadius: 60,
               // borderBottomRightRadius: 60,
             }}
-          ></View>
+          >
+            <Image
+              source={{
+                uri: me.homePath,
+              }}
+              style={{ width: WIDTH, height: WIDTH / 1.414 }}
+            />
+          </View>
           <Divider />
         </View>
         <View style={{ flex: 1 }}>
@@ -135,9 +152,14 @@ const profile = () => {
                 position: 'absolute',
                 top: -28,
                 left: WIDTH / 2 - 30,
-                width: 60,
-                height: 60,
-                backgroundColor: 'transparent',
+                width: 62,
+                height: 62,
+                backgroundColor: 'gray',
+                borderWidth: 2,
+                borderRadius: 20,
+                borderColor: 'gray',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               <Image
@@ -145,21 +167,18 @@ const profile = () => {
                 style={{ width: 60, height: 60, borderRadius: 20 }}
               />
             </View>
-            <View style={{ marginTop: 44, alignSelf: 'center' }}>
-              <Text style={{ fontFamily: 'myfont' }}>{myname}</Text>
+            <View style={{ marginTop: 48, alignSelf: 'center' }}>
+              <Text style={{ fontFamily: 'myfont' }}>{me.userName}</Text>
             </View>
             <View
               style={{
                 paddingHorizontal: 36,
-                paddingVertical: 18,
+                paddingVertical: 14,
                 alignSelf: 'center',
                 backgroundColor: 'white',
               }}
             >
-              <Text style={{ fontFamily: 'myfont' }}>
-                {me.siBody}
-                aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-              </Text>
+              <Text style={{ fontFamily: 'myfont' }}>{me.siBody}</Text>
             </View>
           </View>
           <View

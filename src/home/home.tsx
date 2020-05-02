@@ -72,7 +72,7 @@ export const RootNavigator = () => {
       />
       <Drawer.Screen
         name="お知らせ"
-        component={MyNices}
+        component={red}
         options={{
           inNav: true,
           icon: {
@@ -92,11 +92,12 @@ export const RootNavigator = () => {
             color: 'green',
             size: 20,
           },
+          // unmountOnBlur: true,
         }}
       />
       <Drawer.Screen
         name="THANKYOUCARD設定"
-        component={green}
+        component={blue}
         options={{
           inNav: true,
           icon: {

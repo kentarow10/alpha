@@ -10,7 +10,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from './myNav/types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -105,7 +105,6 @@ export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
   const { theme, toggleTheme } = React.useContext(PreferencesContext);
   const uid = useSelector(GetUid);
-  const myname = useName(uid);
   const me = useSelector(GetAllMe);
   const detail = useSelector(DetailState);
   const [modal, setModal] = useState(false);
@@ -122,6 +121,12 @@ export function DrawerContent(props: Props) {
     ansAt: new firebase.firestore.Timestamp(0, 0),
     postBy: '',
     ansBy: '',
+  });
+
+  useEffect(() => {
+    console.log('=================');
+    console.log(props.state);
+    console.log('=================');
   });
 
   const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
@@ -187,8 +192,7 @@ export function DrawerContent(props: Props) {
               >
                 <Avatar.Image
                   source={{
-                    uri:
-                      'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                    uri: me.iconPath,
                   }}
                   size={50}
                 />
@@ -296,8 +300,7 @@ export function DrawerContent(props: Props) {
               >
                 <Image
                   source={{
-                    uri:
-                      'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                    uri: me.iconPath,
                   }}
                   // source={{ uri: me.iconPath }}
                   style={{
@@ -318,7 +321,7 @@ export function DrawerContent(props: Props) {
                   })
                 }
               >
-                {myname}
+                {me.userName}
               </Title>
               <Divider />
               <Caption style={styles.caption}>id : trensik</Caption>
@@ -349,10 +352,10 @@ export function DrawerContent(props: Props) {
                     )}
                     label={route.name}
                     onPress={() => {
-                      props.navigation.dispatch({
-                        ...DrawerActions.jumpTo(route.name),
-                        target: props.state.key,
-                      });
+                      // console.log('=================');
+                      // console.log(props.state);
+                      // console.log('=================');
+                      props.navigation.navigate(route.name);
                     }}
                   />
                 ))}

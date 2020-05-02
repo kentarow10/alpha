@@ -12,6 +12,8 @@ export const mypinModeOn = actionCreator<{}>('MYPIN_MODE_ON');
 
 export const mypinModeOff = actionCreator<{}>('MYPIN_MODE_OFF');
 
+export const getNavState = actionCreator<{ navState: any }>('GET_NAV_STATE');
+
 // Helper
 
 export const omitText = (num: number, text: string): string => {

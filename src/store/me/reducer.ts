@@ -20,6 +20,9 @@ import {
   updateCardImage,
   updateName,
   updateSiBody,
+  initEditScreen,
+  getHomeUrl,
+  doneEdit,
 } from './actions';
 
 const initialState: Me = {
@@ -29,12 +32,21 @@ const initialState: Me = {
   showPostMode: false,
   userName: '',
   iconPath: '',
+  homePath: '',
   siBody: '',
   myPins: [],
   myPosts: [],
   myNicePosts: [],
   myGotitPins: [],
   myLinkedPins: [],
+  edit: {
+    name: '',
+    siBody: '',
+    isCardUpdate: false,
+    isIconUpdate: false,
+    isHomeUpdate: false,
+    done: false,
+  },
 };
 
 const reducer: Reducer<Me> = reducerWithInitialState(initialState)
@@ -66,6 +78,10 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
     ...state,
     iconPath: payload.iconUrl,
   }))
+  .case(getHomeUrl, (state, payload) => ({
+    ...state,
+    homePath: payload.homeUrl,
+  }))
   .case(getMyPins, (state, payload) => ({
     ...state,
     isFetching: false,
@@ -91,20 +107,24 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
     isFetching: false,
     myLinkedPins: payload,
   }))
-  .case(updateHomeImage, (state, payload) => ({
-    ...state,
-    edit: {
-      ...state.edit,
-      homeUri: payload.uri,
-      homeName: payload.filename,
-    },
-  }))
+  .case(updateHomeImage, (state, payload) => {
+    return {
+      ...state,
+      edit: {
+        ...state.edit,
+        homeUri: payload.uri,
+        homeName: payload.filename,
+        isHomeUpdate: true,
+      },
+    };
+  })
   .case(updateIconImage, (state, payload) => ({
     ...state,
     edit: {
       ...state.edit,
       iconUri: payload.uri,
       iconName: payload.filename,
+      isIconUpdate: true,
     },
   }))
   .case(updateCardImage, (state, payload) => ({
@@ -113,6 +133,7 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
       ...state.edit,
       cardUri: payload.uri,
       cardName: payload.filename,
+      isCardUpdate: true,
     },
   }))
   .case(updateName, (state, payload) => ({
@@ -128,6 +149,21 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
       ...state.edit,
       siBody: payload,
     },
+  }))
+  .case(initEditScreen, (state, payload) => ({
+    ...state,
+    edit: {
+      ...state.edit,
+      homeUri: payload.homeUri,
+      iconUri: payload.iconUri,
+      done: false,
+    },
+  }))
+  .case(doneEdit, (state, payload) => ({
+    ...state,
+    edit: {
+      ...state.edit,
+      done: true,
+    },
   }));
-
 export default reducer;

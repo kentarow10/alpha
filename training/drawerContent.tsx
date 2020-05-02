@@ -10,7 +10,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from './BasicNav/types';
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
 import {
   Avatar,
@@ -26,7 +26,11 @@ import {
 import Animated from 'react-native-reanimated';
 
 import { PreferencesContext } from '../src/context/preferencesContext';
-import { BaseRouter, DrawerActions } from '@react-navigation/native';
+import {
+  BaseRouter,
+  DrawerActions,
+  NavigationContext,
+} from '@react-navigation/native';
 
 type Props = DrawerContentComponentProps<DrawerContentOptions>;
 const { width, height } = Dimensions.get('window');
@@ -151,10 +155,13 @@ export function DrawerContent(props: Props) {
                 )}
                 label={route.name}
                 onPress={() => {
-                  props.navigation.dispatch({
-                    ...DrawerActions.jumpTo(route.name),
-                    target: props.state.key,
-                  });
+                  // props.navigation.emit({ type: 'drawerClose' });
+                  // if (fin) {
+                  //   // props.navigation.dispatch({
+                  //   //   ...DrawerActions.jumpTo(route.name),
+                  //   //   target: props.state.key,
+                  //   // });
+                  // }
                 }}
               />
             ))}

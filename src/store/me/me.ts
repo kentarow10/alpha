@@ -4,12 +4,16 @@ import { SimpleNice } from './actions';
 type EditProf = {
   iconUri?: string;
   iconName?: string;
+  isIconUpdate?: boolean;
   homeUri?: string;
   homeName?: string;
+  isHomeUpdate?: boolean;
   cardUri?: string;
   cardName?: string;
+  isCardUpdate?: boolean;
   name: string;
   siBody: string;
+  done: boolean;
 };
 
 export type Me = {
