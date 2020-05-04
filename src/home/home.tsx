@@ -45,15 +45,16 @@ const green = () => {
 };
 
 export const HomeNavigator = () => {
-  const dispatch = useDispatch();
-  const rootNavigation: NavigationProp<
-    Record<string, object>,
-    string,
-    any,
-    any,
-    {}
-  > = useContext(NavigationContext);
-  dispatch(getRootNavigation({ rootNav: rootNavigation }));
+  // 使ってないので消して良いが念の為
+  // const dispatch = useDispatch();
+  // const rootNavigation: NavigationProp<
+  //   Record<string, object>,
+  //   string,
+  //   any,
+  //   any,
+  //   {}
+  // > = useContext(NavigationContext);
+  // dispatch(getRootNavigation({ rootNav: rootNavigation }));
 
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
@@ -139,13 +140,6 @@ export const HomeNavigator = () => {
       <Drawer.Screen
         name="FLAME"
         component={flame}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Drawer.Screen
-        name="POST"
-        component={Post}
         options={{
           unmountOnBlur: true,
         }}

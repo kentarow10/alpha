@@ -35,7 +35,7 @@ import { TimeLimeScreen } from '../store/screenTypes';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const imgW = (WIDTH - 6) / 3;
+const imgW = (WIDTH - 48) / 2;
 const imgH = imgW * 1.414;
 
 const timeLine = () => {
@@ -54,6 +54,7 @@ const timeLine = () => {
       width: imgW,
       height: imgH,
       // overflow: 'scroll',
+      borderRadius: 8,
     },
     headerBar: {
       flexDirection: 'row',
@@ -67,21 +68,63 @@ const timeLine = () => {
       flex: 1,
     },
     area: {
-      backgroundColor: 'black',
+      backgroundColor: 'gray',
       opacity: 0.8,
       height: 18,
-      width: imgW,
+      width: imgW - 8,
       position: 'absolute',
-      bottom: 0,
+      borderRadius: 5,
+      marginHorizontal: 4,
+      bottom: 5,
     },
     text: {
-      marginTop: 4,
+      marginTop: 2,
+      marginRight: 8,
       color: 'white',
-      // fontFamily: 'MyFont',
+      fontFamily: 'myfont',
       fontSize: 12,
+      fontWeight: 'bold',
       textAlign: 'right',
     },
   });
+
+  const cardStyle = (index: number) => {
+    if (index % 2 == 0) {
+      return {
+        width: imgW,
+        height: imgH,
+        backgroundColor: 'black',
+        marginTop: 16,
+        marginLeft: 16,
+        marginRight: 8,
+        borderRadius: 8,
+        shadowColor: '#ccc',
+        shadowOffset: {
+          width: 0,
+          height: 6,
+        },
+        shadowRadius: 15,
+        shadowOpacity: 0.6,
+      };
+    } else {
+      return {
+        width: imgW,
+        height: imgH,
+        backgroundColor: 'black',
+        marginTop: 16,
+        marginLeft: 8,
+        marginRight: 16,
+        borderRadius: 8,
+        shadowColor: '#ccc',
+        shadowOffset: {
+          width: 0,
+          height: 6,
+        },
+        shadowRadius: 15,
+        shadowOpacity: 0.6,
+      };
+    }
+  };
 
   return (
     <React.Fragment>
@@ -111,27 +154,13 @@ const timeLine = () => {
                       });
                     }}
                   >
-                    <Card
-                      style={{
-                        width: imgW,
-                        height: imgH,
-                        backgroundColor: 'black',
-                        margin: 1,
-                        shadowColor: '#ccc',
-                        shadowOffset: {
-                          width: 0,
-                          height: 6,
-                        },
-                        shadowRadius: 15,
-                        shadowOpacity: 0.6,
-                      }}
-                    >
+                    <Card style={cardStyle(item.index)}>
                       <Image
                         source={{ uri: item.item.uri }}
                         resizeMode="cover"
                         style={styles.img}
                       />
-                      {/* <Provider>
+                      <Provider>
                         <Portal>
                           <View style={styles.area}>
                             <Provider>
@@ -143,7 +172,7 @@ const timeLine = () => {
                             </Provider>
                           </View>
                         </Portal>
-                      </Provider> */}
+                      </Provider>
                     </Card>
                   </TouchableOpacity>
                 </View>

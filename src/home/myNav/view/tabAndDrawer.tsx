@@ -129,9 +129,7 @@ export default function DrawerView({
   // findで先頭取得している？先頭が現在の状態で、それのタイプがdrawerなら開いている、ということ
   const isDrawerOpen = Boolean(state.history.find(it => it.type === 'drawer'));
 
-  const dispatch = useDispatch();
-
-
+  // const dispatch = useDispatch();
 
   const handleDrawerOpen = React.useCallback(() => {
     navigation.dispatch({
@@ -148,16 +146,16 @@ export default function DrawerView({
   }, [navigation, state.key]);
 
   // 画面が変わるたびグローバルなnavStateを更新
-  React.useEffect(() => {
-    dispatch(getNavState({navState: state}))
-  }, [state.index]);
+  // React.useEffect(() => {
+  //   dispatch(getNavState({navState: state}))
+  // }, [state.index]);
 
   React.useEffect(() => {
     if (isDrawerOpen) {
       navigation.emit({ type: 'drawerOpen' });
     } else {
-      dispatch(mypinModeOff({}));
-      console.log('kokokokokokokokokokokokokokokoko')
+      // dispatch(mypinModeOff({}));
+      // console.log('kokokokokokokokokokokokokokokoko')
       navigation.emit({ type: 'drawerClose' });
     }
   }, [isDrawerOpen, navigation, state]);
@@ -229,10 +227,10 @@ export default function DrawerView({
       <ScreenContainer style={styles.content}>
 
         {state.routes.map((route, index) => {
-          console.log('aaaaaaaaaaaaaaaa!!!!!')
-          console.log({route})
-          console.log({index})
-          console.log(state.index)
+          // console.log('aaaaaaaaaaaaaaaa!!!!!')
+          // console.log({route})
+          // console.log({index})
+          // console.log(state.index)
 
           // console.log(index);
           // console.log("route.key");
@@ -245,20 +243,22 @@ export default function DrawerView({
           // console.log(unmountOnBlur)
           const isFocused = state.index === index;
           // console.log('isFocused:'+isFocused);
-          if(!descriptor.options.inNav){
-            if (unmountOnBlur && !isFocused && !(state.index === 6) && !(state.index === 8)) {
-              console.log("return 1")
+          // if(!descriptor.options.inNav){
+            console.log('nav以外')
+          console.log({index})
+          if (unmountOnBlur && !isFocused && !(state.index === 6) && !(state.index === 8)) {
+            console.log("return 1")
 
-              return null;
-            }
-
-            if (lazy && !loaded.includes(index) && !isFocused) {
-              // Don't render a screen if we've never navigated to it
-              console.log("return 2")
-
-              return null;
-            }
+            return null;
           }
+
+          if (lazy && !loaded.includes(index) && !isFocused) {
+            // Don't render a screen if we've never navigated to it
+            console.log("return 2")
+
+            return null;
+          }
+          // }
 
 
 

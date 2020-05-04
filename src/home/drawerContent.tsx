@@ -111,7 +111,7 @@ export function DrawerContent(props: Props) {
   const uid = useSelector(GetUid);
   const me = useSelector(GetAllMe);
   const detail = useSelector(DetailState);
-  const mng = useSelector(ScreenMgrState);
+  // const mng = useSelector(ScreenMgrState);
   const [modal, setModal] = useState(false);
   const [selectedItem, setItem] = useState({
     ansDoc: '',
@@ -126,12 +126,6 @@ export function DrawerContent(props: Props) {
     ansAt: new firebase.firestore.Timestamp(0, 0),
     postBy: '',
     ansBy: '',
-  });
-
-  useEffect(() => {
-    console.log('=================');
-    console.log(props.state);
-    console.log('=================');
   });
 
   const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
@@ -357,9 +351,7 @@ export function DrawerContent(props: Props) {
                     )}
                     label={route.name}
                     onPress={() => {
-                      // console.log('=================');
-                      // console.log(props.state);
-                      // console.log('=================');
+                      // props.navigation.toggleDrawer();
                       props.navigation.navigate(route.name);
                     }}
                   />
@@ -401,10 +393,7 @@ export function DrawerContent(props: Props) {
                 onPress={() => {
                   alert('logout');
                   dispatch(asyncLogout());
-
-                  // props.navigation.navigate('SignIn');
                   props.navigation.goBack(null);
-                  // props.navigation.dispatch({ type: 'Navigation/BACK' });
                 }}
               >
                 <View style={styles.preference}>

@@ -63,12 +63,12 @@ export const asyncGetPosts = () => {
                 height,
                 postAt,
               });
+              dispatch(getPosts(posts));
             })
             .catch(e => {
               console.log(e);
               dispatch(fetchError({}));
             });
-          dispatch(getPosts(posts));
         });
       })
       .catch(() => {

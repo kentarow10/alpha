@@ -217,11 +217,11 @@ export const asyncGetMyPosts = (uid: string) => {
                 height,
                 postAt,
               });
+              dispatch(getMyPosts(posts));
             })
             .catch(e => {
               dispatch(fetchError({}));
             });
-          dispatch(getMyPosts(posts));
         });
       })
       .catch(e => {

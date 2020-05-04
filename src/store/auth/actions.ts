@@ -29,28 +29,19 @@ export const setUserInfo = actionCreator<{
 export const login = (mail: string, pass: string) => {
   return dispatch => {
     // dispatch(trnStart({}));
-    // const db = SQLite.openDatabase('alpha_app');
     FireBase.auth()
       .signInWithEmailAndPassword(mail, pass)
       .then(res => {
-        // dispatch(trnError({}));
         const uid = res.user.uid;
-        dispatch(setUserInfo({ isFirst: 0, uid, accountName: '' }));
-        // db.transaction(tx => {
-        //   tx.executeSql(
-        //     'select * from users where uid = (?)',
-        //     [uid],
-        //     (_, resultSet) => {
-        //       const authed = resultSet.rows.item(0).isFirst;
-        //       const userName = resultSet.rows.item(0).userName;
-        //       if (authed === 0) {
-        //         dispatch(setUserInfo({ isFirst: 0, uid, userName }));
-        //       } else {
-        //         dispatch(setUserInfo({ isFirst: 1, uid, userName }));
-        //       }
-        //     },
-        //   );
-        // });
+
+        db.collection('users')
+          .doc(uid)
+          .get()
+          .then(async snap => {
+            const account = snap.data().account;
+            dispatch(setUserInfo({ isFirst: 0, uid, accountName: account }));
+            await AsyncStorage.setItem('userToken', account);
+          });
       })
       .catch(e => {
         console.log(e);

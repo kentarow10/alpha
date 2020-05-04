@@ -67,7 +67,7 @@ const profile = () => {
   const dispatch = useDispatch();
   const me = useSelector(GetAllMe);
   const uid = useSelector(GetUid);
-  const mng = useSelector(ScreenMgrState);
+  // const mng = useSelector(ScreenMgrState);
   const styles = StyleSheet.create({
     btns: {
       flexDirection: 'row',
@@ -109,7 +109,7 @@ const profile = () => {
     dispatch(asyncGetMyInfo(uid));
     dispatch(asyncGetMyPosts(uid));
     dispatch(asyncGetMyPins(uid));
-  }, [mng.navState]);
+  }, []);
 
   useEffect(() => {
     if (me.edit.done) {

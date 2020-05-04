@@ -1,6 +1,7 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { rtdb } from '../../../firebase/firebase';
 import * as Font from 'expo-font';
+import { DrawerNavigationState } from '@react-navigation/native';
 
 // 準備
 
@@ -12,7 +13,9 @@ export const mypinModeOn = actionCreator<{}>('MYPIN_MODE_ON');
 
 export const mypinModeOff = actionCreator<{}>('MYPIN_MODE_OFF');
 
-export const getNavState = actionCreator<{ navState: any }>('GET_NAV_STATE');
+export const getNavState = actionCreator<{ navState: DrawerNavigationState }>(
+  'GET_NAV_STATE',
+);
 
 export const getRootNavigation = actionCreator<{ rootNav: any }>(
   'GET_ROOT_NAV',

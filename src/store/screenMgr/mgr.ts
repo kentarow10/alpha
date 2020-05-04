@@ -1,8 +1,11 @@
-import { NavigationProp } from '@react-navigation/native';
+import {
+  NavigationProp,
+  DrawerNavigationState,
+} from '@react-navigation/native';
 
 export type ScreenMgr = {
   mypinMode: boolean;
-  navState: any;
+  navState: DrawerNavigationState;
   rootNav: NavigationProp<Record<string, object>, string, any, any, {}>;
 };
 
