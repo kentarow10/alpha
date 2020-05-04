@@ -1,6 +1,9 @@
+import { NavigationProp } from '@react-navigation/native';
+
 export type ScreenMgr = {
   mypinMode: boolean;
   navState: any;
+  rootNav: NavigationProp<Record<string, object>, string, any, any, {}>;
 };
 
 export const cls = {

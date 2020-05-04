@@ -1,5 +1,9 @@
-import React from 'react';
-import { NavigationNativeContainer } from '@react-navigation/native';
+import React, { useContext } from 'react';
+import {
+  NavigationNativeContainer,
+  NavigationContext,
+  NavigationProp,
+} from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { useTheme } from 'react-native-paper';
@@ -17,6 +21,9 @@ import Post from '../behind/post';
 import { answer } from '../behind/answer';
 import flame from '../core/flame';
 import { EditProfile } from '../profile/editProfile';
+import post from '../behind/post';
+import { useDispatch } from 'react-redux';
+import { getRootNavigation } from '../store/screenMgr/mgr';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -37,7 +44,17 @@ const green = () => {
   return <View style={{ backgroundColor: 'white', flex: 1 }}></View>;
 };
 
-export const RootNavigator = () => {
+export const HomeNavigator = () => {
+  const dispatch = useDispatch();
+  const rootNavigation: NavigationProp<
+    Record<string, object>,
+    string,
+    any,
+    any,
+    {}
+  > = useContext(NavigationContext);
+  dispatch(getRootNavigation({ rootNav: rootNavigation }));
+
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
       <Drawer.Screen
@@ -67,6 +84,18 @@ export const RootNavigator = () => {
           inTab: true,
           icon: {
             name: 'earth',
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="投稿する"
+        component={post}
+        options={{
+          inNav: true,
+          icon: {
+            name: 'file-image',
+            color: 'orange',
+            size: 20,
           },
         }}
       />

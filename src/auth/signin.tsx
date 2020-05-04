@@ -26,7 +26,7 @@ const signin = () => {
   };
 
   useEffect(() => {
-    dispatch(asyncAutoLogin());
+    // dispatch(asyncAutoLogin());
   }, []);
 
   return (

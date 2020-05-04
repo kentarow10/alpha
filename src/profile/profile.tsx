@@ -107,20 +107,15 @@ const profile = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyInfo(uid));
-    // dispatch(asyncGetMyPosts(uid));
-    // dispatch(asyncGetMyPins(uid));
+    dispatch(asyncGetMyPosts(uid));
+    dispatch(asyncGetMyPins(uid));
   }, [mng.navState]);
+
   useEffect(() => {
     if (me.edit.done) {
       dispatch(asyncGetMyInfo(uid));
     }
-    // dispatch(asyncGetMyPosts(uid));
-    // dispatch(asyncGetMyPins(uid));
   }, [me.edit.done]);
-
-  useEffect(() => {
-    console.log(me);
-  });
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
@@ -198,7 +193,7 @@ const profile = () => {
                   marginTop: 4,
                 }}
               >
-                投稿　　　　　　　　件
+                投稿　　　　　　　{me.myPosts.length}件
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.btns} onPress={() => {}}>
@@ -211,7 +206,7 @@ const profile = () => {
                   marginTop: 4,
                 }}
               >
-                回答　　　　　　　　件
+                回答　　　　　　　{me.myPins.length}件
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.btns} onPress={() => {}}>

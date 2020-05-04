@@ -11,14 +11,19 @@ import firebase from '../../firebase/firebase';
 import SignInScreen from './signin';
 import SignUpScreen from './signup';
 // import ResetPassword from './resetpass';
-import { RootNavigator } from '../home/home';
+import { RootNavigator, HomeNavigator } from '../home/home';
 import Sample from '../../training/Sample';
 
 const HEIGHT = Dimensions.get('window').height;
 
 const SplashScreen = () => {
+  const dispatch = useDispatch();
   const state = useSelector(GetAuth);
   console.log(state);
+
+  useEffect(() => {
+    dispatch(asyncAutoLogin());
+  }, []);
 
   return <View style={{ backgroundColor: 'red', height: HEIGHT }}></View>;
 };
@@ -39,6 +44,7 @@ const authNav = () => {
     };
     loadFonts();
     setLoading(false);
+    // dispatch(asyncAutoLogin());
   }, []);
 
   return (
@@ -53,7 +59,7 @@ const authNav = () => {
           {/* <Stack.Screen name="ResetPassword" component={ResetPassword} /> */}
         </>
       ) : (
-        <Stack.Screen name="Home" component={RootNavigator} />
+        <Stack.Screen name="Home" component={HomeNavigator} />
       )}
     </Stack.Navigator>
   );

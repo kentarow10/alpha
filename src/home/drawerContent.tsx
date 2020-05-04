@@ -35,15 +35,19 @@ import {
 import Animated from 'react-native-reanimated';
 import firebase from '../../firebase/firebase';
 import { PreferencesContext } from '../context/preferencesContext';
-import { BaseRouter, DrawerActions } from '@react-navigation/native';
+import {
+  BaseRouter,
+  DrawerActions,
+  NavigationContext,
+} from '@react-navigation/native';
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
 import { GetAllMe } from '../store/me/me';
 import { asyncLink, DetailState } from '../store/behind/behind';
 import { rtdb } from '../../firebase/firebase';
-import { cls } from '../store/screenMgr/mgr';
+import { cls, ScreenMgrState } from '../store/screenMgr/mgr';
 import { useName } from '../hooks/useName';
-import { GetUid } from '../store/auth/auth';
+import { GetUid, asyncLogout } from '../store/auth/auth';
 
 type Props = DrawerContentComponentProps<DrawerContentOptions>;
 const { width, height } = Dimensions.get('window');
@@ -107,6 +111,7 @@ export function DrawerContent(props: Props) {
   const uid = useSelector(GetUid);
   const me = useSelector(GetAllMe);
   const detail = useSelector(DetailState);
+  const mng = useSelector(ScreenMgrState);
   const [modal, setModal] = useState(false);
   const [selectedItem, setItem] = useState({
     ansDoc: '',
@@ -395,6 +400,11 @@ export function DrawerContent(props: Props) {
               <TouchableOpacity
                 onPress={() => {
                   alert('logout');
+                  dispatch(asyncLogout());
+
+                  // props.navigation.navigate('SignIn');
+                  props.navigation.goBack(null);
+                  // props.navigation.dispatch({ type: 'Navigation/BACK' });
                 }}
               >
                 <View style={styles.preference}>

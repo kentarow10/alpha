@@ -28,7 +28,7 @@ export const setUserInfo = actionCreator<{
 
 export const login = (mail: string, pass: string) => {
   return dispatch => {
-    dispatch(trnStart({}));
+    // dispatch(trnStart({}));
     // const db = SQLite.openDatabase('alpha_app');
     FireBase.auth()
       .signInWithEmailAndPassword(mail, pass)
@@ -62,18 +62,30 @@ export const login = (mail: string, pass: string) => {
 export const asyncAutoLogin = () => {
   return async dispatch => {
     dispatch(trnStart({}));
-    const isLogin = await AsyncStorage.getItem('userToken');
-    console.log({ isLogin });
+    const token = await AsyncStorage.getItem('userToken');
+    let isLogin = true;
+    if (token === 'false' || !token) {
+      isLogin = false;
+    }
 
     FireBase.auth().onAuthStateChanged(function(user) {
       if (isLogin && user) {
         dispatch(
-          setUserInfo({ isFirst: 0, uid: user.uid, accountName: isLogin }),
+          setUserInfo({ isFirst: 0, uid: user.uid, accountName: token }),
         );
       } else {
         dispatch(setUserInfo({ isFirst: 0, uid: '', accountName: '' }));
       }
     });
+  };
+};
+
+export const asyncLogout = () => {
+  return async dispatch => {
+    dispatch(trnStart({}));
+    await AsyncStorage.setItem('userToken', 'false');
+
+    dispatch(setUserInfo({ isFirst: 0, uid: '', accountName: '' }));
   };
 };
 
