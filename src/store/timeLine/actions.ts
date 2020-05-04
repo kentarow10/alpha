@@ -45,8 +45,8 @@ export const asyncGetPosts = () => {
           const thms = doc.data().thms;
           const postBy = doc.data().postBy;
           const poster = await asyncGetName(postBy);
-          const width = doc.data().w;
-          const height = doc.data().h;
+          const width = doc.data().width;
+          const height = doc.data().height;
           const postAt = doc.data().postAt.toDate();
           storage
             .ref(doc.data().path)

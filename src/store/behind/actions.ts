@@ -274,6 +274,11 @@ export const asyncAnswer = (
   return async dispatch => {
     dispatch(fetching({}));
     const ansAt = firebase.firestore.FieldValue.serverTimestamp();
+    console.log('caaaaaaaaaaaaaaaaaalled');
+    console.log({ pparam });
+    console.log({ order });
+    console.log({ body });
+    console.log({ ansBy });
 
     db.collection('posts')
       .doc(pparam.postDoc)
@@ -292,6 +297,7 @@ export const asyncAnswer = (
         postAt: pparam.postAt,
       })
       .then(res => {
+        console.log('caaaaaaaaaaaaaaaaaaaaaaaaalllllllll');
         const ansRef = rtdb.ref(res.id);
         ansRef.set({
           gCount: 0,

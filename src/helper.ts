@@ -1,4 +1,4 @@
-import { rtdb } from '../firebase/firebase';
+import { rtdb, db, storage } from '../firebase/firebase';
 
 const formatDate = (date: Date, format: string): string => {
   format = format.replace(/YYYY/, date.getFullYear().toString());
@@ -18,10 +18,29 @@ export const timeExpress = (time: firebase.firestore.Timestamp): string => {
   return ex;
 };
 
+export const asyncGetUrlFromPath = async (path: string) => {
+  const url = await storage.ref(path).getDownloadURL();
+
+  return url;
+};
+
 export const asyncGetName = async (uid: string) => {
   const uJson = await rtdb.ref(uid).once('value');
 
   return uJson.val().name;
+};
+
+export const asyncGetUserInfo = async (uid: string) => {
+  const user = await db
+    .collection('users')
+    .doc(uid)
+    .get();
+
+  const name: string = user.data().name;
+  const path = user.data().iconPath;
+  const uri: string = await asyncGetUrlFromPath(path);
+
+  return { name, uri };
 };
 
 export const calcHeightRank = (h: number) => {

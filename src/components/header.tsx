@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import * as Font from 'expo-font';
 import { useTheme, Button, TextInput, Avatar } from 'react-native-paper';
+import { AntDesign } from '@expo/vector-icons';
 import {
   View,
   Text,
@@ -13,7 +14,7 @@ import {
 } from 'react-native';
 import posted from '../behind/posted';
 import { NavigationContext } from '@react-navigation/native';
-import { asyncGetFont, cls } from '../store/screenMgr/mgr';
+import { cls } from '../store/screenMgr/mgr';
 import { useSelector } from 'react-redux';
 import { GetAllMe } from '../store/me/me';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -40,30 +41,41 @@ export const Header = (props: Props) => {
       height: 50,
     },
     btn: {
-      width: 64,
+      width: 32,
+      height: 28,
+      // marginTop: 4,
+      paddingTop: 1,
       marginHorizontal: 4,
+      // backgroundColor: '#ccc',
+      borderColor: '#DDDDDD',
+      borderWidth: 0.4,
+      borderRadius: 440,
+      justifyContent: 'center',
+      alignItems: 'center',
+      // shadowColor: 'black',
+      // shadowOffset: {
+      //   width: 1,
+      //   height: 6,
+      // },
+      // shadowRadius: 2,
+      // shadowOpacity: 1,
     },
   });
-  useEffect(() => {
-    // asyncGetFont();
-  }, []);
 
   return (
     <>
       <View style={styles.headerBar}>
-        <View style={{ marginLeft: 12, width: 64 }}>
+        <View style={{ marginLeft: 16, width: 64 }}>
           {showBackBtn ? (
             <>
-              <Button
-                // icon="arrow-left"
+              <TouchableOpacity
                 style={styles.btn}
-                labelStyle={{ color: cls.grn, marginHorizontal: 2 }}
                 onPress={() => {
                   navigation.goBack();
                 }}
               >
-                もどる
-              </Button>
+                <AntDesign name="back" size={20} color={cls.grn} />
+              </TouchableOpacity>
             </>
           ) : (
             <>
@@ -82,9 +94,9 @@ export const Header = (props: Props) => {
         <View>
           <Text
             style={{
-              marginTop: 3,
+              // marginTop: 3,
               color: '#00A85A',
-              fontSize: 22,
+              fontSize: 26,
               textAlign: 'center',
               fontFamily: 'myfont',
             }}

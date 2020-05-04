@@ -193,7 +193,7 @@ const posted = () => {
   const renderHeader = () => {
     return (
       <>
-        <PostedImage uri={posted.ppram.uri} />
+        <PostedImage uri={posted.ppram.uri} postBy={posted.ppram.postBy} />
         <View>
           <ThmSwitch
             thm={posted.ppram.thms}

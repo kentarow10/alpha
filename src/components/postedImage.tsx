@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { useTheme, Button, TextInput, Avatar } from 'react-native-paper';
+import {
+  useTheme,
+  Button,
+  TextInput,
+  Avatar,
+  Divider,
+} from 'react-native-paper';
 import { View, Text, Dimensions, StyleSheet, Image } from 'react-native';
 import posted from '../behind/posted';
 import { NavigationContext } from '@react-navigation/native';
@@ -11,65 +17,20 @@ import { Example2 } from '../../training/Sample.jsx';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-type SampleProps = {
-  uri: string;
-};
-
-class SampleImg extends React.Component<SampleProps> {
-  shouldComponentUpdate(nextProps: SampleProps) {
-    if (this.props.uri === nextProps.uri) {
-      return true;
-    } else {
-      return true;
-    }
-  }
-  render() {
-    console.log('rerender');
-
-    return (
-      <Image
-        source={{ uri: this.props.uri }}
-        resizeMode="contain"
-        style={{ flex: 1, backgroundColor: 'black' }}
-      />
-    );
-  }
-}
-
 type Props = {
-  iconPath?: string;
-  handleName?: string;
+  iconUri?: string;
+  userName?: string;
   accountName?: string;
   uri: string;
 };
 
-const PostedImage = React.memo<{ uri: string }>(
-  ({ uri }) => {
-    console.log('running!');
-
-    return (
-      <Image
-        source={{ uri: uri }}
-        resizeMode="contain"
-        style={{ flex: 1, backgroundColor: 'black' }}
-      />
-    );
-  },
-  (prevProps, nextProps) => {
-    console.log('prevProps.uri');
-    console.log(prevProps.uri);
-    console.log('nextProps.uri');
-    console.log(nextProps.uri);
-
-    return false;
-  },
-);
-
 export const postedImage = (props: Props) => {
   const styles = StyleSheet.create({
     avatar: {
+      marginLeft: 24,
       marginHorizontal: 10,
       alignSelf: 'center',
+      backgroundColor: '#DDDDDD',
     },
     owner: {
       // flex: 0.7,
@@ -78,6 +39,7 @@ export const postedImage = (props: Props) => {
     },
     names: {
       padding: 16,
+      marginTop: 10,
     },
     text: {
       marginTop: 4,
@@ -98,32 +60,22 @@ export const postedImage = (props: Props) => {
       <View style={styles.owner}>
         <Avatar.Image
           source={{
-            uri:
-              'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+            uri: props.iconUri,
           }}
           size={50}
           style={styles.avatar}
         />
         <View style={styles.names}>
-          <Text style={{ fontWeight: '400', fontSize: 20 }}>
-            ハンドルネーム
-          </Text>
-          <Text
-            style={{
-              fontWeight: '300',
-              fontSize: 12,
-              marginTop: 5,
-              marginLeft: 15,
-              color: 'gray',
-            }}
-          >
-            account name
+          <Text style={{ fontSize: 20, fontFamily: 'myfont' }}>
+            {props.userName}
           </Text>
         </View>
       </View>
+      <Divider />
       <View style={{ height: WIDTH, width: WIDTH }}>
         <Img uri={URL} />
       </View>
+      <Divider />
     </>
   );
 };

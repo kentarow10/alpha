@@ -37,6 +37,8 @@ import { Header } from '../components/header';
 import Posted from './posted';
 import { Answer } from './answer';
 import { Detail } from './detail';
+import { db } from '../../firebase/firebase';
+import { asyncGetUserInfo } from '../helper';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -63,6 +65,7 @@ const flame = () => {
   const [showModal, setModal] = useState(false);
   const scrl = useRef(null);
   const [close, setClose] = useState(false);
+  const [userInfo, setUserInfo] = useState({ iconUri: '', userName: '' });
   const [navState, setNavState] = useState(prm.toDetail ? 'DETAIL' : 'POSTED');
   const goAnswer = (): void => {
     setNavState('ANSWER');
@@ -88,6 +91,11 @@ const flame = () => {
   useEffect(() => {
     const ts = new firebase.firestore.Timestamp(0, 0);
     console.log(ts.toDate());
+    console.log({ prm });
+
+    asyncGetUserInfo(prm.postBy).then(res => {
+      setUserInfo({ iconUri: res.uri, userName: res.name });
+    });
   }, []);
 
   return (
@@ -109,16 +117,20 @@ const flame = () => {
         >
           <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: 'white' }}>
-              <PostedImage uri={prm.uri} />
+              <PostedImage
+                uri={prm.uri}
+                iconUri={userInfo.iconUri}
+                userName={userInfo.userName}
+              />
               {navState === 'POSTED' ? (
                 <Posted
                   postDoc={prm.postDoc}
                   uri={prm.uri}
                   width={prm.width}
                   height={prm.height}
-                  owner={prm.postBy}
+                  postBy={prm.postBy}
                   thms={prm.thms}
-                  createdAt={prm.postAt}
+                  postAt={prm.postAt}
                   close={close}
                   setModal={setModal}
                   goAnswer={goAnswer}

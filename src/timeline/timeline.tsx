@@ -137,6 +137,8 @@ const timeLine = () => {
             numColumns={2}
             style={{ marginBottom: 36 }}
             renderItem={item => {
+              console.log({ item });
+
               return (
                 <View style={{ flexDirection: 'column' }}>
                   {/* <View style={{ height: 57, width: imgW }}></View> */}
