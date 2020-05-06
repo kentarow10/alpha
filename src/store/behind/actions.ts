@@ -11,6 +11,7 @@ import {
   NicePost,
 } from '../types';
 import { database } from 'firebase';
+import { asyncGetName } from '../../helper';
 
 // 準備
 
@@ -623,7 +624,7 @@ export const asyncGetAnss = (postDoc: string) => {
       .collection('posts')
       .doc(postDoc)
       .collection('answers')
-      .where('orderThm', '==', 1)
+      .where('order', '==', 1)
       .orderBy('ansAt')
       .limit(10)
       .get();
@@ -631,7 +632,7 @@ export const asyncGetAnss = (postDoc: string) => {
       .collection('posts')
       .doc(postDoc)
       .collection('answers')
-      .where('orderThm', '==', 2)
+      .where('order', '==', 2)
       .orderBy('ansAt')
       .limit(10)
       .get();
@@ -639,14 +640,15 @@ export const asyncGetAnss = (postDoc: string) => {
       .collection('posts')
       .doc(postDoc)
       .collection('answers')
-      .where('orderThm', '==', 3)
+      .where('order', '==', 3)
       .orderBy('ansAt')
       .limit(10)
       .get();
     const anss1: Pin[] = [];
     const anss2: Pin[] = [];
     const anss3: Pin[] = [];
-    ans1.forEach(doc => {
+    ans1.forEach(async doc => {
+      const answer = await asyncGetName(doc.data().ansBy);
       const ans: Pin = {
         ansDoc: doc.id,
         postDoc: doc.data().postDoc,
@@ -660,10 +662,12 @@ export const asyncGetAnss = (postDoc: string) => {
         postAt: doc.data().postAt,
         ansBy: doc.data().ansBy,
         ansAt: doc.data().ansAt,
+        answer: answer,
       };
       anss1.push(ans);
     });
-    ans2.forEach(doc => {
+    ans2.forEach(async doc => {
+      const answer = await asyncGetName(doc.data().ansBy);
       const ans: Pin = {
         ansDoc: doc.id,
         postDoc: doc.data().postDoc,
@@ -677,10 +681,12 @@ export const asyncGetAnss = (postDoc: string) => {
         postAt: doc.data().postAt,
         ansBy: doc.data().ansBy,
         ansAt: doc.data().ansAt,
+        answer: answer,
       };
       anss2.push(ans);
     });
-    ans3.forEach(doc => {
+    ans3.forEach(async doc => {
+      const answer = await asyncGetName(doc.data().ansBy);
       const ans: Pin = {
         ansDoc: doc.id,
         postDoc: doc.data().postDoc,
@@ -694,6 +700,7 @@ export const asyncGetAnss = (postDoc: string) => {
         postAt: doc.data().postAt,
         ansBy: doc.data().ansBy,
         ansAt: doc.data().ansAt,
+        answer: answer,
       };
       anss3.push(ans);
     });

@@ -10,6 +10,16 @@ const formatDate = (date: Date, format: string): string => {
   return format;
 };
 
+export const stringOmitter = (len: number, text: string) => {
+  if (text.length > len) {
+    const newText = text.substr(0, len - 3);
+
+    return newText + '...';
+  } else {
+    return text;
+  }
+};
+
 export const timeExpress = (time: firebase.firestore.Timestamp): string => {
   const date = time.toDate();
   const format = 'YYYY-MM-DD HH:NN';
@@ -25,9 +35,12 @@ export const asyncGetUrlFromPath = async (path: string) => {
 };
 
 export const asyncGetName = async (uid: string) => {
-  const uJson = await rtdb.ref(uid).once('value');
+  const user = await db
+    .collection('users')
+    .doc(uid)
+    .get();
 
-  return uJson.val().name;
+  return user.data().name;
 };
 
 export const asyncGetUserInfo = async (uid: string) => {
@@ -41,6 +54,16 @@ export const asyncGetUserInfo = async (uid: string) => {
   const uri: string = await asyncGetUrlFromPath(path);
 
   return { name, uri };
+};
+
+export const asyncGetUserInfoList = async (uids: string[]) => {
+  const userInfos = [];
+  uids.forEach(async uid => {
+    const ui = await asyncGetUserInfo(uid);
+    userInfos.push(ui);
+  });
+
+  return userInfos;
 };
 
 export const calcHeightRank = (h: number) => {

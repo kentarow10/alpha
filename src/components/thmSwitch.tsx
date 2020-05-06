@@ -8,6 +8,8 @@ import {
 } from 'react-native-paper';
 import { View, Text, Dimensions, StyleSheet, Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import posted from '../behind/posted';
+import { timeExpress } from '../helper';
 
 type Props = {
   thm: string[];
@@ -93,7 +95,7 @@ export const thmSwitch = (props: Props) => {
       <>
         <View style={styles.upper}>
           <Text style={{ color: 'gray', textAlign: 'right', fontSize: 12 }}>
-            2020-03-03 18:08
+            {timeExpress(props.postAt)}
           </Text>
           {/* <Text>{props.numNice}人の良いね</Text> */}
         </View>
@@ -165,6 +167,8 @@ export const thmSwitch = (props: Props) => {
           </View>
           {props.inAns ? (
             <></>
+          ) : props.numNice === 0 ? (
+            <></>
           ) : (
             <TouchableOpacity
               onPress={() => {
@@ -199,7 +203,7 @@ export const thmSwitch = (props: Props) => {
       <>
         <View style={styles.upper}>
           <Text style={{ color: 'gray', textAlign: 'right', fontSize: 12 }}>
-            2020-03-03 18:08
+            {timeExpress(props.postAt)}
           </Text>
           {/* <Text>{props.numNice}人の良いね</Text> */}
         </View>
@@ -258,6 +262,8 @@ export const thmSwitch = (props: Props) => {
           </View>
           {props.inAns ? (
             <></>
+          ) : props.numNice === 0 ? (
+            <></>
           ) : (
             <TouchableOpacity
               onPress={() => {
@@ -292,7 +298,7 @@ export const thmSwitch = (props: Props) => {
       <>
         <View style={styles.upper}>
           <Text style={{ color: 'gray', textAlign: 'right', fontSize: 12 }}>
-            2020-03-03 18:08
+            {timeExpress(props.postAt)}
           </Text>
           {/* <Text>{props.numNice}人の良いね</Text> */}
         </View>
@@ -337,6 +343,8 @@ export const thmSwitch = (props: Props) => {
             </ToggleButton.Row>
           </View>
           {props.inAns ? (
+            <></>
+          ) : props.numNice === 0 ? (
             <></>
           ) : (
             <TouchableOpacity

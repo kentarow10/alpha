@@ -47,6 +47,7 @@ import { postedImage as PostedImage } from '../components/postedImage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Header } from '../components/header';
 import { cls } from '../store/screenMgr/mgr';
+import { asyncGetUserInfoList } from '../helper';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -60,6 +61,7 @@ type Props = {
   thms: string[];
   postAt: firebase.firestore.Timestamp;
   setModal: (b: boolean) => void;
+  setNicers: (list: any[]) => void;
   close: boolean;
   goAnswer: () => void;
   goDetail: () => void;
@@ -214,6 +216,12 @@ const Posted = (props: Props) => {
     dispatch(asyncGetAnss(props.postDoc));
   }, [posted.ppram.postDoc]);
 
+  useEffect(() => {
+    asyncGetUserInfoList(posted.ppram.niceByList).then(userInfos => {
+      props.setNicers(userInfos);
+    });
+  }, [posted.ppram.niceByList]);
+
   console.log('posted render...');
   console.log('答えのフェッチ');
 
@@ -259,7 +267,11 @@ const Posted = (props: Props) => {
                   posted.ppram.postDoc,
                   uid,
                   posted.ppram.uri,
+                  posted.ppram.width,
+                  posted.ppram.height,
+                  posted.ppram.thms,
                   posted.ppram.postBy,
+                  posted.ppram.postAt,
                 ),
               );
             }}
@@ -330,6 +342,10 @@ const Posted = (props: Props) => {
         // onEndReached={onEndReached}
         keyExtractor={(item, index) => index.toString()}
         renderItem={item => {
+          if (!showAns) {
+            return null;
+          }
+
           return (
             <TouchableOpacity
               onPress={() => {
@@ -348,6 +364,7 @@ const Posted = (props: Props) => {
                     ansBy: item.item.ansBy,
                     postAt: posted.ppram.postAt,
                     ansAt: item.item.ansAt,
+                    answer: item.item.answer,
                   }),
                 );
                 props.goDetail();
@@ -374,10 +391,11 @@ const Posted = (props: Props) => {
                     marginTop: 5,
                     textAlign: 'right',
                     fontSize: 11,
+                    fontWeight: '600',
                     color: 'gray',
                   }}
                 >
-                  {item.item.ansBy}
+                  {item.item.answer}
                 </Text>
               </View>
               <Divider />

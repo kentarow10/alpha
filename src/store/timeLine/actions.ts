@@ -3,6 +3,7 @@ import { Asset } from 'expo-asset';
 import { db, storage, rtdb } from '../../../firebase/firebase';
 import { Post, Comment } from '../types';
 import { asyncGetUserName } from '../screenMgr/mgr';
+import { asyncGetName } from '../../helper';
 
 // 準備
 
@@ -28,12 +29,6 @@ export const getPosts = actionCreator<Post[]>('GET_POST');
 
 // async Actions
 
-export const asyncGetName = async (uid: string) => {
-  const uJson = await rtdb.ref(uid).once('value');
-
-  return uJson.val().name;
-};
-
 export const asyncGetPosts = () => {
   return dispatch => {
     dispatch(startFetch({}));
@@ -47,7 +42,7 @@ export const asyncGetPosts = () => {
           const poster = await asyncGetName(postBy);
           const width = doc.data().width;
           const height = doc.data().height;
-          const postAt = doc.data().postAt.toDate();
+          const postAt = doc.data().postAt;
           storage
             .ref(doc.data().path)
             .getDownloadURL()

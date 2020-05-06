@@ -129,7 +129,7 @@ export default function DrawerView({
   // findで先頭取得している？先頭が現在の状態で、それのタイプがdrawerなら開いている、ということ
   const isDrawerOpen = Boolean(state.history.find(it => it.type === 'drawer'));
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const handleDrawerOpen = React.useCallback(() => {
     navigation.dispatch({
@@ -154,7 +154,7 @@ export default function DrawerView({
     if (isDrawerOpen) {
       navigation.emit({ type: 'drawerOpen' });
     } else {
-      // dispatch(mypinModeOff({}));
+      dispatch(mypinModeOff({}));
       // console.log('kokokokokokokokokokokokokokokoko')
       navigation.emit({ type: 'drawerClose' });
     }

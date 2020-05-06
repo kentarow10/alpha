@@ -48,6 +48,7 @@ import { rtdb } from '../../firebase/firebase';
 import { cls, ScreenMgrState } from '../store/screenMgr/mgr';
 import { useName } from '../hooks/useName';
 import { GetUid, asyncLogout } from '../store/auth/auth';
+import { stringOmitter } from '../helper';
 
 type Props = DrawerContentComponentProps<DrawerContentOptions>;
 const { width, height } = Dimensions.get('window');
@@ -94,12 +95,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   modal: {
+    position: 'absolute',
+    bottom: height / 2 - 80,
+    left: width / 2 - (width * 2) / 6,
     backgroundColor: 'white',
     padding: 10,
-    height: height / 4,
+    height: height / 4 - 24,
     width: (width * 2) / 3,
     borderWidth: 15,
-    borderRadius: 45,
+    borderRadius: 20,
     borderColor: 'white',
   },
 });
@@ -180,22 +184,26 @@ export function DrawerContent(props: Props) {
         {props.mypinsMode ? (
           <>
             <View style={styles.userInfoSection}>
-              <View>
-                <Text style={{ fontFamily: 'Myfont' }}>グラピィ</Text>
-              </View>
-              <TouchableOpacity
-                style={{ marginLeft: 10 }}
-                onPress={() => {
-                  props.navigation.toggleDrawer();
+              <View
+                style={{
+                  height: 48,
+                  justifyContent: 'center',
+                  borderBottomColor: cls.grn,
+                  borderBottomWidth: 3,
                 }}
               >
-                <Avatar.Image
-                  source={{
-                    uri: me.iconPath,
+                <Text
+                  style={{
+                    fontFamily: 'myfont',
+                    fontSize: 20,
+                    textAlign: 'center',
+                    // color: cls.grn,
                   }}
-                  size={50}
-                />
-              </TouchableOpacity>
+                >
+                  どれからリンクしますか？
+                </Text>
+              </View>
+              <Divider />
             </View>
             <View style={styles.drawerSection}>
               <FlatList
@@ -222,14 +230,52 @@ export function DrawerContent(props: Props) {
                         setModal(true);
                       }}
                     >
-                      <View>
-                        <Image
-                          source={{ uri: item.item.uri }}
-                          style={{ width: 50, height: 50 }}
-                        />
-                        <Text>{item.item.thms[item.item.order - 1]}</Text>
-                        <Text>{item.item.body}</Text>
+                      <View
+                        style={{
+                          marginBottom: 7,
+                          borderLeftColor: cls.grn,
+                          borderLeftWidth: 4,
+                          borderRadius: 3,
+                          marginLeft: 6,
+                        }}
+                      >
+                        <View style={{ flexDirection: 'row' }}>
+                          <Image
+                            source={{ uri: item.item.uri }}
+                            style={{
+                              width: 60,
+                              height: 60,
+                              borderRadius: 10,
+                              margin: 8,
+                            }}
+                          />
+                          <View
+                            style={{
+                              height: 60,
+                              marginVertical: 8,
+                              // backgroundColor: 'red',
+                              flex: 1,
+                              padding: 8,
+                            }}
+                          >
+                            <Text style={{ fontWeight: '500', fontSize: 14 }}>
+                              {stringOmitter(
+                                25,
+                                item.item.thms[item.item.order - 1],
+                              )}
+                            </Text>
+                          </View>
+                        </View>
+                        <Divider />
+                        <View
+                          style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+                        >
+                          <Text style={{ fontWeight: '500', fontSize: 14 }}>
+                            {stringOmitter(40, item.item.body)}
+                          </Text>
+                        </View>
                       </View>
+                      {/* <Divider /> */}
                     </TouchableOpacity>
                   );
                 }}
@@ -242,32 +288,55 @@ export function DrawerContent(props: Props) {
               }}
             >
               <View style={styles.modal}>
-                <Text>この回答からリンクしますか？</Text>
-                <Button
+                <Text style={{ fontFamily: 'myfont' }}>
+                  この回答からリンクします
+                </Text>
+                {/* <Button
                   onPress={() => {
                     mutualCheck(selectedItem.ansDoc, detail.dpram.ansDoc);
                   }}
                 >
                   相互チェック
-                </Button>
-
-                <Button
-                  onPress={() => {
-                    dispatch(
-                      asyncLink(
-                        detail.dpram,
-                        selectedItem.ansDoc,
-                        selectedItem.postDoc,
-                        selectedItem.uri,
-                        selectedItem.thms,
-                        selectedItem.order,
-                        selectedItem.body,
-                      ),
-                    );
-                  }}
-                >
-                  OK!
-                </Button>
+                </Button> */}
+                <View>
+                  <Button
+                    style={{
+                      borderColor: '#DDDDDD',
+                      borderWidth: 1,
+                      marginTop: 24,
+                      padding: 8,
+                    }}
+                    labelStyle={{
+                      color: cls.grn,
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                    }}
+                    onPress={() => {
+                      dispatch(
+                        asyncLink(
+                          detail.dpram,
+                          selectedItem.ansDoc,
+                          selectedItem.postDoc,
+                          selectedItem.uri,
+                          selectedItem.thms,
+                          selectedItem.order,
+                          selectedItem.body,
+                        ),
+                      );
+                    }}
+                  >
+                    OK!
+                  </Button>
+                  <Button
+                    style={{ marginTop: 12 }}
+                    labelStyle={{ color: 'gray', fontSize: 12 }}
+                    onPress={() => {
+                      setModal(false);
+                    }}
+                  >
+                    キャンセル
+                  </Button>
+                </View>
               </View>
             </Modal>
           </>

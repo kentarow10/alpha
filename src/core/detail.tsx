@@ -51,7 +51,7 @@ import { mypinModeOn } from '../store/screenMgr/mgr';
 import { GetUid } from '../store/auth/auth';
 import { postedImage as PostedImage } from '../components/postedImage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { timeExpress } from '../helper';
+import { timeExpress, asyncGetUserInfoList } from '../helper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
@@ -62,6 +62,8 @@ const HEIGHT = Dimensions.get('window').height;
 type Props = {
   scrlRef: React.MutableRefObject<any>;
   close: boolean;
+  setModal: (b: boolean) => void;
+  setGotiters: (list: any[]) => void;
   goPosted: () => void;
 };
 
@@ -115,6 +117,7 @@ export const Detail = (props: Props) => {
       // height: 36,
       paddingTop: 9,
       paddingHorizontal: 18,
+      marginLeft: 8,
     },
     middle: {
       flexDirection: 'row',
@@ -183,6 +186,12 @@ export const Detail = (props: Props) => {
     dispatch(asyncListenGotit(detail.dpram.ansDoc, uid));
   }, [detail.dpram.ansDoc]);
 
+  useEffect(() => {
+    asyncGetUserInfoList(detail.gotitByList).then(userInfos => {
+      props.setGotiters(userInfos);
+    });
+  }, [detail.gotitByList]);
+
   const _keyboardWillShow = () => {
     setMock(true);
   };
@@ -248,11 +257,12 @@ export const Detail = (props: Props) => {
                 paddingHorizontal: 18,
                 paddingVertical: 18,
                 paddingBottom: 9,
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: '500',
+                marginLeft: 8,
               }}
             >
-              {/* {detail.dpram.thms[detail.dpram.order - 1]} */}
+              {detail.dpram.thms[detail.dpram.order - 1]}
             </Text>
           </TouchableOpacity>
 
@@ -260,32 +270,44 @@ export const Detail = (props: Props) => {
           <View style={styles.answer}>
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: 'bold',
                 color: '#00A85A',
               }}
             >
-              ハンドルネームの回答
+              {detail.dpram.answer}の回答
             </Text>
 
-            <Text
-              style={{
-                textAlign: 'left',
-                color: 'gray',
-                fontSize: 11,
-                fontWeight: '500',
-              }}
-            >
-              {detail.numGotit}人が分かる！と言っています
-            </Text>
+            {detail.numGotit === 0 ? (
+              <></>
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  props.setModal(true);
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    color: 'gray',
+                    fontSize: 11,
+                    fontWeight: '500',
+                  }}
+                >
+                  {detail.numGotit}人が分かる！と言っています
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
           <Text
             style={{
-              paddingHorizontal: 15,
-              paddingTop: 10,
+              paddingHorizontal: 18,
+              paddingTop: 18,
               fontWeight: '500',
-              fontSize: 14,
+              fontSize: 18,
               lineHeight: 16,
+              marginBottom: 16,
+              marginLeft: 8,
               // letterSpacing: 0.1,
             }}
           >
@@ -301,7 +323,7 @@ export const Detail = (props: Props) => {
                   marginTop: 24,
                 }}
               >
-                2020-03-19 20:33
+                {timeExpress(detail.dpram.ansAt)}
               </Text>
             </View>
             <View

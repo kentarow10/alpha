@@ -458,7 +458,7 @@ const post = () => {
             style={{
               paddingTop: 8,
               fontSize: 14,
-              fontWeight: '400',
+              fontWeight: 'bold',
               textAlignVertical: 'bottom',
               // fontFamily: 'tegaki',
             }}
