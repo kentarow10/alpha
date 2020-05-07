@@ -112,10 +112,9 @@ export function DrawerContent(props: Props) {
   const dispatch = useDispatch();
   const paperTheme = useTheme();
   const { theme, toggleTheme } = React.useContext(PreferencesContext);
-  const uid = useSelector(GetUid);
+  // const uid = useSelector(GetUid);
   const me = useSelector(GetAllMe);
   const detail = useSelector(DetailState);
-  // const mng = useSelector(ScreenMgrState);
   const [modal, setModal] = useState(false);
   const [selectedItem, setItem] = useState({
     ansDoc: '',
@@ -131,36 +130,6 @@ export function DrawerContent(props: Props) {
     postBy: '',
     ansBy: '',
   });
-
-  const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
-    const fromRef = rtdb.ref(fromAnsDoc);
-    const toRef = rtdb.ref(toAnsDoc);
-    let c1 = false;
-    let c2 = false;
-    fromRef.transaction(function(frommmm) {
-      if (frommmm.from[toAnsDoc]) {
-        c1 = true;
-      }
-    });
-    toRef.transaction(function(toooo) {
-      if (toooo.to[fromAnsDoc]) {
-        c2 = true;
-      }
-    });
-    if (c1 && c2) {
-      const refFrom = rtdb.ref(fromAnsDoc + '/mutual/' + toAnsDoc);
-      // refFrom.set({
-      //   ...fromRef.from[toAnsDoc],
-      // });
-      console.log('相互');
-
-      return true;
-    } else if (c1 || c2) {
-      console.log('おかしい');
-    } else {
-      return false;
-    }
-  };
 
   const translateX = Animated.interpolate(props.progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
@@ -209,23 +178,27 @@ export function DrawerContent(props: Props) {
               <FlatList
                 data={me.myPins}
                 renderItem={item => {
+                  console.log('drawercontent');
+                  console.log(item.item);
+
                   return (
                     <TouchableOpacity
                       onPress={() => {
                         console.log(item.item);
+                        const i = item.item;
                         setItem({
-                          ansDoc: '',
-                          postDoc: '',
-                          uri: '',
-                          width: 0,
-                          height: 0,
-                          thms: [],
-                          order: 1,
-                          body: '',
-                          postAt: new firebase.firestore.Timestamp(0, 0),
-                          ansAt: new firebase.firestore.Timestamp(0, 0),
-                          postBy: '',
-                          ansBy: '',
+                          ansDoc: i.ansDoc,
+                          postDoc: i.postDoc,
+                          uri: i.uri,
+                          width: i.width,
+                          height: i.height,
+                          thms: i.thms,
+                          order: i.order,
+                          body: i.body,
+                          postAt: i.postAt,
+                          ansAt: i.ansAt,
+                          postBy: i.postBy,
+                          ansBy: i.ansBy,
                         });
                         setModal(true);
                       }}
@@ -291,13 +264,6 @@ export function DrawerContent(props: Props) {
                 <Text style={{ fontFamily: 'myfont' }}>
                   この回答からリンクします
                 </Text>
-                {/* <Button
-                  onPress={() => {
-                    mutualCheck(selectedItem.ansDoc, detail.dpram.ansDoc);
-                  }}
-                >
-                  相互チェック
-                </Button> */}
                 <View>
                   <Button
                     style={{
@@ -321,6 +287,7 @@ export function DrawerContent(props: Props) {
                           selectedItem.thms,
                           selectedItem.order,
                           selectedItem.body,
+                          selectedItem.ansAt,
                         ),
                       );
                     }}

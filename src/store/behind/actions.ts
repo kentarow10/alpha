@@ -41,7 +41,7 @@ const toggleNice = (postRef, uid) => {
   return post;
 };
 
-export const mutualCheck = async (myAnsDoc: string, ansDoc: string) => {
+export const mutualCheckOld = async (myAnsDoc: string, ansDoc: string) => {
   const myFrom = db
     .collection('links')
     .doc(myAnsDoc)
@@ -159,6 +159,23 @@ export const asyncDelink = (myAnsDoc: string, toAnsDoc: string) => {
 
 // リンクする
 
+const mutualCheck = async (fromAnsDoc: string, toAnsDoc: string) => {
+  const fromM = db
+    .collection('links')
+    .doc(fromAnsDoc)
+    .collection('from')
+    .doc(toAnsDoc);
+
+  const data = await fromM.get();
+  console.log('data.exists');
+  console.log(data.exists);
+  if (!data.exists) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 export const asyncLink = (
   dparam: Pin,
   myansDoc: string,
@@ -167,39 +184,89 @@ export const asyncLink = (
   myansThms: string[],
   myansThmOrder: number,
   myansBody: string,
+  myansAnsAt: firebase.firestore.Timestamp,
 ) => {
   return async dispatch => {
+    console.log('call');
+    console.log({ dparam });
+    console.log({ myansDoc });
     const linkAt = firebase.firestore.FieldValue.serverTimestamp();
     const fromansRef = db
       .collection('links')
       .doc(dparam.ansDoc)
       .collection('from')
       .doc(myansDoc);
-    fromansRef.set({
+    const toansRef = db
+      .collection('links')
+      .doc(myansDoc)
+      .collection('to')
+      .doc(dparam.ansDoc);
+    const data = await fromansRef.get();
+    if (data.exists) {
+      alert('すでにリンクしています！');
+
+      return;
+    }
+    await fromansRef.set({
       postDoc: myansPostDoc,
       ansDoc: myansDoc,
       uri: myansUri,
       thms: myansThms,
       order: myansThmOrder,
       body: myansBody,
+      ansAt: myansAnsAt,
       linkAt,
       parent: dparam.ansDoc,
     });
-    const toansRef = db
-      .collection('links')
-      .doc(myansDoc)
-      .collection('to')
-      .doc(dparam.ansDoc);
-    toansRef.set({
+    await toansRef.set({
       postDoc: dparam.postDoc,
       ansDoc: dparam.ansDoc,
       uri: dparam.uri,
       thms: dparam.thms,
       order: dparam.order,
       body: dparam.body,
+      ansAt: dparam.ansAt,
       linkAt,
       parent: myansDoc,
     });
+    alert('リンクしました！');
+    const mutual = await mutualCheck(myansDoc, dparam.ansDoc);
+    if (mutual) {
+      console.log('mutual');
+      const fromM = db
+        .collection('links')
+        .doc(myansDoc)
+        .collection('mutual')
+        .doc(dparam.ansDoc);
+      const toM = db
+        .collection('links')
+        .doc(dparam.ansDoc)
+        .collection('mutual')
+        .doc(myansDoc);
+      await fromM.set({
+        postDoc: dparam.postDoc,
+        ansDoc: dparam.ansDoc,
+        uri: dparam.uri,
+        thms: dparam.thms,
+        order: dparam.order,
+        body: dparam.body,
+        ansAt: dparam.ansAt,
+        linkAt,
+        parent: myansDoc,
+      });
+      await toM.set({
+        postDoc: myansPostDoc,
+        ansDoc: myansDoc,
+        uri: myansUri,
+        thms: myansThms,
+        order: myansThmOrder,
+        body: myansBody,
+        ansAt: myansAnsAt,
+        linkAt,
+        parent: dparam.ansDoc,
+      });
+      alert('相互リンクになりました！');
+    }
   };
 };
 
