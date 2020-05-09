@@ -106,19 +106,6 @@ export const listenMyNices = (uid: string) => {
   };
 };
 
-// 自分が分かる！した回答一覧
-
-// export type SimplePin = {
-//   ansDoc: string;
-//   postDoc: string;
-//   uri: string;
-//   thms: string[];
-//   order: number;
-//   body: string;
-//   ansBy?: string;
-//   icon?: string;
-// };
-
 // 自分のわかる！のリスン
 
 export const listenMyGotits = (uid: string) => {
@@ -322,21 +309,6 @@ export const asyncGetMyInfo = (uid: string) => {
       });
   };
 };
-
-// export const asyncUpdateSib = (uid: string, text: string) => {
-//   return dispatch => {
-//     dispatch(startFetch({}));
-//     db.collection('users')
-//       .doc(uid)
-//       .update({
-//         siBody: text,
-//       })
-//       .then(() => {
-//         dispatch(endFetch({}));
-//         dispatch(updateSiBody({ siBody: text }));
-//       });
-//   };
-// };
 
 // android Only
 const aspectDict = {

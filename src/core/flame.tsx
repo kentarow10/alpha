@@ -43,6 +43,7 @@ import { asyncGetUserInfo, asyncGetUserInfoList } from '../helper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { cls } from '../store/screenMgr/mgr';
 import posted from '../behind/posted';
+import { GetUid } from '../store/auth/auth';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -66,6 +67,7 @@ const flame = () => {
   const navigation = useContext(NavigationContext);
   const route = useRoute<RouteProp<NavigationParamList, 'FLAME'>>();
   const prm = route.params;
+  const uid = useSelector(GetUid);
   const [showModal, setModal] = useState(false);
   const scrl = useRef(null);
   const [close, setClose] = useState(false);
@@ -108,11 +110,14 @@ const flame = () => {
       contentSize.height - paddingToBottom
     );
   };
+  const deletablePost = () => {
+    if (uid === prm.postBy) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   useEffect(() => {
-    const ts = new firebase.firestore.Timestamp(0, 0);
-    console.log(ts.toDate());
-    console.log({ prm });
-
     asyncGetUserInfo(prm.postBy).then(res => {
       setUserInfo({ iconUri: res.uri, userName: res.name });
     });
@@ -141,6 +146,7 @@ const flame = () => {
                 uri={prm.uri}
                 iconUri={userInfo.iconUri}
                 userName={userInfo.userName}
+                deletable={deletablePost()}
               />
               {navState === 'POSTED' ? (
                 <Posted

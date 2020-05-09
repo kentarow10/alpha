@@ -3,6 +3,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 
 import me from './me/me';
+import person from './person/person';
 import auth from './auth/auth';
 import timeline from './timeLine/timeLine';
 import {
@@ -15,6 +16,7 @@ import { screenMgr } from './screenMgr/mgr';
 
 const reducers = combineReducers({
   me,
+  person,
   auth,
   timeline,
   postedReducer,

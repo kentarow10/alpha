@@ -67,10 +67,6 @@ const calcmt = (r: number) => {
 
 const profile = () => {
   const dispatch = useDispatch();
-  const navigation = useContext(NavigationContext);
-  const me = useSelector(GetAllMe);
-  const uid = useSelector(GetUid);
-  // const mng = useSelector(ScreenMgrState);
   const styles = StyleSheet.create({
     btns: {
       flexDirection: 'row',
@@ -188,12 +184,7 @@ const profile = () => {
             }}
           >
             {/* <View></View> */}
-            <TouchableOpacity
-              style={styles.btns}
-              onPress={() => {
-                navigation.navigate('PPOST', { notMe: false });
-              }}
-            >
+            <TouchableOpacity style={styles.btns} onPress={() => {}}>
               <Entypo name="documents" size={16} color={cls.grn} />
               <Text
                 style={{

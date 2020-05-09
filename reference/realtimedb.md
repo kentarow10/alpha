@@ -7,7 +7,7 @@
 jsonのカタチ
 
 * uid
-    * username
+    * account
 
 * $postDoc
     * nicesCount

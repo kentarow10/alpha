@@ -13,6 +13,8 @@ import { NavigationContext } from '@react-navigation/native';
 // import shallowCompare from 'react-addons-shallow-compare';
 import { Img } from '../components/Img';
 import { Example2 } from '../../training/Sample.jsx';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -22,6 +24,7 @@ type Props = {
   userName?: string;
   accountName?: string;
   uri: string;
+  deletable: boolean;
 };
 
 export const postedImage = (props: Props) => {
@@ -30,7 +33,8 @@ export const postedImage = (props: Props) => {
       marginLeft: 24,
       marginHorizontal: 10,
       alignSelf: 'center',
-      backgroundColor: '#DDDDDD',
+      // backgroundColor: '#DDDDDD',
+      // flex: 2,
     },
     owner: {
       // flex: 0.7,
@@ -40,6 +44,7 @@ export const postedImage = (props: Props) => {
     names: {
       padding: 16,
       marginTop: 10,
+      flex: 8,
     },
     text: {
       marginTop: 4,
@@ -62,7 +67,7 @@ export const postedImage = (props: Props) => {
           source={{
             uri: props.iconUri,
           }}
-          size={50}
+          size={56}
           style={styles.avatar}
         />
         <View style={styles.names}>
@@ -70,6 +75,30 @@ export const postedImage = (props: Props) => {
             {props.userName}
           </Text>
         </View>
+        {props.deletable ? (
+          <View
+            style={{
+              width: 10,
+              backgroundColor: 'white',
+              flex: 0.8,
+              marginTop: 2,
+              marginRight: 4,
+            }}
+          >
+            <TouchableOpacity
+              style={{ backgroundColor: 'red' }}
+              onPress={() => {}}
+            >
+              <MaterialCommunityIcons
+                name="delete-forever-outline"
+                size={24}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
       </View>
       <Divider />
       <View style={{ height: WIDTH, width: WIDTH }}>

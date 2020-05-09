@@ -1,7 +1,7 @@
 import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
-import { Me } from './me';
+import { Me } from '../me/me';
 
 import {
   getMyInfo,
@@ -25,7 +25,7 @@ import {
   doneEdit,
 } from './actions';
 
-const initialState: Me = {
+const initialState2: Me = {
   isFetching: false,
   isError: false,
   isImgError: false,
@@ -39,17 +39,9 @@ const initialState: Me = {
   myNicePosts: [],
   myGotitPins: [],
   myLinkedPins: [],
-  edit: {
-    name: '',
-    siBody: '',
-    isCardUpdate: false,
-    isIconUpdate: false,
-    isHomeUpdate: false,
-    done: false,
-  },
 };
 
-const reducer: Reducer<Me> = reducerWithInitialState(initialState)
+const reducer: Reducer<Me> = reducerWithInitialState(initialState2)
   .case(startFetch, (state, payload) => ({
     ...state,
     isFetching: true,
@@ -106,65 +98,6 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
     ...state,
     isFetching: false,
     myLinkedPins: payload,
-  }))
-  .case(updateHomeImage, (state, payload) => {
-    return {
-      ...state,
-      edit: {
-        ...state.edit,
-        homeUri: payload.uri,
-        homeName: payload.filename,
-        isHomeUpdate: true,
-      },
-    };
-  })
-  .case(updateIconImage, (state, payload) => ({
-    ...state,
-    edit: {
-      ...state.edit,
-      iconUri: payload.uri,
-      iconName: payload.filename,
-      isIconUpdate: true,
-    },
-  }))
-  .case(updateCardImage, (state, payload) => ({
-    ...state,
-    edit: {
-      ...state.edit,
-      cardUri: payload.uri,
-      cardName: payload.filename,
-      isCardUpdate: true,
-    },
-  }))
-  .case(updateName, (state, payload) => ({
-    ...state,
-    edit: {
-      ...state.edit,
-      name: payload,
-    },
-  }))
-  .case(updateSiBody, (state, payload) => ({
-    ...state,
-    edit: {
-      ...state.edit,
-      siBody: payload,
-    },
-  }))
-  .case(initEditScreen, (state, payload) => ({
-    ...state,
-    edit: {
-      ...state.edit,
-      homeUri: payload.homeUri,
-      iconUri: payload.iconUri,
-      done: false,
-    },
-  }))
-  .case(doneEdit, (state, payload) => ({
-    ...state,
-    edit: {
-      ...state.edit,
-      done: true,
-    },
   }));
 
 export default reducer;

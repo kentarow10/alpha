@@ -86,6 +86,9 @@ export type NavigationParamList = {
     postAt: firebase.firestore.Timestamp;
     ansAt: firebase.firestore.Timestamp;
   };
+  PPOST: {
+    notMe: boolean;
+  };
 };
 
 // me

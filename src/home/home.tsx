@@ -24,6 +24,7 @@ import { EditProfile } from '../profile/editProfile';
 import post from '../behind/post';
 import { useDispatch } from 'react-redux';
 import { getRootNavigation } from '../store/screenMgr/mgr';
+import { PersonalPosts } from '../profile/personalposts';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -140,6 +141,13 @@ export const HomeNavigator = () => {
       <Drawer.Screen
         name="FLAME"
         component={flame}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Drawer.Screen
+        name="PPOST"
+        component={PersonalPosts}
         options={{
           unmountOnBlur: true,
         }}
