@@ -150,6 +150,8 @@ export const detailReducer: Reducer<DetailScreen> = reducerWithInitialState(
     comments: payload,
   }))
   .case(getLinks, (state, payload) => {
+    console.log('{ payload }');
+    console.log({ payload });
     const mUpdated = state.mLinks.concat(payload.mpin);
     const fUpdated = state.fLinks.concat(payload.fpin);
     const tUpdated = state.tLinks.concat(payload.tpin);

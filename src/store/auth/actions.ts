@@ -28,7 +28,6 @@ export const setUserInfo = actionCreator<{
 
 export const login = (mail: string, pass: string) => {
   return dispatch => {
-    // dispatch(trnStart({}));
     FireBase.auth()
       .signInWithEmailAndPassword(mail, pass)
       .then(res => {
@@ -99,17 +98,9 @@ export const createUser = (
             const uid = res.user.uid;
 
             const userRef = rtdb.ref(uid);
-            userRef.set({ name, account });
+            userRef.set({ account });
             const uref = db.collection('users').doc(uid);
 
-            // uref
-            //   .collection('nices')
-            //   .doc('samplePostDocument')
-            //   .set({ flag: true });
-            // uref
-            //   .collection('gotits')
-            //   .doc('sampleAnsDocument')
-            //   .set({ flag: true });
             uref
               .set({
                 name,
@@ -139,6 +130,8 @@ export const createUser = (
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
+        alert(errorCode);
+        alert(errorMessage);
       });
   };
 };

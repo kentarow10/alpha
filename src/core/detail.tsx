@@ -47,12 +47,13 @@ import {
   // asyncGotit2,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
-import { mypinModeOn } from '../store/screenMgr/mgr';
+import { mypinModeOn, cls } from '../store/screenMgr/mgr';
 import { GetUid } from '../store/auth/auth';
 import { postedImage as PostedImage } from '../components/postedImage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { timeExpress, asyncGetUserInfoList } from '../helper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { PinItem } from '../components/pinItem';
 
 // import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -95,9 +96,26 @@ export const Detail = (props: Props) => {
     }
   };
   const [focus, setFocus] = useState('link');
+  const [links, setLinks] = useState('mutual');
+  const linkdata = () => {
+    if (links === 'mutual') {
+      return detail.mLinks;
+    } else if (links === 'from') {
+      return detail.fLinks;
+    } else {
+      return detail.tLinks;
+    }
+  };
   const focusColor = (name: string, focus: string) => {
     if (name === focus) {
-      return '#00A85A';
+      return cls.grn;
+    } else {
+      return 'gray';
+    }
+  };
+  const focusColor2 = (name: string, focus: string) => {
+    if (name === focus) {
+      return cls.rd;
     } else {
       return 'gray';
     }
@@ -167,6 +185,7 @@ export const Detail = (props: Props) => {
       console.log(mTime);
       console.log(fTime);
       console.log(tTime);
+      console.log();
       dispatch(asyncGetMoreLinks(detail.dpram.ansDoc, mTime, fTime, tTime));
     } else {
       console.log('not called more fetch');
@@ -175,14 +194,14 @@ export const Detail = (props: Props) => {
 
   useEffect(() => {
     dispatch(asyncFetchComment(detail.dpram.postDoc, detail.dpram.ansDoc));
-    dispatch(
-      asyncGetMoreLinks(
-        detail.dpram.ansDoc,
-        new firebase.firestore.Timestamp(0, 0),
-        new firebase.firestore.Timestamp(0, 0),
-        new firebase.firestore.Timestamp(0, 0),
-      ),
-    );
+    // dispatch(
+    //   asyncGetMoreLinks(
+    //     detail.dpram.ansDoc,
+    //     new firebase.firestore.Timestamp(0, 0),
+    //     new firebase.firestore.Timestamp(0, 0),
+    //     new firebase.firestore.Timestamp(0, 0),
+    //   ),
+    // );
     dispatch(asyncListenGotit(detail.dpram.ansDoc, uid));
   }, [detail.dpram.ansDoc]);
 
@@ -367,7 +386,7 @@ export const Detail = (props: Props) => {
                   height: 1,
                 },
               }}
-              labelStyle={{ fontWeight: 'bold' }}
+              labelStyle={{ fontSize: 14, fontFamily: 'myfont' }}
               onPress={() => {
                 dispatch(mypinModeOn({}));
                 navigation.toggleDrawer();
@@ -404,7 +423,8 @@ export const Detail = (props: Props) => {
                 margin: 0,
                 marginVertical: 8,
                 padding: 0,
-                fontSize: 12,
+                fontSize: 14,
+                fontFamily: 'myfont',
               }}
               onPress={() => {
                 setFocus('link');
@@ -433,7 +453,8 @@ export const Detail = (props: Props) => {
                 margin: 0,
                 marginVertical: 8,
                 padding: 0,
-                fontSize: 12,
+                fontSize: 14,
+                fontFamily: 'myfont',
               }}
               onPress={() => {
                 setFocus('comment');
@@ -445,8 +466,59 @@ export const Detail = (props: Props) => {
           <View style={{ height: 2, backgroundColor: '#00A85A' }}></View>
           {focus === 'link' ? (
             <>
-              <SectionList
-                sections={DATA}
+              <View
+                style={{
+                  flex: 1,
+                  marginVertical: 18,
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setLinks('mutual');
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: focusColor2('mutual', links),
+                      fontFamily: 'myfont',
+                    }}
+                  >
+                    相互リンク
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setLinks('from');
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: focusColor2('from', links),
+                      fontFamily: 'myfont',
+                    }}
+                  >
+                    リンクもと
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setLinks('to');
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: focusColor2('to', links),
+                      fontFamily: 'myfont',
+                    }}
+                  >
+                    リンクさき
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                data={linkdata()}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={item => {
                   const i = item.item;
@@ -468,80 +540,15 @@ export const Detail = (props: Props) => {
                           );
                         }}
                       >
-                        <View style={styles.link}>
-                          <View style={styles.itemHeader}>
-                            <Image
-                              source={{ uri: item.item.uri }}
-                              resizeMode="cover"
-                              style={{
-                                width: 70,
-                                height: 70,
-                                borderRadius: 10,
-                              }}
-                            />
-                            <View style={styles.itemBody}>
-                              <View>
-                                <Text style={{ fontWeight: '500' }}>
-                                  {item.item.thms[item.item.order - 1]}
-                                </Text>
-                              </View>
-                              <View>
-                                <Text
-                                  style={{
-                                    marginTop: 9,
-                                    fontWeight: '500',
-                                  }}
-                                >
-                                  {item.item.body}
-                                </Text>
-                              </View>
-                            </View>
-                          </View>
-                        </View>
-                        <Divider />
+                        <PinItem
+                          uri={i.uri}
+                          thm={i.thms[i.order - 1]}
+                          body={i.body}
+                        />
                       </TouchableOpacity>
                     </>
                   );
                 }}
-                renderSectionHeader={({ section: { title, icon } }) => (
-                  <>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        height: 30,
-                        padding: 6,
-                        paddingHorizontal: 18,
-                        marginBottom: 4,
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: 24,
-                          height: 24,
-                          paddingTop: 2,
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <MaterialCommunityIcons
-                          name={icon}
-                          size={20}
-                          color="#F98A8A"
-                        />
-                      </View>
-                      <Text
-                        style={{
-                          marginLeft: 6,
-                          paddingTop: 6,
-                          fontWeight: '500',
-                          color: 'gray',
-                        }}
-                      >
-                        {title}
-                      </Text>
-                    </View>
-                    <Divider />
-                  </>
-                )}
               />
               <View style={styles.tabMock}></View>
             </>

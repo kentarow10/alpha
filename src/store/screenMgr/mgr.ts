@@ -12,6 +12,8 @@ export type ScreenMgr = {
 export const cls = {
   grn: '#00A85A',
   rd: '#F98A8A',
+  yl: '#FAFA89',
+  sky: '89FAFA',
   off: '#e5e5e5',
   dpgr: '#5DA797',
 };

@@ -8,8 +8,6 @@ type SampleProps = {
 };
 
 export const Img = (props: SampleProps) => {
-  console.log('running!!!');
-
   return (
     <Image
       source={{ uri: props.uri }}

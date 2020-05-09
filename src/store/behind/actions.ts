@@ -41,44 +41,44 @@ const toggleNice = (postRef, uid) => {
   return post;
 };
 
-export const mutualCheckOld = async (myAnsDoc: string, ansDoc: string) => {
-  const myFrom = db
-    .collection('links')
-    .doc(myAnsDoc)
-    .collection('from')
-    .doc(ansDoc);
-  const myTo = db
-    .collection('links')
-    .doc(myAnsDoc)
-    .collection('to')
-    .doc(ansDoc);
-  const myMutual = db
-    .collection('links')
-    .doc(myAnsDoc)
-    .collection('mutual')
-    .doc(ansDoc);
+// export const mutualCheckOld = async (myAnsDoc: string, ansDoc: string) => {
+//   const myFrom = db
+//     .collection('links')
+//     .doc(myAnsDoc)
+//     .collection('from')
+//     .doc(ansDoc);
+//   const myTo = db
+//     .collection('links')
+//     .doc(myAnsDoc)
+//     .collection('to')
+//     .doc(ansDoc);
+//   const myMutual = db
+//     .collection('links')
+//     .doc(myAnsDoc)
+//     .collection('mutual')
+//     .doc(ansDoc);
 
-  return db.runTransaction(trn => {
-    return trn.get(myTo).then(dt => {
-      if (dt.exists) {
-        trn.get(myFrom).then(df => {
-          if (df.exists) {
-            trn.update(myMutual, {
-              postDoc: df.data().postDoc,
-              uri: df.data().uri,
-              thm: df.data().thm,
-              body: df.data().body,
-            });
-          } else {
-            trn.delete(myMutual);
-          }
-        });
-      } else {
-        trn.delete(myMutual);
-      }
-    });
-  });
-};
+//   return db.runTransaction(trn => {
+//     return trn.get(myTo).then(dt => {
+//       if (dt.exists) {
+//         trn.get(myFrom).then(df => {
+//           if (df.exists) {
+//             trn.update(myMutual, {
+//               postDoc: df.data().postDoc,
+//               uri: df.data().uri,
+//               thm: df.data().thm,
+//               body: df.data().body,
+//             });
+//           } else {
+//             trn.delete(myMutual);
+//           }
+//         });
+//       } else {
+//         trn.delete(myMutual);
+//       }
+//     });
+//   });
+// };
 
 // plain Actions
 export const fetching = actionCreator<{}>('FETCH');
@@ -411,28 +411,67 @@ export const asyncPost = (
     } else {
       thms.push(thm1);
     }
-    db.collection('posts')
-      .add({
-        path: `${uid}/${dt}/${imageName}`,
-        width,
-        height,
-        postBy: uid,
-        thms,
-        postAt: date,
-      })
-      .then(res => {
-        const postRef = rtdb.ref(res.id);
-        postRef.set({ nicesCount: 0, nices: { test: null } });
-        const ref = storage.ref().child(`${uid}/${dt}/${imageName}`);
-        ref.put(blob);
 
-        alert('投稿完了しました!');
-        dispatch(done({}));
-      })
-      .catch(error => {
-        console.error('Error writing document: ', error);
-        dispatch(error({}));
-      });
+    // Create the file metadata
+    const metadata = {
+      cacheControl: 'public,max-age=300',
+    };
+
+    // Upload file and metadata to the object 'images/mountains.jpg'
+    const uploadTask = storage
+      .ref()
+      .child(`${uid}/${dt}/${imageName}`)
+      .put(blob, metadata);
+
+    // Listen for state changes, errors, and completion of the upload.
+    uploadTask.on(
+      firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+      function(snapshot) {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+        }
+      },
+      function(error) {
+        console.log(error);
+        alert(error);
+      },
+      function() {
+        // Upload completed successfully, now we can get the download URL
+        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          console.log('File available at', downloadURL);
+          db.collection('posts')
+            .add({
+              path: `${uid}/${dt}/${imageName}`,
+              uri: downloadURL,
+              width,
+              height,
+              postBy: uid,
+              thms,
+              postAt: date,
+            })
+            .then(res => {
+              const postRef = rtdb.ref(res.id);
+              postRef.set({ nicesCount: 0, nices: { test: null } });
+
+              alert('投稿完了しました!');
+              dispatch(done({}));
+            })
+            .catch(error => {
+              console.error('Error writing document: ', error);
+              dispatch(error({}));
+            });
+        });
+      },
+    );
   };
 };
 
