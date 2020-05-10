@@ -562,6 +562,7 @@ export const asyncGotit = (dparam: Pin, uid: string) => {
       .collection('gotits')
       .doc(dparam.ansDoc);
     const obj = {
+      parent: uid,
       postDoc: dparam.postDoc,
       ansDoc: dparam.ansDoc,
       uri: dparam.uri,
@@ -638,6 +639,7 @@ export const asyncNice = (
       .collection('nices')
       .doc(postDoc);
     const obj = {
+      parent: uid,
       flag: true,
       postDoc,
       uri,

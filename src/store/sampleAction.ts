@@ -36,6 +36,7 @@ export const deleteComments = async (postDoc: string, ansDoc: string) => {
 };
 
 const deletePostInUsers = async (postDoc: string) => {
+  console.log('delete post in users');
   const them = await db
     .collectionGroup('nices')
     .where('postDoc', '==', postDoc)
@@ -182,13 +183,18 @@ export const deleteAnswer = async (postDoc: string, ansDoc: string) => {
 };
 
 export const deleteAnswers = async (postDoc: string) => {
+  console.log('delete answers');
   const post = db.collection('posts').doc(postDoc);
   const deleteDoc = await post.collection('answers').get();
   const batchArray: firebase.firestore.WriteBatch[] = [];
 
   deleteDoc.forEach(async d => {
+    console.log('in roop');
     await deleteRefInLinks(d.id);
+    console.log('ok1');
     await deleteComments(postDoc, d.id);
+    console.log('ok2');
+    await rtdb.ref(d.id).remove();
 
     batchArray.push(db.batch());
     let operationCounter = 0;
@@ -207,8 +213,16 @@ export const deleteAnswers = async (postDoc: string) => {
 };
 
 export const deletePost = async (postDoc: string) => {
-  const post = db.collection('posts').doc(postDoc);
-  await deleteAnswers(postDoc);
-  await post.delete();
-  await rtdb.ref(postDoc).remove();
+  return async dispatch => {
+    const post = db.collection('posts').doc(postDoc);
+    console.log('-------------------------------------');
+    await deleteAnswers(postDoc);
+    console.log('first');
+    await post.delete();
+    console.log('second');
+    await rtdb.ref(postDoc).remove();
+    console.log('third');
+    await deletePostInUsers(postDoc);
+    console.log('-------------------------------------');
+  };
 };

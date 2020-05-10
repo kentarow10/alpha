@@ -15,6 +15,9 @@ import { Img } from '../components/Img';
 import { Example2 } from '../../training/Sample.jsx';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { deletePost } from '../store/sampleAction';
+import { useDispatch } from 'react-redux';
+import { asyncDeletePost } from '../store/me/me';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -24,10 +27,12 @@ type Props = {
   userName?: string;
   accountName?: string;
   uri: string;
+  postDoc: string;
   deletable: boolean;
 };
 
 export const postedImage = (props: Props) => {
+  const dispatch = useDispatch();
   const styles = StyleSheet.create({
     avatar: {
       marginLeft: 24,
@@ -87,7 +92,9 @@ export const postedImage = (props: Props) => {
           >
             <TouchableOpacity
               style={{ backgroundColor: 'red' }}
-              onPress={() => {}}
+              onPress={() => {
+                dispatch(asyncDeletePost(props.postDoc));
+              }}
             >
               <MaterialCommunityIcons
                 name="delete-forever-outline"

@@ -147,6 +147,7 @@ const flame = () => {
                 iconUri={userInfo.iconUri}
                 userName={userInfo.userName}
                 deletable={deletablePost()}
+                postDoc={prm.postDoc}
               />
               {navState === 'POSTED' ? (
                 <Posted
