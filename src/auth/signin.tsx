@@ -72,6 +72,15 @@ const signin = () => {
       >
         ユーザー登録
       </Button>
+      {/* <Button
+        onPress={() => {
+          helloWorld();
+        }}
+        mode="contained"
+        // style={styles.btnLogin}
+      >
+        func
+      </Button> */}
     </SafeAreaView>
   );
 };

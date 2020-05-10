@@ -1,6 +1,6 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import { db, storage, rtdb } from '../../../firebase/firebase';
+import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
 import { Me } from './me';
 import { Post, NicePost, Pin, GotitPin, LinkPin } from '../types';
 import { MyName } from './selector';
@@ -677,11 +677,24 @@ export const deleteAnswers = async (postDoc: string) => {
   batchArray.forEach(async batch => await batch.commit());
 };
 
+const deleteAllAnswers = (postDoc: string) => {
+  const path = `posts/${postDoc}/answers`;
+  const deleteFn = firebase.functions().httpsCallable('recursiveDelete');
+  deleteFn({ path: path })
+    .then(function(result) {
+      console.log('Delete success: ' + JSON.stringify(result));
+    })
+    .catch(function(err) {
+      console.log('Delete failed, see console,');
+      console.warn(err);
+    });
+};
+
 export const asyncDeletePost = (postDoc: string) => {
   return async dispatch => {
     const post = db.collection('posts').doc(postDoc);
     console.log('-------------------------------------');
-    await deleteAnswers(postDoc);
+    deleteAllAnswers(postDoc);
     console.log('first');
     await post.delete();
     console.log('second');
