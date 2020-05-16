@@ -35,7 +35,7 @@ import {
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
-import { asyncGetAnss } from '../store/behind/behind';
+import { asyncGetAnss, AnsState, PostState } from '../store/behind/behind';
 import { NavigationContext } from '@react-navigation/native';
 import { Ftext } from '../components/Ftext';
 import { Tegaki } from '../components/Tegaki';
@@ -49,6 +49,7 @@ import {
 } from 'react-native-gesture-handler';
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { calcHeightRank } from '../helper';
+import post from '../behind/post';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -75,6 +76,8 @@ const profile = () => {
   const me = useSelector(GetAllMe);
   const uid = useSelector(GetUid);
   const mng = useSelector(ScreenMgrState);
+  const post = useSelector(PostState);
+  const ans = useSelector(AnsState);
   const styles = StyleSheet.create({
     btns: {
       flexDirection: 'row',
@@ -119,6 +122,18 @@ const profile = () => {
     dispatch(listenMyNices(uid));
     dispatch(listenMyGotits(uid));
   }, []);
+
+  useEffect(() => {
+    if (post.isDone) {
+      dispatch(asyncGetMyPosts(uid));
+    }
+  }, [post.isDone]);
+
+  useEffect(() => {
+    if (ans.isDone) {
+      dispatch(asyncGetMyPins(uid));
+    }
+  }, [ans.isDone]);
 
   useEffect(() => {
     if (me.edit.done) {

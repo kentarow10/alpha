@@ -340,13 +340,8 @@ export const asyncAnswer = (
   ansBy: string,
 ) => {
   return async dispatch => {
-    dispatch(fetching({}));
+    dispatch(ansInit({}));
     const ansAt = firebase.firestore.FieldValue.serverTimestamp();
-    console.log('caaaaaaaaaaaaaaaaaalled');
-    // console.log({ pparam });
-    // console.log({ order });
-    // console.log({ body });
-    // console.log({ ansBy });
 
     db.collection('posts')
       .doc(pparam.postDoc)
@@ -363,14 +358,16 @@ export const asyncAnswer = (
         thms: pparam.thms,
         postBy: pparam.postBy,
         postAt: pparam.postAt,
+        gc: 0,
+        gbl: [],
       })
       .then(res => {
         console.log('caaaaaaaaaaaaaaaaaaaaaaaaalllllllll');
-        const ansRef = rtdb.ref(res.id);
-        ansRef.set({
-          gCount: 0,
-          gs: { test: null },
-        });
+        // const ansRef = rtdb.ref(res.id);
+        // ansRef.set({
+        //   gCount: 0,
+        //   gs: { test: null },
+        // });
         alert('回答しました！');
         dispatch(done({}));
       })
@@ -450,17 +447,19 @@ export const asyncPost = (
           console.log('File available at', downloadURL);
           db.collection('posts')
             .add({
-              path: `${uid}/${dt}/${imageName}`,
+              // path: `${uid}/${dt}/${imageName}`,
               uri: downloadURL,
               width,
               height,
               postBy: uid,
               thms,
               postAt: date,
+              nc: 0,
+              nbl: [],
             })
             .then(res => {
-              const postRef = rtdb.ref(res.id);
-              postRef.set({ nicesCount: 0, nices: { test: null } });
+              // const postRef = rtdb.ref(res.id);
+              // postRef.set({ nicesCount: 0, nices: { test: null } });
 
               alert('投稿完了しました!');
               dispatch(done({}));
@@ -499,67 +498,54 @@ export const asyncChooseImage = () => {
 
 // わかる！のリスン
 
-export const asyncListenGotit = (ansDoc: string, uid: string) => {
-  return disptch => {
-    console.log('listener is called');
-    rtdb.ref(ansDoc).on('value', snap => {
-      if (snap.exists) {
-        const numGotit = snap.val().gCount;
-        if (snap.val().gs) {
-          // console.log(snap.val().gs);
-          const gotitByList = Object.keys(snap.val().gs);
-          const isGotit = gotitByList.includes(uid);
-          disptch(getGotit({ numGotit, gotitByList, isGotit }));
-        } else {
-          disptch(getGotit({ numGotit: 0, gotitByList: [], isGotit: false }));
-        }
-      }
-    });
-  };
-};
+// export const asyncListenGotit = (ansDoc: string, uid: string) => {
+//   return disptch => {
+//     console.log('listener is called');
+//     rtdb.ref(ansDoc).on('value', snap => {
+//       if (snap.exists) {
+//         const numGotit = snap.val().gCount;
+//         if (snap.val().gs) {
+//           // console.log(snap.val().gs);
+//           const gotitByList = Object.keys(snap.val().gs);
+//           const isGotit = gotitByList.includes(uid);
+//           disptch(getGotit({ numGotit, gotitByList, isGotit }));
+//         } else {
+//           disptch(getGotit({ numGotit: 0, gotitByList: [], isGotit: false }));
+//         }
+//       }
+//     });
+//   };
+// };
 
 // 良いねのリスン
 
-export const asyncListenNice = (postDoc: string, uid: string) => {
-  return dispatch => {
-    rtdb.ref(postDoc).on('value', snap => {
-      if (snap.exists) {
-        const numNice = snap.val().nicesCount;
-        if (snap.val().nices) {
-          const niceByList = Object.keys(snap.val().nices);
-          const isNiced = niceByList.includes(uid);
-          dispatch(getNice({ numNice, niceByList, isNiced }));
-        } else {
-          dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
-        }
-      }
-    });
-  };
-};
+// export const asyncListenNice = (postDoc: string, uid: string) => {
+//   return dispatch => {
+//     rtdb.ref(postDoc).on('value', snap => {
+//       if (snap.exists) {
+//         const numNice = snap.val().nicesCount;
+//         if (snap.val().nices) {
+//           const niceByList = Object.keys(snap.val().nices);
+//           const isNiced = niceByList.includes(uid);
+//           dispatch(getNice({ numNice, niceByList, isNiced }));
+//         } else {
+//           dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
+//         }
+//       }
+//     });
+//   };
+// };
 
 // わかる！を押した時
 
 export const asyncGotit = (dparam: Pin, uid: string) => {
   return async dispatch => {
-    const ansRef = rtdb.ref(dparam.ansDoc);
-    ansRef.transaction(function(ans) {
-      if (ans) {
-        if (ans.gs && ans.gs[uid]) {
-          ans.gCount--;
-          ans.gs[uid] = null;
-        } else {
-          ans.gCount++;
-          if (!ans.gs) {
-            ans.gs = {};
-          }
-          ans.gs[uid] = true;
-        }
-
-        return ans;
-      }
-    });
-
     const gotitAt = firebase.firestore.FieldValue.serverTimestamp();
+    const target = db
+      .collection('posts')
+      .doc(dparam.postDoc)
+      .collection('answers')
+      .doc(dparam.ansDoc);
     const mygotit = db
       .collection('users')
       .doc(uid)
@@ -583,6 +569,19 @@ export const asyncGotit = (dparam: Pin, uid: string) => {
       gotitBy: uid,
       gotitAt,
     };
+
+    db.runTransaction(trn => {
+      return trn.get(target).then(anssnap => {
+        const cl = anssnap.data().gbl;
+        if (cl.includes(uid)) {
+          const nl = cl.filter(u => u !== uid);
+          trn.update(target, { gc: nl.length, gbl: nl });
+        } else {
+          cl.push(uid);
+          trn.update(target, { gc: cl.length, gbl: cl });
+        }
+      });
+    });
 
     return db
       .runTransaction(trn => {
@@ -618,25 +617,26 @@ export const asyncNice = (
 ) => {
   return dispatch => {
     if (postDoc === undefined) return;
-    const postRef = rtdb.ref(postDoc);
-    postRef.transaction(function(post) {
-      if (post) {
-        if (post.nices && post.nices[uid]) {
-          post.nicesCount--;
-          post.nices[uid] = null;
-        } else {
-          post.nicesCount++;
-          if (!post.nices) {
-            post.nices = {};
-          }
-          post.nices[uid] = true;
-        }
-      }
+    // const postRef = rtdb.ref(postDoc);
+    // postRef.transaction(function(post) {
+    //   if (post) {
+    //     if (post.nices && post.nices[uid]) {
+    //       post.nicesCount--;
+    //       post.nices[uid] = null;
+    //     } else {
+    //       post.nicesCount++;
+    //       if (!post.nices) {
+    //         post.nices = {};
+    //       }
+    //       post.nices[uid] = true;
+    //     }
+    //   }
 
-      return post;
-    });
+    //   return post;
+    // });
 
     const niceAt = firebase.firestore.FieldValue.serverTimestamp();
+    const target = db.collection('posts').doc(postDoc);
     const mynice = db
       .collection('users')
       .doc(uid)
@@ -655,6 +655,19 @@ export const asyncNice = (
       niceBy: uid,
       niceAt,
     };
+
+    db.runTransaction(trn => {
+      return trn.get(target).then(postsnap => {
+        const cl = postsnap.data().nbl;
+        if (cl.includes(uid)) {
+          const nl = cl.filter(u => u !== uid);
+          trn.update(target, { nc: nl.length, nbl: nl });
+        } else {
+          cl.push(uid);
+          trn.update(target, { nc: cl.length, nbl: cl });
+        }
+      });
+    });
 
     return db
       .runTransaction(trn => {
@@ -914,6 +927,7 @@ export const asyncGetMoreLinks = (
       });
     });
     const links = mutualList.concat(fromList).concat(toList);
+    console.log('ここまでOK');
     dispatch(
       getLinks({ mpin: mutualList, fpin: fromList, tpin: toList, links }),
     );
@@ -986,5 +1000,55 @@ export const asyncGetLinks = (ansDoc: string) => {
     dispatch(
       getLinks({ mpin: mutualList, fpin: fromList, tpin: toList, links }),
     );
+  };
+};
+
+// いいねのリスン
+
+export const listenNices = (postDoc: string, uid: string) => {
+  return async dispatch => {
+    db.collection('posts')
+      .doc(postDoc)
+      .onSnapshot(snap => {
+        const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
+        console.log('listened change at ' + source);
+        if (snap.exists) {
+          const numNice = snap.data().nc;
+          if (snap.data().nbl) {
+            const niceByList = snap.data().nbl;
+            const isNiced = niceByList.includes(uid);
+            dispatch(getNice({ numNice, niceByList, isNiced }));
+          } else {
+            dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
+          }
+        }
+      });
+  };
+};
+
+// 分かるのリスン
+
+export const listenGotits = (postDoc: string, ansDoc: string, uid: string) => {
+  return async dispatch => {
+    db.collection('posts')
+      .doc(postDoc)
+      .collection('answers')
+      .doc(ansDoc)
+      .onSnapshot(snap => {
+        const source = snap.metadata.hasPendingWrites ? 'Local' : 'Server';
+        console.log('listened change at ' + source);
+        if (snap.exists) {
+          const numGotit = snap.data().gc;
+          if (snap.data().gs) {
+            const gotitByList = snap.data().gbl;
+            const isGotit = gotitByList.includes(uid);
+            dispatch(getGotit({ numGotit, gotitByList, isGotit }));
+          } else {
+            dispatch(
+              getGotit({ numGotit: 0, gotitByList: [], isGotit: false }),
+            );
+          }
+        }
+      });
   };
 };

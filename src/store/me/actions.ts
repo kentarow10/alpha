@@ -212,37 +212,33 @@ export const asyncGetMyLinkedAnss = (uid: string) => {
 export const asyncGetMyPosts = (uid: string) => {
   return dispatch => {
     dispatch(startFetch({}));
+    console.log('get my posts');
     db.collection('posts')
       .where('postBy', '==', uid)
       .get()
       .then(snap => {
         const posts: Post[] = [];
         snap.forEach(doc => {
+          console.log(doc.data());
+          const uri = doc.data().uri;
           const thms = doc.data().thms;
           const postBy = doc.data().postBy;
           const width = doc.data().width;
           const height = doc.data().height;
           const postAt = doc.data().postAt;
-          storage
-            .ref(doc.data().path)
-            .getDownloadURL()
-            .then(function(uri) {
-              posts.push({
-                postDoc: doc.id,
-                uri,
-                path: doc.data().path,
-                thms,
-                postBy,
-                width,
-                height,
-                postAt,
-              });
 
-              dispatch(getMyPosts(posts));
-            })
-            .catch(e => {
-              dispatch(fetchError({}));
-            });
+          posts.push({
+            postDoc: doc.id,
+            uri,
+            path: doc.data().path,
+            thms,
+            postBy,
+            width,
+            height,
+            postAt,
+          });
+
+          dispatch(getMyPosts(posts));
         });
         console.log(posts.length);
       })
@@ -256,8 +252,12 @@ export const asyncGetMyPosts = (uid: string) => {
 // 自分のピン一覧取得
 
 export const asyncGetMyPins = (uid: string) => {
-  return dispatch => {
+  return async dispatch => {
     dispatch(startFetch({}));
+    const ui = await db
+      .collection('users')
+      .doc(uid)
+      .get();
     const anss = db.collectionGroup('answers').where('ansBy', '==', uid);
     anss.get().then(snap => {
       const myanss: Pin[] = [];
@@ -271,10 +271,11 @@ export const asyncGetMyPins = (uid: string) => {
           thms: doc.data().thms,
           order: doc.data().order,
           body: doc.data().body,
-          postBy: doc.data().postedBy,
+          postBy: doc.data().postBy,
           ansBy: doc.data().ansBy,
-          postAt: doc.data().postedAt,
+          postAt: doc.data().postAt,
           ansAt: doc.data().ansAt,
+          answer: ui.data().name,
         };
         myanss.push(ans);
       });
@@ -569,122 +570,6 @@ const deleteAnsInUsers = async (ansDoc: string) => {
   batchArray.forEach(async batch => await batch.commit());
 };
 
-export const deleteAnswer = async (postDoc: string, ansDoc: string) => {
-  const ans = db
-    .collection('posts')
-    .doc(postDoc)
-    .collection('answers')
-    .doc(ansDoc);
-  await deleteRefInLinks(ansDoc);
-  await deleteComments(postDoc, ansDoc);
-  await ans.delete();
-  await rtdb.ref(ansDoc).remove();
-};
-
-export const deleteAnswers = async (postDoc: string) => {
-  console.log('delete answers');
-  const post = db.collection('posts').doc(postDoc);
-  const deleteDoc = await post.collection('answers').get();
-  const batchArray: firebase.firestore.WriteBatch[] = [];
-
-  deleteDoc.forEach(async d => {
-    console.log('in roop');
-    await deleteRefInLinks(d.id);
-    console.log('ok1');
-    await deleteComments(postDoc, d.id);
-    console.log('ok2');
-    await rtdb.ref(d.id).remove();
-
-    batchArray.push(db.batch());
-    let operationCounter = 0;
-    let batchIndex = 0;
-    batchArray[batchIndex].delete(post.collection('answers').doc(d.id));
-    operationCounter++;
-
-    if (operationCounter === 499) {
-      batchArray.push(db.batch());
-      batchIndex++;
-      operationCounter = 0;
-    }
-  });
-
-  batchArray.forEach(async batch => await batch.commit());
-};
-
-const deletePost = async (postDoc: string, uid: string, dispatch: any) => {
-  console.log('wooooooooooooofuuuuuuuuuuuuuu!!!!');
-  const path = `posts/${postDoc}`;
-  const createAdminToken = func.httpsCallable('mintAdminToken');
-  createAdminToken({ uid: uid })
-    .then(res => {
-      console.log(res.data);
-      console.log(typeof res.data);
-      firebase
-        .auth()
-        .signInWithCustomToken(res.data as string)
-        .then(rr => {
-          const deleteFn = func.httpsCallable('recursiveDelete');
-          deleteFn({ path: path })
-            .then(function(result) {
-              console.log('Delete success: ' + JSON.stringify(result));
-              // dispatch(startFetch({}));
-              db.collection('posts')
-                .where('postBy', '==', uid)
-                .get()
-                .then(snap => {
-                  const posts: Post[] = [];
-                  snap.forEach(doc => {
-                    console.log({ doc });
-                    const thms = doc.data().thms;
-                    const postBy = doc.data().postBy;
-                    const width = doc.data().width;
-                    const height = doc.data().height;
-                    const postAt = doc.data().postAt;
-                    storage
-                      .ref(doc.data().path)
-                      .getDownloadURL()
-                      .then(function(uri) {
-                        posts.push({
-                          postDoc: doc.id,
-                          uri,
-                          path: doc.data().path,
-                          thms,
-                          postBy,
-                          width,
-                          height,
-                          postAt,
-                        });
-
-                        console.log(posts.length);
-                        dispatch(getMyPosts([]));
-                      })
-                      .catch(e => {
-                        dispatch(fetchError({}));
-                      });
-                  });
-                  console.log(posts.length);
-                })
-                .catch(e => {
-                  console.log(e);
-                  dispatch(fetchError({}));
-                });
-            })
-            .catch(function(err) {
-              console.log('Delete failed, see console,');
-              console.warn(err);
-            });
-        })
-        .catch(function(error) {
-          console.log('error');
-          console.log(error);
-        });
-    })
-    .catch(err => {
-      console.log('err in auth');
-      console.log(err);
-    });
-};
-
 const deleteAnsInLinks = async (ansDoc: string) => {
   console.log('delete ans in links');
   const fromSnap = await db
@@ -775,13 +660,25 @@ const deleteAnsInLinks = async (ansDoc: string) => {
     });
 };
 
+export const deleteAnswer = async (postDoc: string, ansDoc: string) => {
+  const ans = db
+    .collection('posts')
+    .doc(postDoc)
+    .collection('answers')
+    .doc(ansDoc);
+  await deleteAnsInLinks(ansDoc);
+  await deleteComments(postDoc, ansDoc);
+  await ans.delete();
+  await rtdb.ref(ansDoc).remove();
+};
+
 export const asyncDeletePost = (postDoc: string, uid: string) => {
   return async dispatch => {
     console.log('-------------------------------------');
     dispatch(startProfileLoad({}));
     // realtime db
     rtdb.ref(postDoc).off('value');
-    await rtdb.ref(postDoc).set({ nicesCount: 0, nices: [], deleted: true });
+    await rtdb.ref(postDoc).remove();
     // get ansDocs
     const ansDocs = await db
       .collection('posts')
@@ -790,6 +687,9 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
       .get();
     // delete anss
     ansDocs.forEach(async ad => {
+      // realtime db
+      rtdb.ref(ad.id).off('value');
+      await rtdb.ref(ad.id).remove();
       // must have a parent ansDoc
       await deleteAnsInLinks(ad.id);
       // must have a parent uid

@@ -3,6 +3,7 @@ import { Pin, Comment, LinkPin, Post } from './types';
 export type TimeLimeScreen = {
   isFetching: boolean;
   isError: boolean;
+  refetch: boolean;
   posts: Post[];
 };
 

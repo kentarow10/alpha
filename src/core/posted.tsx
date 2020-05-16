@@ -38,6 +38,7 @@ import {
   asyncListenNice,
   detailInit,
   asyncGetMoreAnss,
+  listenNices,
 } from '../store/behind/behind';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DialogContent from 'react-native-paper/lib/typescript/src/components/Dialog/DialogContent';
@@ -199,7 +200,7 @@ const Posted = (props: Props) => {
 
   useEffect(() => {
     if (props.postDoc) {
-      dispatch(asyncListenNice(props.postDoc, uid));
+      dispatch(listenNices(props.postDoc, uid));
     } else {
       setNotFound(true);
     }

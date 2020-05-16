@@ -44,6 +44,7 @@ import {
   asyncFetchComment,
   asyncGetLinks,
   asyncGetMoreLinks,
+  listenGotits,
   // asyncGotit2,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
@@ -202,7 +203,7 @@ export const Detail = (props: Props) => {
     //     new firebase.firestore.Timestamp(0, 0),
     //   ),
     // );
-    dispatch(asyncListenGotit(detail.dpram.ansDoc, uid));
+    dispatch(listenGotits(detail.dpram.postDoc, detail.dpram.ansDoc, uid));
   }, [detail.dpram.ansDoc]);
 
   useEffect(() => {

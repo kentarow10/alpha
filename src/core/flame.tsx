@@ -121,7 +121,9 @@ const flame = () => {
     }
   };
   useEffect(() => {
+    console.log({ prm });
     asyncGetUserInfo(prm.postBy).then(res => {
+      console.log({ res });
       setUserInfo({ iconUri: res.uri, userName: res.name });
     });
   }, []);

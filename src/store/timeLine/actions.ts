@@ -9,15 +9,9 @@ import { asyncGetName } from '../../helper';
 
 const actionCreator = actionCreatorFactory('TIMELINE');
 
-// Helper
-
-async function getFromStorage(path: string) {
-  const url = await storage.ref(path).getDownloadURL();
-
-  return url;
-}
-
 // plain Actions
+
+export const refetch = actionCreator<{}>('RE_FETCH');
 
 export const startFetch = actionCreator<{}>('START_FETCH');
 
@@ -37,33 +31,25 @@ export const asyncGetPosts = () => {
       .then(snap => {
         const posts: Post[] = [];
         snap.forEach(async doc => {
+          const uri = doc.data().uri;
           const thms = doc.data().thms;
           const postBy = doc.data().postBy;
           const poster = await asyncGetName(postBy);
           const width = doc.data().width;
           const height = doc.data().height;
           const postAt = doc.data().postAt;
-          storage
-            .ref(doc.data().path)
-            .getDownloadURL()
-            .then(function(uri) {
-              posts.push({
-                postDoc: doc.id,
-                uri,
-                path: doc.data().path,
-                thms,
-                poster,
-                postBy,
-                width,
-                height,
-                postAt,
-              });
-              dispatch(getPosts(posts));
-            })
-            .catch(e => {
-              console.log(e);
-              dispatch(fetchError({}));
-            });
+          posts.push({
+            postDoc: doc.id,
+            uri,
+            path: doc.data().path,
+            thms,
+            poster,
+            postBy,
+            width,
+            height,
+            postAt,
+          });
+          dispatch(getPosts(posts));
         });
       })
       .catch(() => {

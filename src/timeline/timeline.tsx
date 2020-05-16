@@ -42,8 +42,7 @@ const imgH = imgW * 1.414;
 const timeLine = () => {
   const dispatch = useDispatch();
   const navigation = useContext(NavigationContext);
-  const mng = useSelector(ScreenMgrState);
-  const posts: TimeLimeScreen = useSelector(GetPosts);
+  const tl: TimeLimeScreen = useSelector(GetPosts);
   const { colors } = useTheme();
 
   const styles = StyleSheet.create({
@@ -123,13 +122,17 @@ const timeLine = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(asyncGetPosts());
+  }, [tl.refetch]);
+
   return (
     <React.Fragment>
       <SafeAreaView style={{ height: HEIGHT }}>
         <Header mode="me" />
         <View style={styles.content}>
           <FlatList
-            data={posts.posts}
+            data={tl.posts}
             keyExtractor={(item, index) => index.toString()}
             numColumns={2}
             style={{ marginBottom: 36 }}

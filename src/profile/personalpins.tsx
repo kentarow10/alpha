@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useContext, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   View,
   FlatList,
@@ -20,6 +20,7 @@ import { NavigationParamList } from '../store/types';
 import { GetAllMe } from '../store/me/me';
 import { GetAllPerson } from '../store/person/person';
 import { PinItem } from '../components/pinItem';
+import { detailInit } from '../store/behind/behind';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -29,6 +30,7 @@ const imgH = imgW * 1.414;
 
 export const PersonalPins = () => {
   const navigation = useContext(NavigationContext);
+  const dispatch = useDispatch();
   const route = useRoute<RouteProp<NavigationParamList, 'PPOST'>>();
   const prm = route.params;
   const me = useSelector(GetAllMe);
@@ -94,6 +96,26 @@ export const PersonalPins = () => {
                 <View style={{ flexDirection: 'column' }}>
                   <TouchableOpacity
                     onPress={() => {
+                      console.log(item.item);
+
+                      dispatch(
+                        detailInit({
+                          postDoc: item.item.postDoc,
+                          ansDoc: item.item.ansDoc,
+                          uri: item.item.uri,
+                          width: item.item.width,
+                          height: item.item.height,
+                          thms: item.item.thms,
+                          order: item.item.order,
+                          body: item.item.body,
+                          numNice: item.item.numNice,
+                          postBy: item.item.postBy,
+                          ansBy: item.item.ansBy,
+                          postAt: item.item.postAt,
+                          ansAt: item.item.ansAt,
+                          answer: item.item.answer,
+                        }),
+                      );
                       navigation.navigate('FLAME', {
                         postDoc: item.item.postDoc,
                         uri: item.item.uri,

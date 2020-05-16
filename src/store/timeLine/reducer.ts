@@ -1,12 +1,13 @@
 import { Reducer } from 'redux';
 import { isType } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
-import { startFetch, fetchError, getPosts } from './actions';
+import { startFetch, fetchError, getPosts, refetch } from './actions';
 import { TimeLimeScreen } from '../screenTypes';
 
 const initialState: TimeLimeScreen = {
   isFetching: false,
   isError: false,
+  refetch: false,
   posts: [],
 };
 
@@ -25,6 +26,10 @@ const reducer: Reducer<TimeLimeScreen> = reducerWithInitialState(initialState)
     isFetching: false,
     isError: false,
     posts: payload,
+  }))
+  .case(refetch, (state, payload) => ({
+    ...state,
+    refetch: !state.refetch,
   }));
 
 export default reducer;
