@@ -12,7 +12,6 @@ import {
 } from '../types';
 import { database } from 'firebase';
 import { asyncGetName } from '../../helper';
-import { reFetch } from '../screenMgr/mgr';
 
 // 準備
 
@@ -374,7 +373,6 @@ export const asyncAnswer = (
         });
         alert('回答しました！');
         dispatch(done({}));
-        // dispatch(reFetch({}));
       })
       .catch(e => {
         console.log(e);
@@ -466,7 +464,6 @@ export const asyncPost = (
 
               alert('投稿完了しました!');
               dispatch(done({}));
-              dispatch(reFetch({}));
             })
             .catch(error => {
               console.error('Error writing document: ', error);

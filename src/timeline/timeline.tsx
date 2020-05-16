@@ -46,10 +46,6 @@ const timeLine = () => {
   const posts: TimeLimeScreen = useSelector(GetPosts);
   const { colors } = useTheme();
 
-  useEffect(() => {
-    dispatch(asyncGetPosts());
-  }, [mng.reFetched]);
-
   const styles = StyleSheet.create({
     img: {
       width: imgW,

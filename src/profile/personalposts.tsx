@@ -1,21 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useContext, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as Font from 'expo-font';
-import {
-  useTheme,
-  Card,
-  Avatar,
-  Title,
-  Paragraph,
-  Button,
-  Appbar,
-  Provider,
-  Portal,
-} from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import { Card } from 'react-native-paper';
 import {
   View,
-  Button as Bt,
   FlatList,
   Dimensions,
   Image,
@@ -23,19 +11,13 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { Text } from 'react-native-paper';
-
-// import { SafeAreaView } from 'react-native-safe-area-context';
-import { GetPosts } from '../store/timeLine/selector';
-import { asyncGetPosts } from '../store/timeLine/actions';
 import {
   NavigationContext,
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
 import { Header } from '../components/header';
-import { TimeLimeScreen } from '../store/screenTypes';
-import { Post, NavigationParamList } from '../store/types';
+import { NavigationParamList } from '../store/types';
 import { GetAllMe } from '../store/me/me';
 import { GetAllPerson } from '../store/person/person';
 
@@ -46,7 +28,6 @@ const imgW = (WIDTH - 48) / 2;
 const imgH = imgW * 1.414;
 
 export const PersonalPosts = () => {
-  const dispatch = useDispatch();
   const navigation = useContext(NavigationContext);
   const route = useRoute<RouteProp<NavigationParamList, 'PPOST'>>();
   const prm = route.params;
@@ -64,7 +45,6 @@ export const PersonalPosts = () => {
     img: {
       width: imgW,
       height: imgH,
-      // overflow: 'scroll',
       borderRadius: 8,
     },
     headerBar: {
@@ -148,11 +128,8 @@ export const PersonalPosts = () => {
             numColumns={2}
             style={{ marginBottom: 36 }}
             renderItem={item => {
-              console.log({ item });
-
               return (
                 <View style={{ flexDirection: 'column' }}>
-                  {/* <View style={{ height: 57, width: imgW }}></View> */}
                   <TouchableOpacity
                     onPress={() => {
                       navigation.navigate('FLAME', {

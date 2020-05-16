@@ -7,6 +7,7 @@ import { MyName } from './selector';
 
 import * as ImagePicker from 'expo-image-picker';
 import post from '../../behind/post';
+import { startProfileLoad, endProfileLoad } from '../screenMgr/mgr';
 // 準備
 
 const actionCreator = actionCreatorFactory('ME');
@@ -777,9 +778,10 @@ const deleteAnsInLinks = async (ansDoc: string) => {
 export const asyncDeletePost = (postDoc: string, uid: string) => {
   return async dispatch => {
     console.log('-------------------------------------');
+    dispatch(startProfileLoad({}));
     // realtime db
     rtdb.ref(postDoc).off('value');
-    await rtdb.ref(postDoc).set({ nicesCount: 0, nices: [] });
+    await rtdb.ref(postDoc).set({ nicesCount: 0, nices: [], deleted: true });
     // get ansDocs
     const ansDocs = await db
       .collection('posts')
@@ -796,13 +798,10 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
     // delete post
     // must have a parent uid
     await deletePostInUsers(postDoc);
-    console.log('wooooooooooooofuuuuuuuuuuuuuu!!!!');
     const path = `posts/${postDoc}`;
     const createAdminToken = func.httpsCallable('mintAdminToken');
     createAdminToken({ uid: uid })
       .then(res => {
-        console.log(res.data);
-        console.log(typeof res.data);
         firebase
           .auth()
           .signInWithCustomToken(res.data as string)
@@ -811,14 +810,12 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
             deleteFn({ path: path })
               .then(function(result) {
                 console.log('Delete success: ' + JSON.stringify(result));
-                // dispatch(startFetch({}));
                 db.collection('posts')
                   .where('postBy', '==', uid)
                   .get()
                   .then(snap => {
                     const posts: Post[] = [];
                     snap.forEach(doc => {
-                      console.log({ doc });
                       const thms = doc.data().thms;
                       const postBy = doc.data().postBy;
                       const width = doc.data().width;
@@ -840,7 +837,6 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
                           });
 
                           console.log('in foreach');
-                          console.log(posts.length);
                           dispatch(getMyPosts(posts));
                         })
                         .catch(e => {
@@ -848,10 +844,10 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
                         });
                     });
                     console.log('100% called');
-                    console.log(posts.length);
                     if (posts.length === 0) {
                       dispatch(getMyPosts([]));
                     }
+                    dispatch(endProfileLoad({}));
                   })
                   .catch(e => {
                     console.log(e);
@@ -872,6 +868,5 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
         console.log('err in auth');
         console.log(err);
       });
-    console.log('fetchし直す');
   };
 };

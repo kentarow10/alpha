@@ -25,6 +25,9 @@ import post from '../behind/post';
 import { useDispatch } from 'react-redux';
 import { getRootNavigation } from '../store/screenMgr/mgr';
 import { PersonalPosts } from '../profile/personalposts';
+import { PersonalPins } from '../profile/personalpins';
+import { PersonalNices } from '../profile/personalnices';
+import { PersonalGotits } from '../profile/personalGotits';
 
 // const Drawer = createDrawerNavigator();
 const Drawer = myNavCreator();
@@ -148,6 +151,27 @@ export const HomeNavigator = () => {
       <Drawer.Screen
         name="PPOST"
         component={PersonalPosts}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Drawer.Screen
+        name="PPIN"
+        component={PersonalPins}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Drawer.Screen
+        name="PNICE"
+        component={PersonalNices}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Drawer.Screen
+        name="PGOTIT"
+        component={PersonalGotits}
         options={{
           unmountOnBlur: true,
         }}

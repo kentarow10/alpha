@@ -13,7 +13,8 @@ export const mypinModeOn = actionCreator<{}>('MYPIN_MODE_ON');
 
 export const mypinModeOff = actionCreator<{}>('MYPIN_MODE_OFF');
 
-export const reFetch = actionCreator<{}>('RE_FETCH');
+export const startProfileLoad = actionCreator<{}>('START_PROFILE_LOAD');
+export const endProfileLoad = actionCreator<{}>('END_PROFILE_LOAD');
 
 export const getNavState = actionCreator<{ navState: DrawerNavigationState }>(
   'GET_NAV_STATE',

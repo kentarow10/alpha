@@ -29,6 +29,7 @@ type Props = {
   uri: string;
   postDoc: string;
   deletable: boolean;
+  setDModal: (b: boolean) => void;
   uid: string;
 };
 
@@ -92,11 +93,11 @@ export const postedImage = (props: Props) => {
             }}
           >
             <TouchableOpacity
-              style={{ backgroundColor: 'red' }}
+              style={{ marginRight: 2, marginTop: 2 }}
               onPress={() => {
-                dispatch(asyncDeletePost(props.postDoc, props.uid));
-                navigation.navigate('PROFILE');
-                // dispatch(asyncGetMyPosts(props.uid));
+                props.setDModal(true);
+                // dispatch(asyncDeletePost(props.postDoc, props.uid));
+                // navigation.navigate('PROFILE');
               }}
             >
               <MaterialCommunityIcons

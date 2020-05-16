@@ -9,6 +9,9 @@ import {
   Paragraph,
   Button,
   Divider,
+  Portal,
+  Provider,
+  ActivityIndicator,
 } from 'react-native-paper';
 import {
   View,
@@ -19,6 +22,7 @@ import {
   Dimensions,
   StyleSheet,
   ScrollView,
+  Modal,
 } from 'react-native';
 import {
   GetAllMe,
@@ -128,137 +132,170 @@ const profile = () => {
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
       <Header mode="me" />
-      <ScrollView style={{ flex: 1 }}>
-        <View style={{ height: WIDTH / 1.414 }}>
-          <View
-            style={{
-              width: WIDTH,
-              flex: 1,
-              backgroundColor: 'gray',
-              // borderBottomLeftRadius: 60,
-              // borderBottomRightRadius: 60,
-            }}
-          >
-            <Image
-              source={{
-                uri: me.homePath,
-              }}
-              style={{ width: WIDTH, height: WIDTH / 1.414 }}
-            />
-          </View>
-          <Divider />
+      {mng.profileLoad ? (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#EEEEEE',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <ActivityIndicator
+            animating={true}
+            color={cls.grn}
+            size="large"
+            style={{ marginBottom: 24 }}
+          />
+          <Text style={{ fontWeight: '400' }}>少々お待ちください...</Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <View style={{ width: WIDTH, backgroundColor: 'white', flex: 4 }}>
+      ) : (
+        <ScrollView style={{ flex: 1 }}>
+          <View style={{ height: WIDTH / 1.414 }}>
             <View
               style={{
-                position: 'absolute',
-                top: -28,
-                left: WIDTH / 2 - 30,
-                width: 62,
-                height: 62,
+                width: WIDTH,
+                flex: 1,
                 backgroundColor: 'gray',
-                borderWidth: 2,
-                borderRadius: 20,
-                borderColor: 'gray',
-                justifyContent: 'center',
-                alignItems: 'center',
+                // borderBottomLeftRadius: 60,
+                // borderBottomRightRadius: 60,
               }}
             >
               <Image
-                source={{ uri: me.iconPath }}
-                style={{ width: 60, height: 60, borderRadius: 20 }}
+                source={{
+                  uri: me.homePath,
+                }}
+                style={{ width: WIDTH, height: WIDTH / 1.414 }}
               />
             </View>
-            <View style={{ marginTop: 48, alignSelf: 'center' }}>
-              <Text style={{ fontFamily: 'myfont' }}>{me.userName}</Text>
+            <Divider />
+          </View>
+          <View style={{ flex: 1 }}>
+            <View style={{ width: WIDTH, backgroundColor: 'white', flex: 4 }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -28,
+                  left: WIDTH / 2 - 30,
+                  width: 62,
+                  height: 62,
+                  backgroundColor: 'gray',
+                  borderWidth: 2,
+                  borderRadius: 20,
+                  borderColor: 'gray',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Image
+                  source={{ uri: me.iconPath }}
+                  style={{ width: 60, height: 60, borderRadius: 20 }}
+                />
+              </View>
+              <View style={{ marginTop: 48, alignSelf: 'center' }}>
+                <Text style={{ fontFamily: 'myfont' }}>{me.userName}</Text>
+              </View>
+              <View
+                style={{
+                  paddingHorizontal: 36,
+                  paddingVertical: 14,
+                  alignSelf: 'center',
+                  backgroundColor: 'white',
+                }}
+              >
+                <Text style={{ fontFamily: 'myfont' }}>{me.siBody}</Text>
+              </View>
             </View>
             <View
               style={{
-                paddingHorizontal: 36,
-                paddingVertical: 14,
-                alignSelf: 'center',
-                backgroundColor: 'white',
+                flex: 5,
+                justifyContent: 'center',
               }}
             >
-              <Text style={{ fontFamily: 'myfont' }}>{me.siBody}</Text>
+              <TouchableOpacity
+                style={styles.btns}
+                onPress={() => {
+                  navigation.navigate('PPOST', { notMe: false });
+                }}
+              >
+                <Entypo name="documents" size={16} color={cls.grn} />
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 12,
+                    textAlign: 'center',
+                    marginTop: 4,
+                  }}
+                >
+                  投稿　　　　　　　{me.myPosts.length}件
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.btns}
+                onPress={() => {
+                  navigation.navigate('PPIN', { notMe: false });
+                }}
+              >
+                <MaterialCommunityIcons name="hand" size={16} color={cls.grn} />
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 12,
+                    textAlign: 'center',
+                    marginTop: 4,
+                  }}
+                >
+                  回答　　　　　　　{me.myPins.length}件
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.btns}
+                onPress={() => {
+                  navigation.navigate('PNICE', { notMe: false });
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="thumb-up-outline"
+                  size={16}
+                  color={cls.grn}
+                />
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 12,
+                    textAlign: 'center',
+                    marginTop: 4,
+                  }}
+                >
+                  いいね！　　　　　{me.myNicePosts.length}件
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.btns}
+                onPress={() => {
+                  navigation.navigate('PGOTIT', { notMe: false });
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="lightbulb-on"
+                  size={16}
+                  color={cls.grn}
+                />
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 12,
+                    textAlign: 'center',
+                    marginTop: 4,
+                  }}
+                >
+                  分かる！　　　　　{me.myGotitPins.length}件
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <View
-            style={{
-              flex: 5,
-              justifyContent: 'center',
-            }}
-          >
-            {/* <View></View> */}
-            <TouchableOpacity
-              style={styles.btns}
-              onPress={() => {
-                navigation.navigate('PPOST', { notMe: false });
-              }}
-            >
-              <Entypo name="documents" size={16} color={cls.grn} />
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                  textAlign: 'center',
-                  marginTop: 4,
-                }}
-              >
-                投稿　　　　　　　{me.myPosts.length}件
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btns} onPress={() => {}}>
-              <MaterialCommunityIcons name="hand" size={16} color={cls.grn} />
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                  textAlign: 'center',
-                  marginTop: 4,
-                }}
-              >
-                回答　　　　　　　{me.myPins.length}件
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btns} onPress={() => {}}>
-              <MaterialCommunityIcons
-                name="thumb-up-outline"
-                size={16}
-                color={cls.grn}
-              />
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                  textAlign: 'center',
-                  marginTop: 4,
-                }}
-              >
-                いいね！　　　　　{me.myNicePosts.length}件
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btns} onPress={() => {}}>
-              <MaterialCommunityIcons
-                name="lightbulb-on"
-                size={16}
-                color={cls.grn}
-              />
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 12,
-                  textAlign: 'center',
-                  marginTop: 4,
-                }}
-              >
-                分かる！　　　　　{me.myGotitPins.length}件
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

@@ -44,6 +44,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { cls } from '../store/screenMgr/mgr';
 import posted from '../behind/posted';
 import { GetUid } from '../store/auth/auth';
+import { asyncDeletePost } from '../store/me/me';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -65,10 +66,12 @@ const useNav = () => {
 
 const flame = () => {
   const navigation = useContext(NavigationContext);
+  const dispatch = useDispatch();
   const route = useRoute<RouteProp<NavigationParamList, 'FLAME'>>();
   const prm = route.params;
   const uid = useSelector(GetUid);
   const [showModal, setModal] = useState(false);
+  const [showDModal, setDModal] = useState(false);
   const scrl = useRef(null);
   const [close, setClose] = useState(false);
   const [userInfo, setUserInfo] = useState({ iconUri: '', userName: '' });
@@ -147,6 +150,7 @@ const flame = () => {
                 iconUri={userInfo.iconUri}
                 userName={userInfo.userName}
                 deletable={deletablePost()}
+                setDModal={setDModal}
                 postDoc={prm.postDoc}
                 uid={uid}
               />
@@ -285,6 +289,153 @@ const flame = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setModal(false);
+                  }}
+                  style={{
+                    height: HEIGHT - 140,
+                    width: (WIDTH - 300) / 2,
+                    backgroundColor: 'transparent',
+                  }}
+                ></TouchableOpacity>
+              </View>
+            </Modal>
+          </Portal>
+        </Provider>
+        <Provider>
+          <Portal>
+            <Modal
+              visible={showDModal}
+              onDismiss={() => {
+                setDModal(false);
+              }}
+            >
+              <View style={{ flexDirection: 'row', marginTop: 200 }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDModal(false);
+                  }}
+                  style={{
+                    height: HEIGHT - 140,
+                    width: (WIDTH - 300) / 2,
+                    backgroundColor: 'transparent',
+                  }}
+                ></TouchableOpacity>
+                <View
+                  style={{
+                    height: 320,
+                    width: 300,
+                    backgroundColor: '#DDDDDD',
+                    borderRadius: 8,
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 60,
+                      backgroundColor: cls.grn,
+                      borderRadius: 8,
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        fontFamily: 'myfont',
+                        fontSize: 22,
+                        color: 'white',
+                      }}
+                    >
+                      かくにん
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      height: 200,
+                      backgroundColor: '#DDDDDD',
+                      borderRadius: 8,
+                      justifyContent: 'center',
+                      padding: 24,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        marginBottom: 4,
+                        // fontFamily: 'myfont',
+                        fontSize: 16,
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        // color: 'white',
+                      }}
+                    >
+                      この投稿を削除すると、その回答も全て削除されリンクは全て解消されます。
+                    </Text>
+                    <Text
+                      style={{
+                        marginBottom: 4,
+                        // fontFamily: 'myfont',
+                        fontSize: 16,
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        // color: 'white',
+                      }}
+                    >
+                      それは時に世界の分断を引き起こします。
+                    </Text>
+                    <Text
+                      style={{
+                        marginBottom: 4,
+                        // fontFamily: 'myfont',
+                        fontSize: 16,
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        // color: 'white',
+                      }}
+                    >
+                      それでも削除しますか？
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      height: 60,
+                      justifyContent: 'space-evenly',
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: 'white',
+                        height: 45,
+                        width: 100,
+                        borderRadius: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => {
+                        dispatch(asyncDeletePost(prm.postDoc, uid));
+                        navigation.navigate('PROFILE');
+                      }}
+                    >
+                      <Text style={{ fontWeight: 'bold' }}>はい</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: 'white',
+                        height: 45,
+                        width: 100,
+                        borderRadius: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => {
+                        setDModal(false);
+                      }}
+                    >
+                      <Text style={{ fontWeight: 'bold' }}>いいえ</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDModal(false);
                   }}
                   style={{
                     height: HEIGHT - 140,
