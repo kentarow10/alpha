@@ -179,12 +179,12 @@ export function DrawerContent(props: Props) {
                 data={me.myPins}
                 renderItem={item => {
                   console.log('drawercontent');
-                  console.log(item.item);
+                  // console.log(item.item);
 
                   return (
                     <TouchableOpacity
                       onPress={() => {
-                        console.log(item.item);
+                        // console.log(item.item);
                         const i = item.item;
                         setItem({
                           ansDoc: i.ansDoc,

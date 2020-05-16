@@ -182,10 +182,10 @@ export const Detail = (props: Props) => {
       const tTime = detail.tLinks.length
         ? detail.tLinks[detail.tLinks.length - 1].linkAt
         : new firebase.firestore.Timestamp(0, 0);
-      console.log(mTime);
-      console.log(fTime);
-      console.log(tTime);
-      console.log();
+      // console.log(mTime);
+      // console.log(fTime);
+      // console.log(tTime);
+      // console.log();
       dispatch(asyncGetMoreLinks(detail.dpram.ansDoc, mTime, fTime, tTime));
     } else {
       console.log('not called more fetch');

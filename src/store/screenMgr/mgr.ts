@@ -5,6 +5,7 @@ import {
 
 export type ScreenMgr = {
   mypinMode: boolean;
+  reFetched: boolean;
   navState: DrawerNavigationState;
   rootNav: NavigationProp<Record<string, object>, string, any, any, {}>;
 };

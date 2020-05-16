@@ -166,7 +166,7 @@ const usePost = (initialState = initialData) => {
       .get()
       .then(async doc => {
         const path = doc.data().path;
-        const postedat = doc.data().createdAt.toDate();
+        const postedat = doc.data().createdAt;
         const url = await getFromStorage(path);
         // setPostedAt(postedat);
         // setPostedBy(doc.data().owner);

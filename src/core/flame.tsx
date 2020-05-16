@@ -148,6 +148,7 @@ const flame = () => {
                 userName={userInfo.userName}
                 deletable={deletablePost()}
                 postDoc={prm.postDoc}
+                uid={uid}
               />
               {navState === 'POSTED' ? (
                 <Posted

@@ -31,6 +31,7 @@ import { asyncGetPosts } from '../store/timeLine/actions';
 import { NavigationContext } from '@react-navigation/native';
 import { Header } from '../components/header';
 import { TimeLimeScreen } from '../store/screenTypes';
+import { ScreenMgrState } from '../store/screenMgr/mgr';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -41,13 +42,13 @@ const imgH = imgW * 1.414;
 const timeLine = () => {
   const dispatch = useDispatch();
   const navigation = useContext(NavigationContext);
+  const mng = useSelector(ScreenMgrState);
   const posts: TimeLimeScreen = useSelector(GetPosts);
   const { colors } = useTheme();
 
   useEffect(() => {
-    // getFont();
     dispatch(asyncGetPosts());
-  }, []);
+  }, [mng.reFetched]);
 
   const styles = StyleSheet.create({
     img: {
@@ -137,7 +138,7 @@ const timeLine = () => {
             numColumns={2}
             style={{ marginBottom: 36 }}
             renderItem={item => {
-              console.log({ item });
+              // console.log({ item });
 
               return (
                 <View style={{ flexDirection: 'column' }}>

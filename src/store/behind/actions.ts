@@ -12,6 +12,7 @@ import {
 } from '../types';
 import { database } from 'firebase';
 import { asyncGetName } from '../../helper';
+import { reFetch } from '../screenMgr/mgr';
 
 // 準備
 
@@ -36,7 +37,7 @@ const toggleNice = (postRef, uid) => {
 
     return post;
   });
-  console.log(post);
+  // console.log(post);
 
   return post;
 };
@@ -188,8 +189,8 @@ export const asyncLink = (
 ) => {
   return async dispatch => {
     console.log('call');
-    console.log({ dparam });
-    console.log({ myansDoc });
+    // console.log({ dparam });
+    // console.log({ myansDoc });
     const linkAt = firebase.firestore.FieldValue.serverTimestamp();
     const fromansRef = db
       .collection('links')
@@ -343,10 +344,10 @@ export const asyncAnswer = (
     dispatch(fetching({}));
     const ansAt = firebase.firestore.FieldValue.serverTimestamp();
     console.log('caaaaaaaaaaaaaaaaaalled');
-    console.log({ pparam });
-    console.log({ order });
-    console.log({ body });
-    console.log({ ansBy });
+    // console.log({ pparam });
+    // console.log({ order });
+    // console.log({ body });
+    // console.log({ ansBy });
 
     db.collection('posts')
       .doc(pparam.postDoc)
@@ -373,6 +374,7 @@ export const asyncAnswer = (
         });
         alert('回答しました！');
         dispatch(done({}));
+        // dispatch(reFetch({}));
       })
       .catch(e => {
         console.log(e);
@@ -464,6 +466,7 @@ export const asyncPost = (
 
               alert('投稿完了しました!');
               dispatch(done({}));
+              dispatch(reFetch({}));
             })
             .catch(error => {
               console.error('Error writing document: ', error);
@@ -503,14 +506,16 @@ export const asyncListenGotit = (ansDoc: string, uid: string) => {
   return disptch => {
     console.log('listener is called');
     rtdb.ref(ansDoc).on('value', snap => {
-      const numGotit = snap.val().gCount;
-      if (snap.val().gs) {
-        console.log(snap.val().gs);
-        const gotitByList = Object.keys(snap.val().gs);
-        const isGotit = gotitByList.includes(uid);
-        disptch(getGotit({ numGotit, gotitByList, isGotit }));
-      } else {
-        disptch(getGotit({ numGotit: 0, gotitByList: [], isGotit: false }));
+      if (snap.exists) {
+        const numGotit = snap.val().gCount;
+        if (snap.val().gs) {
+          // console.log(snap.val().gs);
+          const gotitByList = Object.keys(snap.val().gs);
+          const isGotit = gotitByList.includes(uid);
+          disptch(getGotit({ numGotit, gotitByList, isGotit }));
+        } else {
+          disptch(getGotit({ numGotit: 0, gotitByList: [], isGotit: false }));
+        }
       }
     });
   };
@@ -521,13 +526,15 @@ export const asyncListenGotit = (ansDoc: string, uid: string) => {
 export const asyncListenNice = (postDoc: string, uid: string) => {
   return dispatch => {
     rtdb.ref(postDoc).on('value', snap => {
-      const numNice = snap.val().nicesCount;
-      if (snap.val().nices) {
-        const niceByList = Object.keys(snap.val().nices);
-        const isNiced = niceByList.includes(uid);
-        dispatch(getNice({ numNice, niceByList, isNiced }));
-      } else {
-        dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
+      if (snap.exists) {
+        const numNice = snap.val().nicesCount;
+        if (snap.val().nices) {
+          const niceByList = Object.keys(snap.val().nices);
+          const isNiced = niceByList.includes(uid);
+          dispatch(getNice({ numNice, niceByList, isNiced }));
+        } else {
+          dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
+        }
       }
     });
   };
@@ -874,7 +881,7 @@ export const asyncGetMoreLinks = (
       });
     });
     from.forEach(snap => {
-      console.log(snap.data());
+      // console.log(snap.data());
       fromList.push({
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,
@@ -892,7 +899,7 @@ export const asyncGetMoreLinks = (
       });
     });
     to.forEach(snap => {
-      console.log(snap.data());
+      // console.log(snap.data());
       toList.push({
         ansDoc: snap.id,
         postDoc: snap.data().postDoc,

@@ -17,7 +17,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { deletePost } from '../store/sampleAction';
 import { useDispatch } from 'react-redux';
-import { asyncDeletePost } from '../store/me/me';
+import { asyncDeletePost, asyncGetMyPosts } from '../store/me/me';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -29,6 +29,7 @@ type Props = {
   uri: string;
   postDoc: string;
   deletable: boolean;
+  uid: string;
 };
 
 export const postedImage = (props: Props) => {
@@ -93,7 +94,9 @@ export const postedImage = (props: Props) => {
             <TouchableOpacity
               style={{ backgroundColor: 'red' }}
               onPress={() => {
-                dispatch(asyncDeletePost(props.postDoc));
+                dispatch(asyncDeletePost(props.postDoc, props.uid));
+                navigation.navigate('PROFILE');
+                // dispatch(asyncGetMyPosts(props.uid));
               }}
             >
               <MaterialCommunityIcons

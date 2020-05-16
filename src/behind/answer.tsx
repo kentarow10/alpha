@@ -182,7 +182,7 @@ export const answer = () => {
                   dense={true}
                   onContentSizeChange={e => {
                     if (e.nativeEvent.contentSize.height > 80) {
-                      console.log(e.nativeEvent.contentSize);
+                      // console.log(e.nativeEvent.contentSize);
                       scrl.current.scrollToEnd();
                     }
                   }}

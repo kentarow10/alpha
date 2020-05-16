@@ -90,9 +90,9 @@ export const thmSwitch = (props: Props) => {
   });
   const num = props.thm.length;
 
-  console.log('props.postAt');
-  console.log(typeof props.postAt);
-  console.log('props.postAt');
+  // console.log('props.postAt');
+  // console.log(typeof props.postAt);
+  // console.log('props.postAt');
 
   if (num === 3) {
     return (

@@ -26,7 +26,7 @@ const getNice = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyNicePosts(uid));
-    console.log(me);
+    // console.log(me);
   }, []);
 
   return (

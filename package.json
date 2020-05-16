@@ -20,6 +20,7 @@
     "expo-image-picker": "~8.0.1",
     "expo-sqlite": "~8.0.0",
     "firebase": "^7.8.1",
+    "firebase-admin": "^8.12.1",
     "firebase-tools": "^8.2.0",
     "loadash": "^1.0.0",
     "react": "~16.9.0",

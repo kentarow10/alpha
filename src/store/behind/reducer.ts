@@ -197,11 +197,13 @@ export const postReducer: Reducer<PostScreen> = reducerWithInitialState(
     ...state,
     isFetching: true,
     isError: false,
+    isDone: false,
   }))
   .case(error, (state, payload) => ({
     ...state,
     isFetching: false,
     isError: true,
+    isDone: false,
   }))
   .case(done, (state, payload) => ({
     ...state,

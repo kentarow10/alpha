@@ -244,9 +244,9 @@ export default function DrawerView({
           const isFocused = state.index === index;
           // console.log('isFocused:'+isFocused);
           // if(!descriptor.options.inNav){
-            console.log('nav以外')
-          console.log({index})
-          if (unmountOnBlur && !isFocused && !(state.index === 6) && !(state.index === 8)) {
+          // console.log(route)
+          // console.log(index)
+          if (unmountOnBlur && !isFocused) {
             console.log("return 1")
 
             return null;

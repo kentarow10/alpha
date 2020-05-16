@@ -70,7 +70,7 @@ const profile = () => {
   const navigation = useContext(NavigationContext);
   const me = useSelector(GetAllMe);
   const uid = useSelector(GetUid);
-  // const mng = useSelector(ScreenMgrState);
+  const mng = useSelector(ScreenMgrState);
   const styles = StyleSheet.create({
     btns: {
       flexDirection: 'row',
@@ -109,8 +109,8 @@ const profile = () => {
   });
 
   useEffect(() => {
-    dispatch(asyncGetMyInfo(uid));
     dispatch(asyncGetMyPosts(uid));
+    dispatch(asyncGetMyInfo(uid));
     dispatch(asyncGetMyPins(uid));
     dispatch(listenMyNices(uid));
     dispatch(listenMyGotits(uid));
@@ -121,6 +121,9 @@ const profile = () => {
       dispatch(asyncGetMyInfo(uid));
     }
   }, [me.edit.done]);
+
+  console.log('me.myPosts.length');
+  console.log(me.myPosts.length);
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>

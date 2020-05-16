@@ -75,6 +75,7 @@ const Posted = (props: Props) => {
   const uid = useSelector(GetUid);
   const [order, setOrder] = useState(1);
   const [showAns, setAnss] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const doneNiceColor = (niced: boolean): '#00A85A' | 'white' => {
     if (niced) {
       return '#00A85A';
@@ -197,7 +198,11 @@ const Posted = (props: Props) => {
   }, [navigation]);
 
   useEffect(() => {
-    dispatch(asyncListenNice(props.postDoc, uid));
+    if (props.postDoc) {
+      dispatch(asyncListenNice(props.postDoc, uid));
+    } else {
+      setNotFound(true);
+    }
 
     dispatch(
       getParams({
@@ -225,7 +230,9 @@ const Posted = (props: Props) => {
   console.log('posted render...');
   console.log('答えのフェッチ');
 
-  return (
+  return notFound ? (
+    <View style={{ backgroundColor: 'red' }}></View>
+  ) : (
     <React.Fragment>
       <View>
         <ThmSwitch

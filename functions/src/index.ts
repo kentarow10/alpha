@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const firebaseTools = require('firebase-tools');
-console.log(require.resolve('firebase-tools'));
+// console.log(require.resolve('firebase-tools'));
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 
@@ -26,7 +26,9 @@ exports.mintAdminToken = functions.https.onCall((data, context) => {
   return admin
     .auth()
     .createCustomToken(uid, { admin: true })
-    .then(token => ({ token: token }));
+    .then(token => {
+      return token;
+    });
 });
 
 // [START recursive_delete_function]
@@ -48,7 +50,8 @@ exports.recursiveDelete = functions
   })
   .https.onCall((data, context) => {
     // Only allow admin users to execute this function.
-    if (!(context.auth && context.auth.token && context.auth.token.admin)) {
+    if (!(context.auth && context.auth.token)) {
+      // if (!(context.auth && context.auth.token && context.auth.token.admin)) {
       throw new functions.https.HttpsError(
         'permission-denied',
         'Must be an administrative user to initiate delete.',

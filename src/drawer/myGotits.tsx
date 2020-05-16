@@ -31,7 +31,7 @@ const getGotits = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyGotitAnss(uid));
-    console.log(me);
+    // console.log(me);
   }, []);
 
   return (

@@ -87,11 +87,16 @@ const reducer: Reducer<Me> = reducerWithInitialState(initialState)
     isFetching: false,
     myPins: payload,
   }))
-  .case(getMyPosts, (state, payload) => ({
-    ...state,
-    isFetching: false,
-    myPosts: payload,
-  }))
+  .case(getMyPosts, (state, payload) => {
+    console.log('aaaaaa00000');
+    console.log(payload);
+
+    return {
+      ...state,
+      isFetching: false,
+      myPosts: payload,
+    };
+  })
   .case(getMyNicePosts, (state, payload) => ({
     ...state,
     isFetching: false,

@@ -7,10 +7,12 @@ import {
   mypinModeOff,
   getNavState,
   getRootNavigation,
+  reFetch,
 } from './actions';
 
 const initialState: ScreenMgr = {
   mypinMode: false,
+  reFetched: false,
   navState: null,
   rootNav: null,
 };
@@ -25,6 +27,10 @@ export const screenMgr: Reducer<ScreenMgr> = reducerWithInitialState(
   .case(mypinModeOff, (state, payload) => ({
     ...state,
     mypinMode: false,
+  }))
+  .case(reFetch, (state, payload) => ({
+    ...state,
+    mypinMode: !state.reFetched,
   }))
   .case(getNavState, (state, payload) => ({
     ...state,

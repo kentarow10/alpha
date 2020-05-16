@@ -47,6 +47,7 @@ import { NavigationContext } from '@react-navigation/native';
 import { inputThmSwitch as ITS } from '../components/inputThmSwitch';
 import { cls } from '../store/screenMgr/mgr';
 import { Header } from '../components/header';
+import { asyncGetMyPosts } from '../store/me/me';
 
 const W = Dimensions.get('window').width;
 const H = Dimensions.get('window').height;
@@ -405,6 +406,7 @@ const post = () => {
   useEffect(() => {
     if (state.isDone) {
       navigation.navigate('PROFILE');
+      dispatch(asyncGetMyPosts(uid));
     }
   }, [state.isDone]);
 
@@ -521,6 +523,7 @@ const post = () => {
           }}
           disabled={!canSubmit()}
           onPress={() => {
+            console.log('post!!!');
             dispatch(
               asyncPost(
                 uid,

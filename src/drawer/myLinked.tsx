@@ -32,7 +32,7 @@ const getLinked = () => {
 
   useEffect(() => {
     dispatch(asyncGetMyLinkedAnss(uid));
-    console.log(me);
+    // console.log(me);
   }, []);
 
   return (
