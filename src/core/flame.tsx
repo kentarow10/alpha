@@ -72,6 +72,7 @@ const flame = () => {
   const uid = useSelector(GetUid);
   const [showModal, setModal] = useState(false);
   const [showDModal, setDModal] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const scrl = useRef(null);
   const [close, setClose] = useState(false);
   const [userInfo, setUserInfo] = useState({ iconUri: '', userName: '' });
@@ -121,14 +122,17 @@ const flame = () => {
     }
   };
   useEffect(() => {
-    console.log({ prm });
     asyncGetUserInfo(prm.postBy).then(res => {
       console.log({ res });
       setUserInfo({ iconUri: res.uri, userName: res.name });
     });
   }, []);
 
-  return (
+  return notFound ? (
+    <SafeAreaView
+      style={{ height: HEIGHT, backgroundColor: 'red' }}
+    ></SafeAreaView>
+  ) : (
     <React.Fragment>
       <SafeAreaView style={{ height: HEIGHT }}>
         <Header mode="back" />
@@ -170,6 +174,7 @@ const flame = () => {
                   setNicers={setNicers}
                   goAnswer={goAnswer}
                   goDetail={goDetail}
+                  setNotFound={setNotFound}
                 />
               ) : navState === 'ANSWER' ? (
                 <Answer scrlRef={scrl} goPosted={goPosted} />
@@ -180,6 +185,7 @@ const flame = () => {
                   close={close}
                   setModal={setModal}
                   setGotiters={setGotiters}
+                  setNotFound={setNotFound}
                 />
               )}
             </View>

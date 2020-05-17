@@ -39,12 +39,12 @@ import {
   DetailState,
   detailInit,
   asyncGotit,
-  asyncListenGotit,
   asyncComment,
   asyncFetchComment,
   asyncGetLinks,
   asyncGetMoreLinks,
   listenGotits,
+  listenAns,
   // asyncGotit2,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
@@ -56,17 +56,13 @@ import { timeExpress, asyncGetUserInfoList } from '../helper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PinItem } from '../components/pinItem';
 
-// import { SafeAreaView } from 'react-native-safe-area-context';
-
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
-
 type Props = {
   scrlRef: React.MutableRefObject<any>;
   close: boolean;
   setModal: (b: boolean) => void;
   setGotiters: (list: any[]) => void;
   goPosted: () => void;
+  setNotFound: (b: boolean) => void;
 };
 
 export const Detail = (props: Props) => {
@@ -74,12 +70,10 @@ export const Detail = (props: Props) => {
   const { colors } = useTheme();
   const uid = useSelector(GetUid);
   const detail = useSelector(DetailState);
-  const posted = useSelector(PostedState);
   const navigation = useContext(NavigationContext);
   const [com, setCom] = useState('');
   const [mock, setMock] = useState(false);
 
-  //   const proportion = posted.ppram.height / posted.ppram.width;
   const doneGotitIcon = (
     gotit: boolean,
   ): 'lightbulb-outline' | 'lightbulb-on' => {
@@ -133,7 +127,6 @@ export const Detail = (props: Props) => {
     answer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      // height: 36,
       paddingTop: 9,
       paddingHorizontal: 18,
       marginLeft: 8,
@@ -149,7 +142,6 @@ export const Detail = (props: Props) => {
     text: {
       marginTop: 4,
       color: 'white',
-      // fontFamily: 'MyFont',
       fontSize: 12,
       textAlign: 'right',
     },
@@ -163,7 +155,6 @@ export const Detail = (props: Props) => {
       marginTop: 9,
     },
     itemBody: {
-      // marginTop: 8,
       marginLeft: 18,
     },
     tabMock: {
@@ -173,7 +164,6 @@ export const Detail = (props: Props) => {
 
   useEffect(() => {
     if (props.close) {
-      console.log('|||||||||||||||||||||||||||||||||||||||');
       const mTime = detail.mLinks.length
         ? detail.mLinks[detail.mLinks.length - 1].linkAt
         : new firebase.firestore.Timestamp(0, 0);
@@ -183,10 +173,6 @@ export const Detail = (props: Props) => {
       const tTime = detail.tLinks.length
         ? detail.tLinks[detail.tLinks.length - 1].linkAt
         : new firebase.firestore.Timestamp(0, 0);
-      // console.log(mTime);
-      // console.log(fTime);
-      // console.log(tTime);
-      // console.log();
       dispatch(asyncGetMoreLinks(detail.dpram.ansDoc, mTime, fTime, tTime));
     } else {
       console.log('not called more fetch');
@@ -194,15 +180,11 @@ export const Detail = (props: Props) => {
   }, [props.close]);
 
   useEffect(() => {
+    dispatch(listenAns(detail.dpram.postDoc, detail.dpram.ansDoc));
+  });
+
+  useEffect(() => {
     dispatch(asyncFetchComment(detail.dpram.postDoc, detail.dpram.ansDoc));
-    // dispatch(
-    //   asyncGetMoreLinks(
-    //     detail.dpram.ansDoc,
-    //     new firebase.firestore.Timestamp(0, 0),
-    //     new firebase.firestore.Timestamp(0, 0),
-    //     new firebase.firestore.Timestamp(0, 0),
-    //   ),
-    // );
     dispatch(listenGotits(detail.dpram.postDoc, detail.dpram.ansDoc, uid));
   }, [detail.dpram.ansDoc]);
 
@@ -242,23 +224,9 @@ export const Detail = (props: Props) => {
     };
   }, []);
 
-  const DATA = [
-    {
-      title: '相互にリンクしています',
-      icon: 'arrow-left-right-bold-outline',
-      data: detail.mLinks,
-    },
-    {
-      title: 'リンクされています',
-      icon: 'arrow-right-bold-outline',
-      data: detail.fLinks,
-    },
-    {
-      title: 'リンクしています',
-      icon: 'arrow-left-bold-outline',
-      data: detail.tLinks,
-    },
-  ];
+  useEffect(() => {
+    props.setNotFound(!detail.ansExist);
+  }, [detail.ansExist]);
 
   return (
     <React.Fragment>

@@ -1,57 +1,28 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useContext, useState, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as Font from 'expo-font';
-import {
-  useTheme,
-  Button,
-  Avatar,
-  FAB,
-  Portal,
-  Provider,
-  Divider,
-  Modal,
-} from 'react-native-paper';
-import {
-  View,
-  Button as Bt,
-  FlatList,
-  Dimensions,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import { useTheme, Button, Divider, Modal } from 'react-native-paper';
+import { View, FlatList, Dimensions, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import {
-  NavigationContext,
-  useRoute,
-  RouteProp,
-} from '@react-navigation/native';
-import { NavigationParamList } from '../store/types';
+import { NavigationContext } from '@react-navigation/native';
 import {
   PostedState,
   getParams,
   asyncGetAnss,
-  getAnss,
   asyncNice,
-  asyncListenNice,
   detailInit,
   asyncGetMoreAnss,
   listenNices,
+  listenPost,
 } from '../store/behind/behind';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import DialogContent from 'react-native-paper/lib/typescript/src/components/Dialog/DialogContent';
 import { GetUid } from '../store/auth/auth';
 import { thmSwitch as ThmSwitch } from '../components/thmSwitch';
-import { postedImage as PostedImage } from '../components/postedImage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Header } from '../components/header';
 import { cls } from '../store/screenMgr/mgr';
 import { asyncGetUserInfoList } from '../helper';
 
 const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
 
 type Props = {
   postDoc: string;
@@ -63,6 +34,7 @@ type Props = {
   postAt: firebase.firestore.Timestamp;
   setModal: (b: boolean) => void;
   setNicers: (list: any[]) => void;
+  setNotFound: (b: boolean) => void;
   close: boolean;
   goAnswer: () => void;
   goDetail: () => void;
@@ -76,7 +48,6 @@ const Posted = (props: Props) => {
   const uid = useSelector(GetUid);
   const [order, setOrder] = useState(1);
   const [showAns, setAnss] = useState(false);
-  const [notFound, setNotFound] = useState(false);
   const doneNiceColor = (niced: boolean): '#00A85A' | 'white' => {
     if (niced) {
       return '#00A85A';
@@ -199,12 +170,7 @@ const Posted = (props: Props) => {
   }, [navigation]);
 
   useEffect(() => {
-    if (props.postDoc) {
-      dispatch(listenNices(props.postDoc, uid));
-    } else {
-      setNotFound(true);
-    }
-
+    dispatch(listenNices(props.postDoc, uid));
     dispatch(
       getParams({
         postDoc: props.postDoc,
@@ -228,12 +194,15 @@ const Posted = (props: Props) => {
     });
   }, [posted.ppram.niceByList]);
 
-  console.log('posted render...');
-  console.log('答えのフェッチ');
+  useEffect(() => {
+    dispatch(listenPost(props.postDoc));
+  });
 
-  return notFound ? (
-    <View style={{ backgroundColor: 'red' }}></View>
-  ) : (
+  useEffect(() => {
+    props.setNotFound(!posted.postExist);
+  }, [posted.postExist]);
+
+  return (
     <React.Fragment>
       <View>
         <ThmSwitch

@@ -87,6 +87,9 @@ export const error = actionCreator<{}>('ERROR');
 
 export const done = actionCreator<{}>('DONE');
 
+export const postExist = actionCreator<{ postExist: boolean }>('POST_EXIST');
+export const ansExist = actionCreator<{ ansExist: boolean }>('ANS_EXIST');
+
 export const startFetch = actionCreator<{}>('START_FETCH');
 
 export const getAnss = actionCreator<{
@@ -1014,13 +1017,9 @@ export const listenNices = (postDoc: string, uid: string) => {
         console.log('listened change at ' + source);
         if (snap.exists) {
           const numNice = snap.data().nc;
-          if (snap.data().nbl) {
-            const niceByList = snap.data().nbl;
-            const isNiced = niceByList.includes(uid);
-            dispatch(getNice({ numNice, niceByList, isNiced }));
-          } else {
-            dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
-          }
+          const niceByList = snap.data().nbl;
+          const isNiced = niceByList.includes(uid);
+          dispatch(getNice({ numNice, niceByList, isNiced }));
         }
       });
   };
@@ -1039,15 +1038,43 @@ export const listenGotits = (postDoc: string, ansDoc: string, uid: string) => {
         console.log('listened change at ' + source);
         if (snap.exists) {
           const numGotit = snap.data().gc;
-          if (snap.data().gs) {
-            const gotitByList = snap.data().gbl;
-            const isGotit = gotitByList.includes(uid);
-            dispatch(getGotit({ numGotit, gotitByList, isGotit }));
-          } else {
-            dispatch(
-              getGotit({ numGotit: 0, gotitByList: [], isGotit: false }),
-            );
-          }
+          const gotitByList = snap.data().gbl;
+          const isGotit = gotitByList.includes(uid);
+          dispatch(getGotit({ numGotit, gotitByList, isGotit }));
+        }
+      });
+  };
+};
+
+// 存在のリスン
+
+export const listenPost = (postDoc: string) => {
+  return dispatch => {
+    db.collection('posts')
+      .doc(postDoc)
+      .onSnapshot(snap => {
+        if (snap.exists) {
+          dispatch(postExist({ postExist: true }));
+        } else {
+          dispatch(postExist({ postExist: false }));
+        }
+      });
+  };
+};
+
+export const listenAns = (postDoc: string, ansDoc: string) => {
+  return dispatch => {
+    console.log('ここまでーー');
+    db.collection('posts')
+      .doc(postDoc)
+      .collection('answers')
+      .doc(ansDoc)
+      .onSnapshot(snap => {
+        if (snap.exists) {
+          console.log('ここまでーー２');
+          dispatch(ansExist({ ansExist: true }));
+        } else {
+          dispatch(ansExist({ ansExist: false }));
         }
       });
   };

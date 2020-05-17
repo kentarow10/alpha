@@ -230,7 +230,6 @@ export const asyncGetMyPosts = (uid: string) => {
           posts.push({
             postDoc: doc.id,
             uri,
-            path: doc.data().path,
             thms,
             postBy,
             width,
@@ -721,27 +720,19 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
                       const width = doc.data().width;
                       const height = doc.data().height;
                       const postAt = doc.data().postAt;
-                      storage
-                        .ref(doc.data().path)
-                        .getDownloadURL()
-                        .then(function(uri) {
-                          posts.push({
-                            postDoc: doc.id,
-                            uri,
-                            path: doc.data().path,
-                            thms,
-                            postBy,
-                            width,
-                            height,
-                            postAt,
-                          });
+                      const uri = doc.data().uri;
+                      posts.push({
+                        postDoc: doc.id,
+                        uri,
+                        thms,
+                        postBy,
+                        width,
+                        height,
+                        postAt,
+                      });
 
-                          console.log('in foreach');
-                          dispatch(getMyPosts(posts));
-                        })
-                        .catch(e => {
-                          dispatch(fetchError({}));
-                        });
+                      console.log('in foreach');
+                      dispatch(getMyPosts(posts));
                     });
                     console.log('100% called');
                     if (posts.length === 0) {

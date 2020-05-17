@@ -25,6 +25,8 @@ import {
   postInit,
   getLinks,
   getMoreAnss1,
+  postExist,
+  ansExist,
 } from './actions';
 
 // posted screen
@@ -32,6 +34,7 @@ import {
 const initialState: PostedScreen = {
   isFetching: false,
   isError: false,
+  postExist: true,
   doneNice: false,
   ppram: {
     postDoc: '',
@@ -95,6 +98,10 @@ export const postedReducer: Reducer<PostedScreen> = reducerWithInitialState(
       numNice: payload.numNice,
       niceByList: payload.niceByList,
     },
+  }))
+  .case(postExist, (state, payload) => ({
+    ...state,
+    postExist: payload.postExist,
   }));
 
 // detail screen
@@ -102,6 +109,7 @@ export const postedReducer: Reducer<PostedScreen> = reducerWithInitialState(
 const initialDetail: DetailScreen = {
   isFetching: false,
   isError: false,
+  ansExist: true,
   dpram: {
     postDoc: '',
     ansDoc: '',
@@ -165,7 +173,11 @@ export const detailReducer: Reducer<DetailScreen> = reducerWithInitialState(
       tLinks: tUpdated,
       links: updated,
     };
-  });
+  })
+  .case(ansExist, (state, payload) => ({
+    ...state,
+    ansExist: payload.ansExist,
+  }));
 
 // post screen
 

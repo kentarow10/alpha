@@ -11,6 +11,7 @@ export type PostedScreen = {
   isFetching: boolean;
   isError: boolean;
   doneNice: boolean;
+  postExist: boolean;
   ppram: Post;
   anss1: Pin[];
   anss2: Pin[];
@@ -20,6 +21,7 @@ export type PostedScreen = {
 export type DetailScreen = {
   isFetching: boolean;
   isError: boolean;
+  ansExist: boolean;
   dpram: Pin;
   numGotit: number;
   gotitByList: string[];
