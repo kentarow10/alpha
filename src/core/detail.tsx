@@ -45,6 +45,7 @@ import {
   asyncGetMoreLinks,
   listenGotits,
   listenAns,
+  listenPost,
   // asyncGotit2,
 } from '../store/behind/behind';
 import { Item } from 'react-native-paper/lib/typescript/src/components/List/List';
@@ -60,6 +61,8 @@ type Props = {
   scrlRef: React.MutableRefObject<any>;
   close: boolean;
   setModal: (b: boolean) => void;
+  setDAModal: (b: boolean) => void;
+  setDelAns: (v: string) => void;
   setGotiters: (list: any[]) => void;
   goPosted: () => void;
   setNotFound: (b: boolean) => void;
@@ -70,9 +73,11 @@ export const Detail = (props: Props) => {
   const { colors } = useTheme();
   const uid = useSelector(GetUid);
   const detail = useSelector(DetailState);
+  const posted = useSelector(PostedState);
   const navigation = useContext(NavigationContext);
   const [com, setCom] = useState('');
   const [mock, setMock] = useState(false);
+  const [ansNotFound, setAnsNotFound] = useState(false);
 
   const doneGotitIcon = (
     gotit: boolean,
@@ -180,6 +185,7 @@ export const Detail = (props: Props) => {
   }, [props.close]);
 
   useEffect(() => {
+    dispatch(listenPost(detail.dpram.postDoc));
     dispatch(listenAns(detail.dpram.postDoc, detail.dpram.ansDoc));
   });
 
@@ -225,34 +231,66 @@ export const Detail = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    props.setNotFound(!detail.ansExist);
+    props.setNotFound(!posted.postExist);
+  }, [posted.postExist]);
+
+  useEffect(() => {
+    setAnsNotFound(!detail.ansExist);
   }, [detail.ansExist]);
 
-  return (
+  return !detail.ansExist ? (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#DDDDDD',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Text style={{ fontFamily: 'myfont', fontSize: 16, color: cls.grn }}>
+        お探しの回答は削除されたようです。。
+      </Text>
+    </View>
+  ) : (
     <React.Fragment>
       <View style={styles.content}>
         <KeyboardAvoidingView
           behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
           style={{ flex: 1, zIndex: -100 }}
         >
-          <TouchableOpacity
-            onPress={() => {
-              props.goPosted();
-            }}
-          >
-            <Text
-              style={{
-                paddingHorizontal: 18,
-                paddingVertical: 18,
-                paddingBottom: 9,
-                fontSize: 14,
-                fontWeight: '500',
-                marginLeft: 8,
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity
+              onPress={() => {
+                props.goPosted();
               }}
             >
-              {detail.dpram.thms[detail.dpram.order - 1]}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  paddingHorizontal: 18,
+                  paddingVertical: 18,
+                  paddingBottom: 9,
+                  fontSize: 14,
+                  fontWeight: '500',
+                  marginLeft: 8,
+                }}
+              >
+                {detail.dpram.thms[detail.dpram.order - 1]}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ marginRight: 2, marginTop: 2 }}
+              onPress={() => {
+                props.setDelAns(detail.dpram.ansDoc);
+                props.setDAModal(true);
+              }}
+            >
+              <MaterialCommunityIcons
+                name="delete-forever-outline"
+                size={24}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
 
           <Divider />
           <View style={styles.answer}>

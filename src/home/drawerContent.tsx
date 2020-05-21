@@ -287,7 +287,10 @@ export function DrawerContent(props: Props) {
                           selectedItem.thms,
                           selectedItem.order,
                           selectedItem.body,
+                          selectedItem.postAt,
+                          selectedItem.postBy,
                           selectedItem.ansAt,
+                          selectedItem.ansBy,
                         ),
                       );
                     }}

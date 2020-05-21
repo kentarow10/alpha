@@ -4,10 +4,13 @@ import firebase, { db, storage, rtdb, func } from '../../../firebase/firebase';
 import { Me } from './me';
 import { Post, NicePost, Pin, GotitPin, LinkPin } from '../types';
 import { MyName } from './selector';
-
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import post from '../../behind/post';
 import { startProfileLoad, endProfileLoad } from '../screenMgr/mgr';
+import { Platform } from 'react-native';
 // 準備
 
 const actionCreator = actionCreatorFactory('ME');
@@ -66,7 +69,48 @@ export const doneEdit = actionCreator<{}>('EDIT_DONE');
 
 // async Actions
 
-// drawerの各項目から呼ばれる
+export const registerForPushNotificationsAsync = (uid: string) => {
+  return async dispatch => {
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(
+        Permissions.NOTIFICATIONS,
+      );
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(
+          Permissions.NOTIFICATIONS,
+        );
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+
+        return;
+      }
+      const token = await Notifications.getExpoPushTokenAsync();
+      console.log(token);
+      db.collection('users')
+        .doc(uid)
+        .set(
+          {
+            noteToken: token,
+          },
+          { merge: true },
+        );
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+
+    if (Platform.OS === 'android') {
+      Notifications.createChannelAndroidAsync('default', {
+        name: 'default',
+        sound: true,
+        priority: 'max',
+        vibrate: [0, 250, 250, 250],
+      });
+    }
+  };
+};
 
 // 自分がいいねした投稿一覧
 
@@ -671,13 +715,83 @@ export const deleteAnswer = async (postDoc: string, ansDoc: string) => {
   await rtdb.ref(ansDoc).remove();
 };
 
+export const asyncDeleteAns = (
+  postDoc: string,
+  ansDoc: string,
+  uid: string,
+  name: string,
+) => {
+  return async dispatch => {
+    dispatch(startProfileLoad({}));
+    await deleteAnsInLinks(ansDoc);
+    await deleteAnsInUsers(ansDoc);
+    const path = `posts/${postDoc}/answers/${ansDoc}`;
+    const createAdminToken = func.httpsCallable('mintAdminToken');
+    createAdminToken({ uid: uid })
+      .then(res => {
+        firebase
+          .auth()
+          .signInWithCustomToken(res.data as string)
+          .then(rr => {
+            const deleteFn = func.httpsCallable('recursiveDelete');
+            deleteFn({ path: path })
+              .then(function(result) {
+                console.log('Delete success: ' + JSON.stringify(result));
+                db.collectionGroup('answers')
+                  .where('ansBy', '==', uid)
+                  .get()
+                  .then(snap => {
+                    const myanss: Pin[] = [];
+                    snap.forEach(doc => {
+                      const ans: Pin = {
+                        postDoc: doc.data().postDoc,
+                        ansDoc: doc.id,
+                        uri: doc.data().uri,
+                        width: doc.data().width,
+                        height: doc.data().height,
+                        thms: doc.data().thms,
+                        order: doc.data().order,
+                        body: doc.data().body,
+                        postBy: doc.data().postBy,
+                        ansBy: doc.data().ansBy,
+                        postAt: doc.data().postAt,
+                        ansAt: doc.data().ansAt,
+                        answer: name,
+                      };
+                      myanss.push(ans);
+                    });
+                    dispatch(getMyPins(myanss));
+                    dispatch(endProfileLoad({}));
+                  })
+                  .catch(e => {
+                    console.log(e);
+                    dispatch(fetchError({}));
+                  });
+              })
+              .catch(function(err) {
+                console.log('Delete failed, see console,');
+                console.warn(err);
+              });
+          })
+          .catch(function(error) {
+            console.log('error');
+            console.log(error);
+          });
+      })
+      .catch(err => {
+        console.log('err in auth');
+        console.log(err);
+      });
+  };
+};
+
 export const asyncDeletePost = (postDoc: string, uid: string) => {
   return async dispatch => {
     console.log('-------------------------------------');
     dispatch(startProfileLoad({}));
     // realtime db
-    rtdb.ref(postDoc).off('value');
-    await rtdb.ref(postDoc).remove();
+    // rtdb.ref(postDoc).off('value');
+    // await rtdb.ref(postDoc).remove();
     // get ansDocs
     const ansDocs = await db
       .collection('posts')

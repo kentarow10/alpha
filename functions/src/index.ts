@@ -80,3 +80,71 @@ exports.recursiveDelete = functions
       });
   });
 // [END recursive_delete_function]
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+// const { Expo } = require('expo-server-sdk');
+// const expo = new Expo();
+
+exports.notify = functions.firestore
+  .document('users/{uid}/notes/{noteDoc}')
+  .onCreate(async (snap, context) => {
+    const { uid } = context.params;
+    let token = '';
+
+    const docRef = admin
+      .firestore()
+      .collection('users')
+      .doc(uid);
+    docRef
+      .get()
+      .then(snapshot => {
+        token = snapshot.data().token;
+      })
+      .catch(e => console.log(e));
+
+    const newValue = snap.data();
+    const cases = newValue.cases;
+    const ms = newValue.message;
+    let message = {};
+
+    switch (cases) {
+      case 'ANSWERED':
+        message = {
+          to: token,
+          sound: 'default',
+          title: 'test',
+          body: 'hello',
+          data: { name: 'foo', message: '回答されました！' + ms },
+        };
+        break;
+      case 'COMMENTED':
+        message = {
+          to: token,
+          sound: 'default',
+          title: 'test',
+          body: 'hello',
+          data: { name: 'foo', message: 'コメントがつきました！' + ms },
+        };
+        break;
+      case 'LINKED':
+        message = {
+          to: token,
+          sound: 'default',
+          title: 'test',
+          body: 'hello',
+          data: { name: 'foo', message: 'リンクされました！' + ms },
+        };
+        break;
+      default:
+        console.log(`Sorry, we are out of ${cases}.`);
+    }
+    await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  });

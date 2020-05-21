@@ -12,6 +12,7 @@ import {
 } from '../types';
 import { database } from 'firebase';
 import { asyncGetName } from '../../helper';
+import { refetch } from '../timeLine/actions';
 
 // 準備
 
@@ -187,12 +188,12 @@ export const asyncLink = (
   myansThms: string[],
   myansThmOrder: number,
   myansBody: string,
+  myansPostAt: firebase.firestore.Timestamp,
+  myansPostBy: string,
   myansAnsAt: firebase.firestore.Timestamp,
+  myansAnsBy: string,
 ) => {
   return async dispatch => {
-    console.log('call');
-    // console.log({ dparam });
-    // console.log({ myansDoc });
     const linkAt = firebase.firestore.FieldValue.serverTimestamp();
     const fromansRef = db
       .collection('links')
@@ -210,6 +211,26 @@ export const asyncLink = (
 
       return;
     }
+    await db
+      .collection('users')
+      .doc(dparam.ansBy)
+      .collection('notes')
+      .add({
+        cases: 'LINKED',
+        message: 'リンクされました！',
+        opeBy: myansAnsBy,
+        postDoc: myansPostDoc,
+        ansDoc: myansDoc,
+        uri: myansUri,
+        thms: myansThms,
+        order: myansThmOrder,
+        body: myansBody,
+        postBy: myansPostBy,
+        postAt: myansPostAt,
+        ansBy: myansAnsBy,
+        ansAt: myansAnsAt,
+      });
+
     await fromansRef.set({
       postDoc: myansPostDoc,
       ansDoc: myansDoc,
@@ -217,7 +238,10 @@ export const asyncLink = (
       thms: myansThms,
       order: myansThmOrder,
       body: myansBody,
+      postBy: myansPostBy,
+      postAt: myansPostAt,
       ansAt: myansAnsAt,
+      ansBy: myansAnsBy,
       linkAt,
       parent: dparam.ansDoc,
     });
@@ -228,7 +252,10 @@ export const asyncLink = (
       thms: dparam.thms,
       order: dparam.order,
       body: dparam.body,
+      postAt: dparam.postAt,
+      postBy: dparam.postBy,
       ansAt: dparam.ansAt,
+      ansBy: dparam.ansBy,
       linkAt,
       parent: myansDoc,
     });
@@ -302,6 +329,29 @@ export const asyncFetchComment = (postDoc: string, ansDoc: string) => {
 export const asyncComment = (dparam: Pin, comment: string, uid: string) => {
   return async dispach => {
     const commentAt = firebase.firestore.FieldValue.serverTimestamp();
+
+    await db
+      .collection('users')
+      .doc(dparam.ansBy)
+      .collection('notes')
+      .add({
+        cases: 'COMMENTED',
+        message: 'コメントがつきました！',
+        opeBy: uid,
+        postDoc: dparam.postDoc,
+        ansDoc: dparam.ansDoc,
+        uri: dparam.uri,
+        width: dparam.width,
+        height: dparam.height,
+        thms: dparam.thms,
+        order: dparam.order,
+        body: dparam.body,
+        postBy: dparam.postBy,
+        postAt: dparam.postAt,
+        ansBy: dparam.ansBy,
+        ansAt: dparam.ansAt,
+      });
+
     db.collection('posts')
       .doc(dparam.postDoc)
       .collection('answers')
@@ -365,14 +415,31 @@ export const asyncAnswer = (
         gbl: [],
       })
       .then(res => {
-        console.log('caaaaaaaaaaaaaaaaaaaaaaaaalllllllll');
-        // const ansRef = rtdb.ref(res.id);
-        // ansRef.set({
-        //   gCount: 0,
-        //   gs: { test: null },
-        // });
-        alert('回答しました！');
-        dispatch(done({}));
+        // 通知用
+        db.collection('users')
+          .doc(pparam.postBy)
+          .collection('notes')
+          .add({
+            cases: 'ANSWERED',
+            message: '回答されました！',
+            opeBy: ansBy,
+            postDoc: pparam.postDoc,
+            ansDoc: res.id,
+            uri: pparam.uri,
+            body,
+            ansBy,
+            ansAt,
+            order,
+            width: pparam.width,
+            height: pparam.height,
+            thms: pparam.thms,
+            postBy: pparam.postBy,
+            postAt: pparam.postAt,
+          })
+          .then(r => {
+            alert('回答しました！');
+            dispatch(done({}));
+          });
       })
       .catch(e => {
         console.log(e);
@@ -466,6 +533,7 @@ export const asyncPost = (
 
               alert('投稿完了しました!');
               dispatch(done({}));
+              dispatch(refetch({}));
             })
             .catch(error => {
               console.error('Error writing document: ', error);

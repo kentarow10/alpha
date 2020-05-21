@@ -44,7 +44,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { cls } from '../store/screenMgr/mgr';
 import posted from '../behind/posted';
 import { GetUid } from '../store/auth/auth';
-import { asyncDeletePost } from '../store/me/me';
+import { asyncDeletePost, asyncDeleteAns, MyName } from '../store/me/me';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -70,8 +70,11 @@ const flame = () => {
   const route = useRoute<RouteProp<NavigationParamList, 'FLAME'>>();
   const prm = route.params;
   const uid = useSelector(GetUid);
+  const myname = useSelector(MyName);
   const [showModal, setModal] = useState(false);
   const [showDModal, setDModal] = useState(false);
+  const [showDAModal, setDAModal] = useState(false);
+  const [delAns, setDelAns] = useState('');
   const [notFound, setNotFound] = useState(false);
   const scrl = useRef(null);
   const [close, setClose] = useState(false);
@@ -129,9 +132,22 @@ const flame = () => {
   }, []);
 
   return notFound ? (
-    <SafeAreaView
-      style={{ height: HEIGHT, backgroundColor: 'red' }}
-    ></SafeAreaView>
+    <SafeAreaView style={{ height: HEIGHT, width: WIDTH }}>
+      <Header mode="back" />
+      <Divider />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#DDDDDD',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Text style={{ fontFamily: 'myfont', fontSize: 20, color: cls.grn }}>
+          お探しの投稿は削除されたようです。。。
+        </Text>
+      </View>
+    </SafeAreaView>
   ) : (
     <React.Fragment>
       <SafeAreaView style={{ height: HEIGHT }}>
@@ -184,6 +200,8 @@ const flame = () => {
                   goPosted={goPosted}
                   close={close}
                   setModal={setModal}
+                  setDAModal={setDAModal}
+                  setDelAns={setDelAns}
                   setGotiters={setGotiters}
                   setNotFound={setNotFound}
                 />
@@ -378,11 +396,9 @@ const flame = () => {
                     <Text
                       style={{
                         marginBottom: 4,
-                        // fontFamily: 'myfont',
                         fontSize: 16,
                         textAlign: 'center',
                         fontWeight: 'bold',
-                        // color: 'white',
                       }}
                     >
                       それは時に世界の分断を引き起こします。
@@ -400,7 +416,6 @@ const flame = () => {
                       それでも削除しますか？
                     </Text>
                   </View>
-
                   <View
                     style={{
                       flexDirection: 'row',
@@ -444,6 +459,152 @@ const flame = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setDModal(false);
+                  }}
+                  style={{
+                    height: HEIGHT - 140,
+                    width: (WIDTH - 300) / 2,
+                    backgroundColor: 'transparent',
+                  }}
+                ></TouchableOpacity>
+              </View>
+            </Modal>
+          </Portal>
+        </Provider>
+        <Provider>
+          <Portal>
+            <Modal
+              visible={showDModal}
+              onDismiss={() => {
+                setDAModal(false);
+              }}
+            >
+              <View style={{ flexDirection: 'row', marginTop: 200 }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDAModal(false);
+                  }}
+                  style={{
+                    height: HEIGHT - 140,
+                    width: (WIDTH - 300) / 2,
+                    backgroundColor: 'transparent',
+                  }}
+                ></TouchableOpacity>
+                <View
+                  style={{
+                    height: 320,
+                    width: 300,
+                    backgroundColor: '#DDDDDD',
+                    borderRadius: 8,
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 60,
+                      backgroundColor: cls.grn,
+                      borderRadius: 8,
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        fontFamily: 'myfont',
+                        fontSize: 22,
+                        color: 'white',
+                      }}
+                    >
+                      かくにん
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      height: 200,
+                      backgroundColor: '#DDDDDD',
+                      borderRadius: 8,
+                      justifyContent: 'center',
+                      padding: 24,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        marginBottom: 4,
+                        // fontFamily: 'myfont',
+                        fontSize: 16,
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        // color: 'white',
+                      }}
+                    >
+                      この回答を削除するとリンクは全て解消されます。
+                    </Text>
+                    <Text
+                      style={{
+                        marginBottom: 4,
+                        fontSize: 16,
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      世界を構成する一要素ですが、大きな影響を与える可能性があります。
+                    </Text>
+                    <Text
+                      style={{
+                        marginBottom: 4,
+                        // fontFamily: 'myfont',
+                        fontSize: 16,
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        // color: 'white',
+                      }}
+                    >
+                      それでも削除しますか？
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      height: 60,
+                      justifyContent: 'space-evenly',
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: 'white',
+                        height: 45,
+                        width: 100,
+                        borderRadius: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => {
+                        dispatch(
+                          asyncDeleteAns(prm.postDoc, delAns, uid, myname),
+                        );
+                        navigation.navigate('PROFILE');
+                      }}
+                    >
+                      <Text style={{ fontWeight: 'bold' }}>はい</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: 'white',
+                        height: 45,
+                        width: 100,
+                        borderRadius: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => {
+                        setDAModal(false);
+                      }}
+                    >
+                      <Text style={{ fontWeight: 'bold' }}>いいえ</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDAModal(false);
                   }}
                   style={{
                     height: HEIGHT - 140,

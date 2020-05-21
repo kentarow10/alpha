@@ -31,6 +31,7 @@ import {
   asyncGetMyPins,
   listenMyNices,
   listenMyGotits,
+  registerForPushNotificationsAsync,
 } from '../store/me/me';
 import firebase from '../../firebase/firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -116,6 +117,7 @@ const profile = () => {
   });
 
   useEffect(() => {
+    dispatch(registerForPushNotificationsAsync(uid));
     dispatch(asyncGetMyPosts(uid));
     dispatch(asyncGetMyInfo(uid));
     dispatch(asyncGetMyPins(uid));

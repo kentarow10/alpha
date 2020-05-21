@@ -96,6 +96,60 @@ postDoc
             * postAt
             * gotitAt
             * ansDoc(参照用)
+    * subcollection('notes')
+        * $noteDocument
+            * cases(共通)
+            * message(共通)
+            * opeBy(共通)
+            リンクされた時
+            parent: uid,
+            postDoc: dparam.postDoc,
+            ansDoc: dparam.ansDoc,
+            uri: dparam.uri,
+            width: dparam.width,
+            height: dparam.height,
+            thms: dparam.thms,
+            order: dparam.order,
+            body: dparam.body,
+            postBy: dparam.postBy,
+            postAt: dparam.postAt,
+            ansBy: dparam.ansBy,
+            ansAt: dparam.ansAt,
+            flag: true,
+            gotitBy: uid,
+            gotitAt,
+            linkAt: snap.data().linkAt,
+            回答された時
+            parent: uid,
+            postDoc: dparam.postDoc,
+            ansDoc: dparam.ansDoc,
+            uri: dparam.uri,
+            width: dparam.width,
+            height: dparam.height,
+            thms: dparam.thms,
+            order: dparam.order,
+            body: dparam.body,
+            postBy: dparam.postBy,
+            postAt: dparam.postAt,
+            ansBy: dparam.ansBy,
+            ansAt: dparam.ansAt,
+            flag: true,
+            gotitBy: uid,
+            gotitAt,
+            コメント
+            postDoc: dparam.postDoc,
+            ansDoc: dparam.ansDoc,
+            uri: dparam.uri,
+            width: dparam.width,
+            height: dparam.height,
+            thms: dparam.thms,
+            order: dparam.order,
+            body: dparam.body,
+            postBy: dparam.postBy,
+            postAt: dparam.postAt,
+            ansBy: dparam.ansBy,
+            ansAt: dparam.ansAt,
+
     
 * onSnapshot()でドキュメントをリスンできる
 
