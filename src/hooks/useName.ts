@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { rtdb } from '../../firebase/firebase';
 import { asyncGetName } from '../helper';
 
 export const useName = (uid: string) => {

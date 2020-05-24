@@ -40,7 +40,7 @@ import { asyncGetAnss, AnsState, PostState } from '../store/behind/behind';
 import { NavigationContext } from '@react-navigation/native';
 import { Ftext } from '../components/Ftext';
 import { Tegaki } from '../components/Tegaki';
-import { asyncGetUserName, cls, ScreenMgrState } from '../store/screenMgr/mgr';
+import { cls, ScreenMgrState } from '../store/screenMgr/mgr';
 import { GetUid } from '../store/auth/auth';
 import { useName } from '../hooks/useName';
 import { Header } from '../components/header';
@@ -117,8 +117,8 @@ const profile = () => {
   });
 
   useEffect(() => {
-    dispatch(registerForPushNotificationsAsync(uid));
-    dispatch(asyncGetMyPosts(uid));
+    // dispatch(registerForPushNotificationsAsync(uid));
+    // dispatch(asyncGetMyPosts(uid));
     dispatch(asyncGetMyInfo(uid));
     dispatch(asyncGetMyPins(uid));
     dispatch(listenMyNices(uid));
@@ -127,13 +127,13 @@ const profile = () => {
 
   useEffect(() => {
     if (post.isDone) {
-      dispatch(asyncGetMyPosts(uid));
+      // dispatch(asyncGetMyPosts(uid));
     }
   }, [post.isDone]);
 
   useEffect(() => {
     if (ans.isDone) {
-      dispatch(asyncGetMyPins(uid));
+      // dispatch(asyncGetMyPins(uid));
     }
   }, [ans.isDone]);
 

@@ -1,8 +1,7 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import { db, storage, rtdb } from '../../../firebase/firebase';
+import { db } from '../../../firebase/firebase';
 import { Post, Comment } from '../types';
-import { asyncGetUserName } from '../screenMgr/mgr';
 import { asyncGetName } from '../../helper';
 
 // 準備

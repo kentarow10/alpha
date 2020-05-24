@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import FireBase, { db, storage, rtdb } from '../../../firebase/firebase';
+import FireBase, { db, storage } from '../../../firebase/firebase';
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
 import { AsyncStorage } from 'react-native';
@@ -97,8 +97,6 @@ export const createUser = (
           .then(res => {
             const uid = res.user.uid;
 
-            const userRef = rtdb.ref(uid);
-            userRef.set({ account });
             const uref = db.collection('users').doc(uid);
 
             uref

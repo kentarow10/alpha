@@ -1,4 +1,4 @@
-import { rtdb, db, storage } from '../firebase/firebase';
+import { db, storage } from '../firebase/firebase';
 
 const formatDate = (date: Date, format: string): string => {
   format = format.replace(/YYYY/, date.getFullYear().toString());

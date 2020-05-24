@@ -44,7 +44,6 @@ import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
 import { GetAllMe } from '../store/me/me';
 import { asyncLink, DetailState } from '../store/behind/behind';
-import { rtdb } from '../../firebase/firebase';
 import { cls, ScreenMgrState } from '../store/screenMgr/mgr';
 import { useName } from '../hooks/useName';
 import { GetUid, asyncLogout } from '../store/auth/auth';

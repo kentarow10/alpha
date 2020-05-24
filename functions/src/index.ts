@@ -2,6 +2,8 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const firebaseTools = require('firebase-tools');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const fetch = require('node-fetch');
 // console.log(require.resolve('firebase-tools'));
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -97,54 +99,55 @@ exports.notify = functions.firestore
       .doc(uid);
     docRef
       .get()
-      .then(snapshot => {
-        token = snapshot.data().token;
+      .then(async snapshot => {
+        token = snapshot.data().noteToken;
+
+        const newValue = snap.data();
+        const cases = newValue.cases;
+        const ms = newValue.message;
+        let message = {};
+
+        switch (cases) {
+          case 'ANSWERED':
+            message = {
+              to: token,
+              sound: 'default',
+              title: 'アプリ名',
+              body: ms,
+              data: { name: 'foo', message: '回答されました！' + ms },
+            };
+            break;
+          case 'COMMENTED':
+            message = {
+              to: token,
+              sound: 'default',
+              title: 'アプリ名',
+              body: ms,
+              data: { name: 'foo', message: 'コメントがつきました！' + ms },
+            };
+            break;
+          case 'LINKED':
+            message = {
+              to: token,
+              sound: 'default',
+              title: 'アプリ名',
+              body: ms,
+              data: { name: 'foo', message: 'リンクされました！' + ms },
+            };
+            break;
+          default:
+            console.log(`Sorry, we are out of ${cases}.`);
+        }
+        console.log({ message });
+        await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
       })
       .catch(e => console.log(e));
-
-    const newValue = snap.data();
-    const cases = newValue.cases;
-    const ms = newValue.message;
-    let message = {};
-
-    switch (cases) {
-      case 'ANSWERED':
-        message = {
-          to: token,
-          sound: 'default',
-          title: 'test',
-          body: 'hello',
-          data: { name: 'foo', message: '回答されました！' + ms },
-        };
-        break;
-      case 'COMMENTED':
-        message = {
-          to: token,
-          sound: 'default',
-          title: 'test',
-          body: 'hello',
-          data: { name: 'foo', message: 'コメントがつきました！' + ms },
-        };
-        break;
-      case 'LINKED':
-        message = {
-          to: token,
-          sound: 'default',
-          title: 'test',
-          body: 'hello',
-          data: { name: 'foo', message: 'リンクされました！' + ms },
-        };
-        break;
-      default:
-        console.log(`Sorry, we are out of ${cases}.`);
-    }
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
   });

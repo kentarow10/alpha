@@ -1,6 +1,4 @@
 import { actionCreatorFactory } from 'typescript-fsa';
-import { rtdb } from '../../../firebase/firebase';
-import * as Font from 'expo-font';
 import { DrawerNavigationState } from '@react-navigation/native';
 
 // 準備
@@ -34,10 +32,4 @@ export const omitText = (num: number, text: string): string => {
 
     return omitted;
   }
-};
-
-export const asyncGetUserName = async (uid: string) => {
-  const uJson = await rtdb.ref(uid).once('value');
-
-  return uJson.val().name;
 };

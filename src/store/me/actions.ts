@@ -1,6 +1,6 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import firebase, { db, storage, rtdb, func } from '../../../firebase/firebase';
+import firebase, { db, storage, func } from '../../../firebase/firebase';
 import { Me } from './me';
 import { Post, NicePost, Pin, GotitPin, LinkPin } from '../types';
 import { MyName } from './selector';
@@ -71,43 +71,50 @@ export const doneEdit = actionCreator<{}>('EDIT_DONE');
 
 export const registerForPushNotificationsAsync = (uid: string) => {
   return async dispatch => {
-    if (Constants.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS,
-      );
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(
+    try {
+      if (Constants.isDevice) {
+        const { status: existingStatus } = await Permissions.getAsync(
           Permissions.NOTIFICATIONS,
         );
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Permissions.askAsync(
+            Permissions.NOTIFICATIONS,
+          );
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          alert(
+            'このアプリはプッシュ通知を行いません。通知ご希望の方は[設定]→[通知]からいつでも変更できます',
+          );
 
-        return;
+          return;
+        }
+        const token = await Notifications.getExpoPushTokenAsync();
+        console.log('aaa');
+        console.log({ token });
+        db.collection('users')
+          .doc(uid)
+          .set(
+            {
+              noteToken: token,
+            },
+            { merge: true },
+          );
+      } else {
+        alert('Must use physical device for Push Notifications');
       }
-      const token = await Notifications.getExpoPushTokenAsync();
-      console.log(token);
-      db.collection('users')
-        .doc(uid)
-        .set(
-          {
-            noteToken: token,
-          },
-          { merge: true },
-        );
-    } else {
-      alert('Must use physical device for Push Notifications');
-    }
 
-    if (Platform.OS === 'android') {
-      Notifications.createChannelAndroidAsync('default', {
-        name: 'default',
-        sound: true,
-        priority: 'max',
-        vibrate: [0, 250, 250, 250],
-      });
+      if (Platform.OS === 'android') {
+        Notifications.createChannelAndroidAsync('default', {
+          name: 'default',
+          sound: true,
+          priority: 'max',
+          vibrate: [0, 250, 250, 250],
+        });
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 };
@@ -202,52 +209,7 @@ export const listenMyGotits = (uid: string) => {
   };
 };
 
-// export const asyncGetMyGotitPins = (uid: string) => {
-//   return async dispatch => {
-//     const gotits = await rtdb.ref(uid + '/gotits').once('value');
-//     const ansDoc = Object.keys(gotits);
-//     const gotitsList: Pin[] = ansDoc.map(ad => {
-//       const postDoc = gotits[ad].postDoc;
-//       const uri = gotits[ad].uri;
-//       const thm = gotits[ad].thm;
-//       const body = gotits[ad].body;
-//       const ansBy = gotits[ad].ansBy;
-
-//       return { ansDoc: ad, postDoc, uri, thm, body, ansBy };
-//     });
-//     dispatch(getMyGotitPins(gotitsList));
-//   };
-// };
-
 // ほかのユーザーからリンクされた自分の回答一覧
-
-export const asyncGetMyLinkedAnss = (uid: string) => {
-  // return dispatch => {
-  //   rtdb
-  //     .ref('/' + uid + '/linked/')
-  //     .once('value')
-  //     .then(snap => {
-  //       console.log(snap.val());
-  //       const linkeds = snap.val();
-  //       const combs: Comb[] = [];
-  //       for (const ansd in linkeds) {
-  //         const postDoc = linkeds[ansd].postDoc;
-  //         const uri = linkeds[ansd].uri;
-  //         const thm = linkeds[ansd].thm;
-  //         const body = linkeds[ansd].body;
-  //         const comb: Comb = {
-  //           ansDoc: ansd,
-  //           postDoc,
-  //           uri,
-  //           thm,
-  //           ans: body,
-  //         };
-  //         combs.push(comb);
-  //       }
-  //       dispatch(getMyLinkedAnss(combs));
-  //     });
-  // };
-};
 
 // プロフィール画面から呼ばれる
 
@@ -712,7 +674,6 @@ export const deleteAnswer = async (postDoc: string, ansDoc: string) => {
   await deleteAnsInLinks(ansDoc);
   await deleteComments(postDoc, ansDoc);
   await ans.delete();
-  await rtdb.ref(ansDoc).remove();
 };
 
 export const asyncDeleteAns = (
@@ -789,9 +750,6 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
   return async dispatch => {
     console.log('-------------------------------------');
     dispatch(startProfileLoad({}));
-    // realtime db
-    // rtdb.ref(postDoc).off('value');
-    // await rtdb.ref(postDoc).remove();
     // get ansDocs
     const ansDocs = await db
       .collection('posts')
@@ -800,9 +758,6 @@ export const asyncDeletePost = (postDoc: string, uid: string) => {
       .get();
     // delete anss
     ansDocs.forEach(async ad => {
-      // realtime db
-      rtdb.ref(ad.id).off('value');
-      await rtdb.ref(ad.id).remove();
       // must have a parent ansDoc
       await deleteAnsInLinks(ad.id);
       // must have a parent uid

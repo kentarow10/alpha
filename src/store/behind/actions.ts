@@ -1,6 +1,6 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import * as ImagePicker from 'expo-image-picker';
-import firebase, { db, storage, rtdb } from '../../../firebase/firebase';
+import firebase, { db, storage } from '../../../firebase/firebase';
 import {
   Post,
   Comment,
@@ -528,9 +528,6 @@ export const asyncPost = (
               nbl: [],
             })
             .then(res => {
-              // const postRef = rtdb.ref(res.id);
-              // postRef.set({ nicesCount: 0, nices: { test: null } });
-
               alert('投稿完了しました!');
               dispatch(done({}));
               dispatch(refetch({}));
@@ -566,46 +563,6 @@ export const asyncChooseImage = () => {
     });
   };
 };
-
-// わかる！のリスン
-
-// export const asyncListenGotit = (ansDoc: string, uid: string) => {
-//   return disptch => {
-//     console.log('listener is called');
-//     rtdb.ref(ansDoc).on('value', snap => {
-//       if (snap.exists) {
-//         const numGotit = snap.val().gCount;
-//         if (snap.val().gs) {
-//           // console.log(snap.val().gs);
-//           const gotitByList = Object.keys(snap.val().gs);
-//           const isGotit = gotitByList.includes(uid);
-//           disptch(getGotit({ numGotit, gotitByList, isGotit }));
-//         } else {
-//           disptch(getGotit({ numGotit: 0, gotitByList: [], isGotit: false }));
-//         }
-//       }
-//     });
-//   };
-// };
-
-// 良いねのリスン
-
-// export const asyncListenNice = (postDoc: string, uid: string) => {
-//   return dispatch => {
-//     rtdb.ref(postDoc).on('value', snap => {
-//       if (snap.exists) {
-//         const numNice = snap.val().nicesCount;
-//         if (snap.val().nices) {
-//           const niceByList = Object.keys(snap.val().nices);
-//           const isNiced = niceByList.includes(uid);
-//           dispatch(getNice({ numNice, niceByList, isNiced }));
-//         } else {
-//           dispatch(getNice({ numNice, niceByList: [], isNiced: false }));
-//         }
-//       }
-//     });
-//   };
-// };
 
 // わかる！を押した時
 
@@ -688,23 +645,6 @@ export const asyncNice = (
 ) => {
   return dispatch => {
     if (postDoc === undefined) return;
-    // const postRef = rtdb.ref(postDoc);
-    // postRef.transaction(function(post) {
-    //   if (post) {
-    //     if (post.nices && post.nices[uid]) {
-    //       post.nicesCount--;
-    //       post.nices[uid] = null;
-    //     } else {
-    //       post.nicesCount++;
-    //       if (!post.nices) {
-    //         post.nices = {};
-    //       }
-    //       post.nices[uid] = true;
-    //     }
-    //   }
-
-    //   return post;
-    // });
 
     const niceAt = firebase.firestore.FieldValue.serverTimestamp();
     const target = db.collection('posts').doc(postDoc);

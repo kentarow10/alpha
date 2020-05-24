@@ -1,6 +1,6 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { Asset } from 'expo-asset';
-import { db, storage, rtdb } from '../../../firebase/firebase';
+import { db, storage } from '../../../firebase/firebase';
 import { Me } from './me';
 import { Post, NicePost, Pin, GotitPin, LinkPin } from '../types';
 import { MyName } from './selector';
@@ -141,53 +141,6 @@ export const listenMyGotits = (uid: string) => {
         dispatch(getMyGotitPins(gotitList));
       });
   };
-};
-
-// export const asyncGetMyGotitPins = (uid: string) => {
-//   return async dispatch => {
-//     const gotits = await rtdb.ref(uid + '/gotits').once('value');
-//     const ansDoc = Object.keys(gotits);
-//     const gotitsList: Pin[] = ansDoc.map(ad => {
-//       const postDoc = gotits[ad].postDoc;
-//       const uri = gotits[ad].uri;
-//       const thm = gotits[ad].thm;
-//       const body = gotits[ad].body;
-//       const ansBy = gotits[ad].ansBy;
-
-//       return { ansDoc: ad, postDoc, uri, thm, body, ansBy };
-//     });
-//     dispatch(getMyGotitPins(gotitsList));
-//   };
-// };
-
-// ほかのユーザーからリンクされた自分の回答一覧
-
-export const asyncGetMyLinkedAnss = (uid: string) => {
-  // return dispatch => {
-  //   rtdb
-  //     .ref('/' + uid + '/linked/')
-  //     .once('value')
-  //     .then(snap => {
-  //       console.log(snap.val());
-  //       const linkeds = snap.val();
-  //       const combs: Comb[] = [];
-  //       for (const ansd in linkeds) {
-  //         const postDoc = linkeds[ansd].postDoc;
-  //         const uri = linkeds[ansd].uri;
-  //         const thm = linkeds[ansd].thm;
-  //         const body = linkeds[ansd].body;
-  //         const comb: Comb = {
-  //           ansDoc: ansd,
-  //           postDoc,
-  //           uri,
-  //           thm,
-  //           ans: body,
-  //         };
-  //         combs.push(comb);
-  //       }
-  //       dispatch(getMyLinkedAnss(combs));
-  //     });
-  // };
 };
 
 // プロフィール画面から呼ばれる
