@@ -187,7 +187,7 @@ export const Detail = (props: Props) => {
   useEffect(() => {
     dispatch(listenPost(detail.dpram.postDoc));
     dispatch(listenAns(detail.dpram.postDoc, detail.dpram.ansDoc));
-  });
+  }, []);
 
   useEffect(() => {
     dispatch(asyncFetchComment(detail.dpram.postDoc, detail.dpram.ansDoc));

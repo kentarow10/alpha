@@ -36,6 +36,7 @@ import { GetUid } from '../store/auth/auth';
 import { thmSwitch as ThmSwitch } from '../components/thmSwitch';
 import { postedImage as PostedImage } from '../components/postedImage';
 import { accessibilityProps } from 'react-native-paper/lib/typescript/src/components/MaterialCommunityIcon';
+import { Indicator } from '../components/Indicator';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -155,7 +156,11 @@ export const Answer = (props: Props) => {
     };
   }, []);
 
-  return (
+  return ans.isFetching ? (
+    <>
+      <Indicator />
+    </>
+  ) : (
     <React.Fragment>
       <View style={styles.content}>
         <ThmSwitch

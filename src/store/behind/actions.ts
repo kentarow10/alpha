@@ -13,6 +13,7 @@ import {
 import { database } from 'firebase';
 import { asyncGetName } from '../../helper';
 import { refetch } from '../timeLine/actions';
+import { Alert } from 'react-native';
 
 // 準備
 
@@ -443,6 +444,11 @@ export const asyncAnswer = (
       })
       .catch(e => {
         console.log(e);
+        Alert.alert(
+          '!お知らせ!',
+          '通信エラーが発生しました。\nお手数ですが、やり直してみてください。',
+          [{ text: 'OK' }],
+        );
         dispatch(error({}));
       });
   };
@@ -508,8 +514,28 @@ export const asyncPost = (
         }
       },
       function(error) {
-        console.log(error);
-        alert(error);
+        switch (error.code_) {
+          case 'storage/unauthorized':
+            Alert.alert(
+              '！お知らせ！',
+              'ごめんなさい。投稿に失敗しました。\n投稿する画像のサイズが大きいです。。\n上限は３MBです。',
+              [{ text: 'OK' }],
+            );
+            break;
+          case 'storage/canceled':
+            Alert.alert(
+              '！お知らせ！',
+              '投稿がキャンセルされました。もう一度やり直してください。',
+              [{ text: 'OK' }],
+            );
+            break;
+          default:
+            Alert.alert(
+              '！お知らせ！',
+              'ごめんなさい。エラーが発生しました。\nお手数ですが、時間を置いてやり直すか、運営にご連絡ください。',
+              [{ text: 'OK' }],
+            );
+        }
       },
       function() {
         // Upload completed successfully, now we can get the download URL
@@ -528,7 +554,7 @@ export const asyncPost = (
               nbl: [],
             })
             .then(res => {
-              alert('投稿完了しました!');
+              Alert.alert('お知らせ', '投稿完了しました！', [{ text: 'OK' }]);
               dispatch(done({}));
               dispatch(refetch({}));
             })

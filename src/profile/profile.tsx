@@ -118,7 +118,7 @@ const profile = () => {
 
   useEffect(() => {
     // dispatch(registerForPushNotificationsAsync(uid));
-    // dispatch(asyncGetMyPosts(uid));
+    dispatch(asyncGetMyPosts(uid));
     dispatch(asyncGetMyInfo(uid));
     dispatch(asyncGetMyPins(uid));
     dispatch(listenMyNices(uid));

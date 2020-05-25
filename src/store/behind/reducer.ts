@@ -243,14 +243,9 @@ export const ansReducer: Reducer<AnsScreen> = reducerWithInitialState(
   initialAnswer,
 )
   .case(ansInit, (state, payload) => ({
-    isFetching: false,
-    isError: false,
-    isDone: false,
-  }))
-  .case(fetching, (state, payload) => ({
-    ...state,
     isFetching: true,
     isError: false,
+    isDone: false,
   }))
   .case(error, (state, payload) => ({
     ...state,
