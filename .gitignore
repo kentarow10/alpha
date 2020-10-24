@@ -1,5 +1,6 @@
 node_modules/**/*
 .expo/*
+.expo-shared/*
 npm-debug.*
 *.jks
 *.p8
@@ -10,6 +11,7 @@ npm-debug.*
 web-build/
 web-report/
 firebase/config.ts
-
-# macOS
+.firebaserc
+firestore.rules
+storage.rules
 .DS_Store
