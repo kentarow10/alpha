@@ -2,6 +2,8 @@ import * as firebase from 'firebase';
 require('firebase/auth');
 require('firebase/storage');
 require('firebase/firestore');
+require('firebase/database');
+require('firebase/functions');
 import My from './config';
 
 const firebaseConfig = {
@@ -17,4 +19,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 export const storage = firebase.storage();
 export const db = firebase.firestore();
+export const rtdb = firebase.database();
+export const func = firebase.functions();
 export default firebase;

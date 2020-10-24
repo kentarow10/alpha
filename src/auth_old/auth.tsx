@@ -25,24 +25,23 @@ const useAuth = (initialState = initialData) => {
   const [auth, setAuth] = useState(initialState);
   const navigation = useContext(NavigationContext);
   const initializeDatabase = (uid: string) => {
-    // DBの作成先を出力
     console.log(FileSystem.documentDirectory + 'SQLite/');
     const db = SQLite.openDatabase('alpha_app');
 
     db.transaction(
       tx => {
-        tx.executeSql(
-          'create table if not exists users (uid text primary key not null, username text, iconPath text);',
-          null,
-          () => {
-            console.log('success');
-          },
-          () => {
-            console.log('fail');
+        // tx.executeSql(
+        //   'create table if not exists users (id integer primary key not null, uid text, username text, iconPath text);',
+        //   null,
+        //   () => {
+        //     console.log('success');
+        //   },
+        //   () => {
+        //     console.log('fail');
 
-            return true;
-          },
-        );
+        //     return true;
+        //   },
+        // );
 
         tx.executeSql(
           'create table if not exists anss (id integer primary key not null, uid text, postId text, ansId text);',
@@ -58,15 +57,26 @@ const useAuth = (initialState = initialData) => {
         );
 
         tx.executeSql(
-          'insert into users (uid) values (?);',
+          'select * from anss where uid = (?)',
           [uid],
-          () => {
-            console.log('success');
-          },
-          () => {
-            console.log('fail');
+          (_, resultSet) => {
+            if (resultSet.rows.length === 0) {
+              tx.executeSql(
+                'insert into anss (uid) values (?)',
+                [uid],
+                () => {
+                  console.log('success');
+                },
+                e => {
+                  console.log('fail');
+                  console.log(e);
 
-            return true;
+                  return true;
+                },
+              );
+            } else {
+              console.log('exists');
+            }
           },
         );
       },
@@ -103,6 +113,13 @@ const useAuth = (initialState = initialData) => {
         let uid: string;
         if (user != null) {
           uid = user.uid;
+          async () => {
+            try {
+              await AsyncStorage.setItem('uid', uid);
+            } catch (e) {
+              console.log(e);
+            }
+          };
           initializeDatabase(uid);
         }
         setAuthed('true');

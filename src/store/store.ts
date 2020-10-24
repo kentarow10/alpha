@@ -1,0 +1,37 @@
+import { combineReducers, createStore, compose, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
+
+import me from './me/me';
+import person from './person/person';
+import auth from './auth/auth';
+import timeline from './timeLine/timeLine';
+import {
+  postedReducer,
+  detailReducer,
+  postReducer,
+  ansReducer,
+} from './behind/behind';
+import { screenMgr } from './screenMgr/mgr';
+
+const reducers = combineReducers({
+  me,
+  person,
+  auth,
+  timeline,
+  postedReducer,
+  detailReducer,
+  postReducer,
+  ansReducer,
+  screenMgr,
+});
+
+const storeEnhancers =
+  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+export const Store = createStore(
+  reducers,
+  composeWithDevTools(applyMiddleware(thunk)),
+);
+
+export type State = ReturnType<typeof Store.getState>;

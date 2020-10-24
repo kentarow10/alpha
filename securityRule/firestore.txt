@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUserAuthenticated(userID) {
+      return request.auth.uid == userID;
+    }
+
+    function existingData() {
+        return resource.data;
+    }
+
+    function incomingData() {
+        return request.resource.data;
+    }
+
+    match /users/{uid} {
+        allow read: if isAuthenticated();
+        allow write: if isUserAuthenticated(uid);
+
+        match /nices/{niceDoc} {
+            allow read: if isAuthenticated();
+            allow write: if isUserAuthenticated(uid);
+        }
+
+        match /gotits/{gotitDoc} {
+            allow read: if isAuthenticated();
+            allow write: if isUserAuthenticated(uid);
+        }
+
+        match /notes/{noteDoc} {
+            allow read: if isUserAuthenticated(uid);
+            allow write: if isAuthenticated();
+        }
+    }
+
+    match /posts/{postDoc} {
+        allow read: if isAuthenticated();
+        allow create, delete: if isUserAuthenticated(incomingData().postBy);
+
+        match /answers/{ansDoc} {
+            allow read: if isAuthenticated();
+            allow create, delete: if isUserAuthenticated(incomingData().ansBy);
+
+            match /comments/{comDoc} {
+                allow read: if isAuthenticated();
+                allow create, delete: if isUserAuthenticated(incomingData().comBy);
+            }
+        }
+    }
+
+    match /links/{ansDoc} {
+
+        match /to/{toDoc} {
+            allow read, write: if isAuthenticated();
+        }
+        match /from/{fromDoc} {
+            allow read, write: if isAuthenticated();
+        }
+        match /mutual/{mutualDoc} {
+            allow read, write: if isAuthenticated();
+        }
+    }
+  }
+}
+
+match /users/{uid} {
+        allow read: if true;
+        allow write: if isUserAuthenticated(uid);
+
+        match /nices/{niceDoc} {
+            allow read: if true;
+            allow write: if isUserAuthenticated(uid);
+        }
+
+        match /gotits/{gotitDoc} {
+            allow read: if true;
+            allow write: if isUserAuthenticated(uid);
+        }
+
+        match /notes/{noteDoc} {
+            allow read: if isUserAuthenticated(uid);
+            allow write: if isAuthenticated();
+        }
+    }
+
+    match /posts/{postDoc} {
+        allow read: if true;
+        allow create, delete: if isUserAuthenticated(incomingData().postBy);
+
+        match /answers/{ansDoc} {
+            allow read: if true;
+            allow create, delete: if isUserAuthenticated(incomingData().ansBy);
+
+            match /comments/{comDoc} {
+                allow read: if isAuthenticated();
+                allow create, delete: if isUserAuthenticated(incomingData().comBy);
+            }
+        }
+    }
+
+    match /links/{ansDoc} {
+
+        match /to/{toDoc} {
+            allow read, write: if isAuthenticated();
+        }
+        match /from/{fromDoc} {
+            allow read, write: if isAuthenticated();
+        }
+        match /mutual/{mutualDoc} {
+            allow read, write: if isAuthenticated();
+        }
+    }

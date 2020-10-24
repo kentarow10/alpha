@@ -1,13 +1,24 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import {
-  DrawerContentComponentProps,
-  DrawerContentOptions,
+  // DrawerContentComponentProps,
+  // DrawerContentOptions,
   DrawerContentScrollView,
   DrawerItem,
 } from '@react-navigation/drawer';
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  DrawerContentComponentProps,
+  DrawerContentOptions,
+} from './myNav/types';
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Dimensions,
+  Image,
+} from 'react-native';
+import Modal from 'react-native-modal';
 import {
   Avatar,
   Caption,
@@ -18,27 +29,46 @@ import {
   Title,
   TouchableRipple,
   useTheme,
+  Button,
+  Divider,
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
-
+import firebase from '../../firebase/firebase';
 import { PreferencesContext } from '../context/preferencesContext';
+import {
+  BaseRouter,
+  DrawerActions,
+  NavigationContext,
+} from '@react-navigation/native';
+import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
+import { useSelector, useDispatch } from 'react-redux';
+import { GetAllMe } from '../store/me/me';
+import { asyncLink, DetailState } from '../store/behind/behind';
+import { cls, ScreenMgrState } from '../store/screenMgr/mgr';
+import { useName } from '../hooks/useName';
+import { GetUid, asyncLogout } from '../store/auth/auth';
+import { stringOmitter } from '../helper';
 
-type Props = DrawerContentComponentProps<DrawerNavigationProp>;
+type Props = DrawerContentComponentProps<DrawerContentOptions>;
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   drawerContent: {
-    flex: 1,
+    // flex: 1,
+    height: height,
   },
   userInfoSection: {
     paddingLeft: 20,
   },
   title: {
-    marginTop: 20,
+    marginTop: 14,
     fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,
     lineHeight: 14,
+    paddingTop: 8,
+    marginBottom: 8,
   },
   row: {
     marginTop: 20,
@@ -55,19 +85,50 @@ const styles = StyleSheet.create({
     marginRight: 3,
   },
   drawerSection: {
-    marginTop: 15,
+    marginTop: 10,
   },
   preference: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 6,
     paddingHorizontal: 16,
+  },
+  modal: {
+    position: 'absolute',
+    bottom: height / 2 - 80,
+    left: width / 2 - (width * 2) / 6,
+    backgroundColor: 'white',
+    padding: 10,
+    height: height / 4 - 24,
+    width: (width * 2) / 3,
+    borderWidth: 15,
+    borderRadius: 20,
+    borderColor: 'white',
   },
 });
 
 export function DrawerContent(props: Props) {
+  const dispatch = useDispatch();
   const paperTheme = useTheme();
   const { theme, toggleTheme } = React.useContext(PreferencesContext);
+  // const uid = useSelector(GetUid);
+  const me = useSelector(GetAllMe);
+  const detail = useSelector(DetailState);
+  const [modal, setModal] = useState(false);
+  const [selectedItem, setItem] = useState({
+    ansDoc: '',
+    postDoc: '',
+    uri: '',
+    width: 0,
+    height: 0,
+    thms: [],
+    order: 1,
+    body: '',
+    postAt: new firebase.firestore.Timestamp(0, 0),
+    ansAt: new firebase.firestore.Timestamp(0, 0),
+    postBy: '',
+    ansBy: '',
+  });
 
   const translateX = Animated.interpolate(props.progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
@@ -75,91 +136,332 @@ export function DrawerContent(props: Props) {
   });
 
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView
+      {...props}
+      style={{ backgroundColor: paperTheme.colors.surface }}
+    >
       <Animated.View
         style={[
           styles.drawerContent,
           {
-            backgroundColor: paperTheme.colors.surface,
+            backgroundColor: 'white',
             transform: [{ translateX }],
           },
         ]}
       >
-        <View style={styles.userInfoSection}>
-          <TouchableOpacity
-            style={{ marginLeft: 10 }}
-            onPress={() => {
-              props.navigation.toggleDrawer();
-            }}
-          >
-            <Avatar.Image
-              source={{
-                uri:
-                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-              }}
-              size={50}
-            />
-          </TouchableOpacity>
-          <Title style={styles.title}>Dawid Urbaniak</Title>
-          <Caption style={styles.caption}>@trensik</Caption>
-          <View style={styles.row}>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                202
-              </Paragraph>
-              <Caption style={styles.caption}>Obserwuje</Caption>
-            </View>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                159
-              </Paragraph>
-              <Caption style={styles.caption}>Obserwujący</Caption>
-            </View>
-          </View>
-        </View>
-        <Drawer.Section style={styles.drawerSection}>
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons
-                name="account-outline"
-                color={color}
-                size={size}
-              />
-            )}
-            label="Profile"
-            onPress={() => {
-              props.navigation.jumpTo('Home');
-            }}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons name="tune" color={color} size={size} />
-            )}
-            label="Preferences"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons
-                name="bookmark-outline"
-                color={color}
-                size={size}
-              />
-            )}
-            label="Bookmarks"
-            onPress={() => {}}
-          />
-        </Drawer.Section>
-        <Drawer.Section title="Preferences">
-          <TouchableRipple onPress={toggleTheme}>
-            <View style={styles.preference}>
-              <Text>Dark Theme</Text>
-              <View pointerEvents="none">
-                <Switch value={theme === 'dark'} />
+        {props.mypinsMode ? (
+          <>
+            <View style={styles.userInfoSection}>
+              <View
+                style={{
+                  height: 48,
+                  justifyContent: 'center',
+                  borderBottomColor: cls.grn,
+                  borderBottomWidth: 3,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: 'myfont',
+                    fontSize: 20,
+                    textAlign: 'center',
+                    // color: cls.grn,
+                  }}
+                >
+                  どれからリンクしますか？
+                </Text>
               </View>
+              <Divider />
             </View>
-          </TouchableRipple>
-        </Drawer.Section>
+            <View style={styles.drawerSection}>
+              <FlatList
+                data={me.myPins}
+                renderItem={item => {
+                  console.log('drawercontent');
+                  // console.log(item.item);
+
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        // console.log(item.item);
+                        const i = item.item;
+                        setItem({
+                          ansDoc: i.ansDoc,
+                          postDoc: i.postDoc,
+                          uri: i.uri,
+                          width: i.width,
+                          height: i.height,
+                          thms: i.thms,
+                          order: i.order,
+                          body: i.body,
+                          postAt: i.postAt,
+                          ansAt: i.ansAt,
+                          postBy: i.postBy,
+                          ansBy: i.ansBy,
+                        });
+                        setModal(true);
+                      }}
+                    >
+                      <View
+                        style={{
+                          marginBottom: 7,
+                          borderLeftColor: cls.grn,
+                          borderLeftWidth: 4,
+                          borderRadius: 3,
+                          marginLeft: 6,
+                        }}
+                      >
+                        <View style={{ flexDirection: 'row' }}>
+                          <Image
+                            source={{ uri: item.item.uri }}
+                            style={{
+                              width: 60,
+                              height: 60,
+                              borderRadius: 10,
+                              margin: 8,
+                            }}
+                          />
+                          <View
+                            style={{
+                              height: 60,
+                              marginVertical: 8,
+                              // backgroundColor: 'red',
+                              flex: 1,
+                              padding: 8,
+                            }}
+                          >
+                            <Text style={{ fontWeight: '500', fontSize: 14 }}>
+                              {stringOmitter(
+                                25,
+                                item.item.thms[item.item.order - 1],
+                              )}
+                            </Text>
+                          </View>
+                        </View>
+                        <Divider />
+                        <View
+                          style={{ paddingHorizontal: 16, paddingVertical: 16 }}
+                        >
+                          <Text style={{ fontWeight: '500', fontSize: 14 }}>
+                            {stringOmitter(40, item.item.body)}
+                          </Text>
+                        </View>
+                      </View>
+                      {/* <Divider /> */}
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+            <Modal
+              isVisible={modal}
+              onBackdropPress={() => {
+                setModal(false);
+              }}
+            >
+              <View style={styles.modal}>
+                <Text style={{ fontFamily: 'myfont' }}>
+                  この回答からリンクします
+                </Text>
+                <View>
+                  <Button
+                    style={{
+                      borderColor: '#DDDDDD',
+                      borderWidth: 1,
+                      marginTop: 24,
+                      padding: 8,
+                    }}
+                    labelStyle={{
+                      color: cls.grn,
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                    }}
+                    onPress={() => {
+                      dispatch(
+                        asyncLink(
+                          detail.dpram,
+                          selectedItem.ansDoc,
+                          selectedItem.postDoc,
+                          selectedItem.uri,
+                          selectedItem.thms,
+                          selectedItem.order,
+                          selectedItem.body,
+                          selectedItem.postAt,
+                          selectedItem.postBy,
+                          selectedItem.ansAt,
+                          selectedItem.ansBy,
+                        ),
+                      );
+                    }}
+                  >
+                    OK!
+                  </Button>
+                  <Button
+                    style={{ marginTop: 12 }}
+                    labelStyle={{ color: 'gray', fontSize: 12 }}
+                    onPress={() => {
+                      setModal(false);
+                    }}
+                  >
+                    キャンセル
+                  </Button>
+                </View>
+              </View>
+            </Modal>
+          </>
+        ) : (
+          <>
+            <View style={styles.userInfoSection}>
+              <View style={{ height: 48, justifyContent: 'center' }}>
+                <Text
+                  style={{
+                    fontFamily: 'myfont',
+                    fontSize: 20,
+                    textAlign: 'center',
+                    color: cls.grn,
+                  }}
+                >
+                  グラピィ
+                </Text>
+              </View>
+              <Divider />
+              <TouchableOpacity
+                style={{
+                  marginLeft: 10,
+                  marginTop: 12,
+                  justifyContent: 'center',
+                }}
+                onPress={() => {
+                  props.navigation.toggleDrawer();
+                }}
+              >
+                <Image
+                  source={{
+                    uri: me.iconPath,
+                  }}
+                  // source={{ uri: me.iconPath }}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 20,
+                    alignSelf: 'center',
+                  }}
+                />
+              </TouchableOpacity>
+              <Title
+                style={
+                  (styles.title,
+                  {
+                    fontFamily: 'myfont',
+                    textAlign: 'center',
+                    marginBottom: 8,
+                  })
+                }
+              >
+                {me.userName}
+              </Title>
+              <Divider />
+              <Caption style={styles.caption}>id : trensik</Caption>
+              <Divider />
+            </View>
+            <Drawer.Section style={styles.drawerSection}>
+              {props.state.routes
+                .filter(
+                  route => props.descriptors[route.key].options.inNav === true,
+                )
+                .map(route => (
+                  <DrawerItem
+                    key={route.key}
+                    icon={({ color, size }) => (
+                      <MaterialCommunityIcons
+                        name={
+                          props.descriptors[route.key].options.icon != undefined
+                            ? props.descriptors[route.key].options.icon.name
+                            : 'account-outline'
+                        }
+                        color={cls.rd}
+                        size={
+                          props.descriptors[route.key].options.icon != undefined
+                            ? props.descriptors[route.key].options.icon.size
+                            : 20
+                        }
+                      />
+                    )}
+                    label={route.name}
+                    onPress={() => {
+                      // props.navigation.toggleDrawer();
+                      props.navigation.navigate(route.name);
+                    }}
+                  />
+                ))}
+            </Drawer.Section>
+            <Drawer.Section>
+              <TouchableRipple onPress={toggleTheme}>
+                <View style={styles.preference}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <View
+                      style={{ marginTop: 6, marginRight: 28, marginLeft: 6 }}
+                    >
+                      <Feather
+                        name="moon"
+                        size={20}
+                        color="rgba(0, 0, 0, 0.68)"
+                      />
+                    </View>
+
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        marginTop: 10,
+                        color: 'rgba(0, 0, 0, 0.68)',
+                      }}
+                    >
+                      ダークモード
+                    </Text>
+                  </View>
+
+                  <View pointerEvents="none">
+                    <Switch value={theme === 'dark'} />
+                  </View>
+                </View>
+              </TouchableRipple>
+              <Divider />
+              <TouchableOpacity
+                onPress={() => {
+                  alert('logout');
+                  dispatch(asyncLogout());
+                  props.navigation.goBack(null);
+                }}
+              >
+                <View style={styles.preference}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <View
+                      style={{ marginTop: 6, marginRight: 28, marginLeft: 6 }}
+                    >
+                      <MaterialCommunityIcons
+                        name="logout"
+                        size={20}
+                        color="rgba(0, 0, 0, 0.68)"
+                      />
+                    </View>
+
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        marginTop: 10,
+                        color: 'rgba(0, 0, 0, 0.68)',
+                      }}
+                    >
+                      ログアウト
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Drawer.Section>
+          </>
+        )}
       </Animated.View>
     </DrawerContentScrollView>
   );
